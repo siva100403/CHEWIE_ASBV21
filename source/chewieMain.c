@@ -1,0 +1,165 @@
+/*
+ * Copyright 2016-2025 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/**
+ * @file    CHEWIE_ASBV21.c
+ * @brief   Application entry point.
+ */
+
+/* FreeRTOS kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "timers.h"
+#include "semphr.h"
+
+/* Standard C includes */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+/* NXP includes */
+#include "board.h"
+#include "peripherals.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "fsl_debug_console.h"
+#include "fsl_spc.h"
+#include "fsl_lpi2c.h"
+#include "fsl_lpuart.h"
+#include "fsl_device_registers.h"
+
+/* Chewie Includes */
+#include "dgCommon.h"
+#include "version.h"
+#include "modulecom.h"
+#include "dgtimer.h"
+#include "GPIOSignals.h"
+#include "dgI2cDriver.h"
+#include "rtc.h"
+#include "ASB_HMI_common.h"
+#include "sysStart.h"
+
+/* TODO: insert other definitions and declarations here. */
+int initPrintMod(void);
+
+/*
+ * @brief   Application entry point.
+ */
+int main(void) {
+
+	/*Configure LDO */
+	SPC_EnableDCDCRegulator(SPC0, false);
+
+    /* Init board hardware. */
+    BOARD_InitBootPins();
+    BOARD_InitBootClocks();
+    BOARD_InitBootPeripherals();
+
+    /* Init FSL debug console. */
+    //BOARD_InitDebugConsole();
+
+    //Initialize Module store
+    initModuleStore();
+
+    if(initSysStart()==DG_SUCCESS)
+    {
+    	printf("chewieMain.c:initSysStart(): Success\r\n");
+    }
+    else
+    {
+    	printf("chewieMain.c:initSysStart(): Fail\r\n");
+    }
+
+    if(initPrintMod() != DG_SUCCESS)
+    {
+        printf("chewieMain.c:InitPrintMod(): failed\r\n");
+    }
+    else
+    {
+        printf("chewieMain.c:InitPrintMod(): success\r\n");
+
+    }
+
+    vTaskStartScheduler();
+    //PRINTF("After Task scheduler started!.\r\n");
+    for (;;)
+    {
+        //PRINTF("Inside main thread!.\r\n");
+        vTaskDelay( 1000 );
+
+    }
+
+    /* Force the counter to be placed into memory. */
+    volatile static int i = 0 ;
+    /* Enter an infinite loop, just incrementing a counter. */
+    while(1) {
+        i++ ;
+        /* 'Dummy' NOP to allow source level single stepping of
+            tight while() loop */
+        __asm volatile ("nop");
+    }
+    return 0 ;
+}
+
+
+static void print_task(void *pvParameters)
+{
+
+
+    GREEN_LED_ON();
+    RED_LED_ON();
+    BLUE_LED_ON();
+
+
+    vTaskDelay( 500 ); //For other tasks to get started
+
+
+
+
+
+    char timeString[36];
+    uint8_t i, value;
+
+    i=0;
+
+
+
+    while(1)
+    {
+
+
+        vTaskDelay( 500 );
+
+
+        rtcRAMWrite(0x20, i++);
+        getRTCtime( timeString);
+    	printf("chewieMain.c:(): current time=%s\r\n", timeString);
+        vTaskDelay( 500);
+        rtcRAMRead(0x20, &value);
+    	printf("chewieMain.c:(): RTC RAM value=%d\r\n", value);
+    	printf("chewieMain.c:(): inside print_task\r\n");
+    }
+
+
+}
+
+int initPrintMod(void)
+{
+	//Create print_task
+	TaskHandle_t printTaskHandle;
+
+    if (xTaskCreate(print_task, "print_task", configMINIMAL_STACK_SIZE + 100, NULL, task_PRIORITY, &printTaskHandle) !=
+        pdPASS)
+    {
+        printf("initPrintMod():Print Task creation failed!.\r\n");
+        return DG_FAIL;
+    }
+
+    return DG_SUCCESS;
+}
+
