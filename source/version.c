@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.0" );
+strcpy(swVer,"0.3.1" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
 }
@@ -63,5 +63,14 @@ void getHwVersion(char * version)
 /************************Ver 0.3.0 30-11-2025********************
  * New Features
  * 1. First port from ASB V2.0 to ASB V2.1 Hardware
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.1 01-12-2025********************
+ * New Features
+ * 1. CLI Module integrated
+ * 2. SysConfig and sysStart modules integrated
+ * Known Issues
+ * 1. Floating point does not work in printf(). Need to modify the project configuration
  *
  *******************************************************************/

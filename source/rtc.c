@@ -621,8 +621,11 @@ int powerDWTIME_stamp( char *string)
 		return(DG_FAIL);
 	}
 	string[i++] = ':';
-	/*sec register */
-	ret=mcp7940_reg_read(RTCSEC_REG , &reg_value);
+	/*sec register: Seconds are not stored by MCP7940N. Hence make it zero*/
+	string[i++] = '0';
+	string[i++] = '0';
+
+/*	ret=mcp7940_reg_read(RTCSEC_REG , &reg_value);
 	if(ret == DG_SUCCESS)
 	{
 		string[i++]= (char)(((reg_value & 0x70) >> 4) + (0x30));
@@ -631,7 +634,7 @@ int powerDWTIME_stamp( char *string)
 	else
 	{
 		return(DG_FAIL);
-	}
+	}*/
 
 	string[i++]='\0';
 	//printf("%s\n",string);

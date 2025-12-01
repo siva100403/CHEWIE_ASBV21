@@ -43,6 +43,10 @@
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
+#include "dgUartDriverCommon.h"
+#include "CliUartDriver.h"
+#include "cliProc.h"
+#include "sysConfig.h"
 
 /* TODO: insert other definitions and declarations here. */
 int initPrintMod(void);
@@ -116,32 +120,59 @@ static void print_task(void *pvParameters)
     BLUE_LED_ON();
 
 
-    vTaskDelay( 500 ); //For other tasks to get started
+    vTaskDelay( 1000 ); //For other tasks to get started
 
 
+/*    	//Initialize CLI Module
+    	if(initCli()==DG_SUCCESS)
+    	{
+    		printf("chewieMain.c:: initCli() passed\r\n");
+    	}
+    	else
+    	{
+    		printf("chewieMain.c:: initCli() failed\r\n");
+
+    	}
 
 
-
-    char timeString[36];
-    uint8_t i, value;
-
-    i=0;
+		if(initCliUart() == DG_SUCCESS)
+		{
+    		printf("chewieMain.c:: initCliUart() passed\r\n");
+		}
+		else
+		{
+    		printf("chewieMain.c:: initCliUart() failed\r\n");
+		}*/
 
 
 
     while(1)
     {
 
+/*    	LS_DRIVE_HIGH();
+    	HEATER_OFF();
+    	SHD_STOP();
+    	SHD_DIR_CW();
+    	LID_MOTOR_DIR_CLOSE();
+    	SPARE1_RELAY_OFF();
+    	HMI_INT_INACTIVE();
+    	LID_POWER_OFF();
+    	SPARE2_RELAY_OFF();*/
 
         vTaskDelay( 500 );
 
+/*    	LS_DRIVE_LOW();
+    	HEATER_ON();
+    	SHD_START();
+    	SHD_DIR_CCW();
+    	LID_MOTOR_DIR_OPEN();
+    	SPARE1_RELAY_ON();
+    	HMI_INT_ACTIVE();
+    	LID_POWER_ON();
+    	SPARE2_RELAY_ON();*/
 
-        rtcRAMWrite(0x20, i++);
-        getRTCtime( timeString);
-    	printf("chewieMain.c:(): current time=%s\r\n", timeString);
         vTaskDelay( 500);
-        rtcRAMRead(0x20, &value);
-    	printf("chewieMain.c:(): RTC RAM value=%d\r\n", value);
+
     	printf("chewieMain.c:(): inside print_task\r\n");
     }
 

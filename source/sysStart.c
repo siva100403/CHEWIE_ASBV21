@@ -39,6 +39,12 @@
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
+#include "dgUartDriverCommon.h"
+#include "CliUartDriver.h"
+#include "cliProc.h"
+#include "sysConfig.h"
+
+
 
 
 
@@ -70,6 +76,8 @@ static void sysStart_task(void *pvParameters)
 	initVersion();
 
     BLUE_LED_ON();
+    RED_LED_OFF();
+    GREEN_LED_OFF();
 	//Initialize the state
 	//sysStartState = SYSSTART_STATE_START;
 
@@ -144,7 +152,7 @@ static void sysStart_task(void *pvParameters)
 
 	}
 
-/*	//Initialize Chewie System Configuration from EEPROM
+	//Initialize Chewie System Configuration from EEPROM
 	if(initSysConfig()==DG_SUCCESS)
 	{
 		printf("sysStart_task(): initSysConfig() passed\r\n");
@@ -152,9 +160,9 @@ static void sysStart_task(void *pvParameters)
 	else
 	{
 		printf("sysStart_task(): initSysConfig() failed\r\n");
-	}*/
+	}
 
-/*	//Initialize CLI Module
+	//Initialize CLI Module
 	if(initCli()==DG_SUCCESS)
 	{
 		printf("sysStart_task(): initCli() passed\r\n");
@@ -167,24 +175,26 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initCli() failed\r\n");
 		moduleHealthReg[CLI_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[CLI_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 
-/*	//If initCLI is successful initialize the UART for CLI
+	//If initCLI is successful initialize the UART for CLI
 	if(moduleHealthReg[CLI_MOD].operationStatus == MODULE_WORKING)
 	{
 		if(initCliUart() == DG_SUCCESS)
 		{
+			printf("sysStart_task(): initCliUart() passed\r\n");
 			//CLI UART initialization is success. Update Health Register
 			devHealthReg[CLI_UART_DEV].presenceStatus = DEVICE_PRESENT;
 			devHealthReg[CLI_UART_DEV].operationStatus = DEVICE_WORKING;
 		}
 		else
 		{
+			printf("sysStart_task(): initCliUart() failed\r\n");
 			//CLI UART initialization failed. Update Health Register
 			devHealthReg[CLI_UART_DEV].presenceStatus = DEVICE_PRESENT;
 			devHealthReg[CLI_UART_DEV].operationStatus = DEVICE_NOTWORKING;
 		}
-	}*/
+	}
 
 /*	//Initialize LPSPI Device which is used by TDC1000 and DRV89XX devices
 	if(initSPI_MCLS() == DG_SUCCESS)
