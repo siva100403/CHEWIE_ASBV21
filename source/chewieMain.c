@@ -32,6 +32,7 @@
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
+#include "fsl_lpspi.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -39,7 +40,9 @@
 #include "modulecom.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "seqControlCommon.h"
 #include "dgI2cDriver.h"
+#include "eeConfig.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
@@ -47,6 +50,19 @@
 #include "CliUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "actuatorCtrl.h"
+#include "sensorMod.h"
+#include "augerAPI.h"
+#include "shredder.h"
+#include "shredderAPI.h"
+#include "adcs.h"
+
 
 /* TODO: insert other definitions and declarations here. */
 int initPrintMod(void);

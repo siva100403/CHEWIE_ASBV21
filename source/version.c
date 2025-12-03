@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.1" );
+strcpy(swVer,"0.3.2" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
 }
@@ -72,5 +72,12 @@ void getHwVersion(char * version)
  * 2. SysConfig and sysStart modules integrated
  * Known Issues
  * 1. Floating point does not work in printf(). Need to modify the project configuration
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.2 03-12-2025********************
+ * New Features
+ * 1. DRV89xx driver integrated.
+ * 2. CLI added for controlling the DRV89xx connected devices
  *
  *******************************************************************/

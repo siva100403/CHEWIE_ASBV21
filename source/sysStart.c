@@ -43,7 +43,12 @@
 #include "CliUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
-
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "shredder.h"
+#include "shredderAPI.h"
+#include "adcs.h"
 
 
 
@@ -196,7 +201,7 @@ static void sysStart_task(void *pvParameters)
 		}
 	}
 
-/*	//Initialize LPSPI Device which is used by TDC1000 and DRV89XX devices
+	//Initialize LPSPI Device which is used by TDC1000 and DRV89XX devices
 	if(initSPI_MCLS() == DG_SUCCESS)
 	{
 		printf("sysStart_task(): initSPI_MCLS()) passed\r\n");
@@ -204,8 +209,7 @@ static void sysStart_task(void *pvParameters)
 	else
 	{
 		printf("sysStart_task(): initSPI_MCLS()) failed\r\n");
-	}*/
-/*
+	}
 	//Initialize DRV89XX_1 Motor Driver Device Module
 	if(initDRV89XX_1()==DG_SUCCESS)
 	{
@@ -219,9 +223,9 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initDRV89XX_1() failed\r\n");
 		devHealthReg[DRV89XX_1_DEV].presenceStatus = DEVICE_NOTPRESENT;
 		devHealthReg[DRV89XX_1_DEV].operationStatus = DEVICE_NOTWORKING;
-	}*/
+	}
 
-/*	//Initialize DRV89XX_2 Motor Driver Device Module
+	//Initialize DRV89XX_2 Motor Driver Device Module
 	if(initDRV89XX_2()==DG_SUCCESS)
 	{
 		printf("sysStart_task(): initDRV89XX_2() passed\r\n");
@@ -234,31 +238,17 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initDRV89XX_2() failed\r\n");
 		devHealthReg[DRV89XX_2_DEV].presenceStatus = DEVICE_NOTPRESENT;
 		devHealthReg[DRV89XX_2_DEV].operationStatus = DEVICE_NOTWORKING;
-	}*/
-
-/*	//Initialize DRV89XX_3 Motor Driver Device Module
-	if(initDRV89XX_3()==DG_SUCCESS)
-	{
-		printf("sysStart_task(): initDRV89XX_3() passed\r\n");
-		devHealthReg[DRV89XX_3_DEV].presenceStatus = DEVICE_PRESENT;
-		devHealthReg[DRV89XX_3_DEV].operationStatus = DEVICE_WORKING;
-
 	}
-	else
-	{
-		printf("sysStart_task(): initDRV89XX_3() failed\r\n");
-		devHealthReg[DRV89XX_3_DEV].presenceStatus = DEVICE_NOTPRESENT;
-		devHealthReg[DRV89XX_3_DEV].operationStatus = DEVICE_NOTWORKING;
-	}*/
 
-/*	if(initDrv89xxFaulthandler() == DG_SUCCESS)
+
+	if(initDrv89xxFaulthandler() == DG_SUCCESS)
 	{
 		printf("sysStart_task():initDrv89xxFaulthandler() Success\r\n");
 	}
 	else
 	{
 		printf("sysStart_task():initDrv89xxFaulthandler() failed\r\n");
-	}*/
+	}
 
 /*	//Initialize SHT40 Temperature, Humidity sensor
 	if(initSht40()==DG_SUCCESS)
@@ -317,7 +307,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[LID_MOD].operationStatus = MODULE_NOTWORKING;
 	}
     */
-/*    //vTaskDelay(500 / portTICK_PERIOD_MS);
+    //vTaskDelay(500 / portTICK_PERIOD_MS);
     //Initialize shredder module and associated components
     if(initShd() == DG_SUCCESS)
 	{
@@ -330,7 +320,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initShd() failed\r\n");
 		moduleHealthReg[SHREDDER_MOD].presenceStatus = MODULE_NOTPRESENT;
 		moduleHealthReg[SHREDDER_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 /*    //Initialize Limit switch module
     if(initLimitSwitchModule() == DG_SUCCESS)
 	{
@@ -359,7 +349,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[SENSOR_MOD].operationStatus = MODULE_NOTWORKING;
 	}*/
 
-/*    if(initAdcs() == DG_SUCCESS)
+    if(initAdcs() == DG_SUCCESS)
     {
     	printf("sysStart_task(): initAdcs success\r\n");
 		moduleHealthReg[ADCS_MOD].presenceStatus = MODULE_PRESENT;
@@ -370,7 +360,7 @@ static void sysStart_task(void *pvParameters)
     	printf("sysStart_task(): initAdcs fail\r\n");
 		moduleHealthReg[ADCS_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[ADCS_MOD].operationStatus = MODULE_NOTWORKING;
-    }*/
+    }
 
 /*	//Initialize Composting Module
 	if(initCSM() == DG_SUCCESS)

@@ -182,8 +182,10 @@ typedef struct shredderCtrlSeq
 	uint8_t shdMotor;
 	uint8_t shdFlapMotor;
 	uint8_t flushSprayer;
+	uint8_t shdAugMotor;
 	uint8_t ctrlSeqRecType;
 }dgShredderCtrlSeq_t;
+
 
 typedef struct shredderTimingVar
 {

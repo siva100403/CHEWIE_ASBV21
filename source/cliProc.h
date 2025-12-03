@@ -54,8 +54,8 @@ struct cmd_buffer
 #define AIR_VALVE3		9
 #define FAN_MOTOR		10
 #define AUGER_MOTOR		11
-#define LID_MOTOR      	12
-#define LID_MOTOR_SPEED 13
+#define SHDAUG_MOTOR      	12
+#define SHDAUG_MOTOR_SPEED 	13
 #define FLAP_MOTOR     	14
 
 #define GETTIME			15

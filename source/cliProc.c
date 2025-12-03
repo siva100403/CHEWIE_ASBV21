@@ -27,33 +27,35 @@
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
+#include "fsl_lpspi.h"
 
-/* CHEWIE Includes */
-#include <dgCommon.h>
-#include <modulecom.h>
-#include "sysConfig.h"
-#include "ASB_HMI_common.h"
-#include "version.h"
-#include "cliProc.h"
+/* Chewie Includes */
 #include "dgCommon.h"
+#include "version.h"
+#include "modulecom.h"
+#include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "seqControlCommon.h"
+#include "dgI2cDriver.h"
+#include "rtc.h"
+#include "ASB_HMI_common.h"
+#include "sysStart.h"
 #include "dgUartDriverCommon.h"
 #include "CliUartDriver.h"
-#include "rtc.h"
-//#include "actuatorCtrl.h"
-//#include "CTAPI.h"
-//#include "sht40Driver.h"
-//#include "lidModuleAPI.h"
-//#include "lidModule.h"
-//#include "transferCS.h"
-//#include "transferCSAPI.h"
-//#include "ADCS.h"
-//#include "sensorModAPI.h"
+#include "cliProc.h"
+#include "sysConfig.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "actuatorCtrl.h"
 #include "sensorMod.h"
-//#include "csmMod.h"
-//#include "csmModAPI.h"
-//#include "shredder.h"
-//#include "shredderAPI.h"
+#include "augerAPI.h"
+#include "shredder.h"
+#include "shredderAPI.h"
+#include "adcs.h"
 
 /*******************************************************************************
  * Global Variables
@@ -289,13 +291,13 @@ int getCmdCode(char* token)
 	{
 		cmdCode = TCS;
 	}
-	else if(strcmp(&token[0], "LIDMOTOR\0")==0)
+	else if(strcmp(&token[0], "SHDAUG_MOTOR\0")==0)
 	{
-		cmdCode = LID_MOTOR;
+		cmdCode = SHDAUG_MOTOR;
 	}
-	else if(strcmp(&token[0], "LIDMOTORSPEED\0")==0)
+	else if(strcmp(&token[0], "SHDAUG_MOTORSPEED\0")==0)
 	{
-		cmdCode = LID_MOTOR_SPEED;
+		cmdCode = SHDAUG_MOTOR_SPEED;
 	}
 	else
 	{
@@ -455,7 +457,6 @@ void cli_Task(void* arg)
 					break;
 				}
 
-/*
 				case DC_SPRAYER:
 				{
 					//DCSPRAYER ON/OFF
@@ -488,8 +489,8 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
-/*				case FLUSH_SPRAYER:
+				}
+				case FLUSH_SPRAYER:
 				{
 					//FLUSHSPRAYER ON/OFF
 
@@ -521,8 +522,8 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
-/*				case ST_MOTOR:
+				}
+				case ST_MOTOR:
 				{
 					//STMOTOR START/STOP
 
@@ -554,8 +555,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
-/*
+				}
 				case ADDITIVE_DISPR:
 				{
 					//ADDITIVE START/STOP
@@ -589,7 +589,6 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-*/
 /*
 				case CTCS:
 				{
@@ -624,6 +623,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
+*/
 				case FLAP_MOTOR:
 				{
 					//FLAP OPEN/CLOSE/OFF
@@ -759,7 +759,7 @@ void cli_Task(void* arg)
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
 					break;
-				}*/
+				}
 /*
 				case LID:
 				{
@@ -832,10 +832,10 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-
-				case LID_MOTOR:
+*/
+				case SHDAUG_MOTOR:
 				{
-					//LIDMOTOR OPEN/CLOSE/OFF
+					//SHDAUG_MOTOR RR/RL/OFF
 
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
@@ -845,17 +845,17 @@ void cli_Task(void* arg)
 						setRxStatus(RS232_RCV_IDLE);
 						break;
 					}
-					if (strcmp(&token[0], "OPEN\0")==0)
+					if (strcmp(&token[0], "RL\0")==0)
 					{
-						LID_MOTOR_DIR_OPEN();
+						shdAugMotorCCWR();
 					}
-					else if (strcmp(&token[0], "CLOSE\0")==0)
+					else if (strcmp(&token[0], "RR\0")==0)
 					{
-						LID_MOTOR_DIR_CLOSE();
+						shdAugMotorCWR();
 					}
 					else if (strcmp(&token[0], "OFF\0")==0)
 					{
-						//lidMotorStop();
+						shdAugMotorStop();
 					}
 					else
 					{
@@ -871,9 +871,9 @@ void cli_Task(void* arg)
 					break;
 				}
 
-				case LID_MOTOR_SPEED:
+				case SHDAUG_MOTOR_SPEED:
 				{
-					//LIDMOTORSPEED Speed(0-100)
+					//SHDAUG_MOTORSPEED Speed(0-100)
 
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
@@ -885,15 +885,15 @@ void cli_Task(void* arg)
 					}
 					uint8_t speed=atoi(&token[0]);
 					speed &=0xFF;
-					lidMotorSetspeed(speed);
+					shdAugMotorSetspeed(speed);
 
 					strcpy(response, "CC:\r\n>");
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-*/
-/*
+
+
 				case FAN_MOTOR:
 				{
 					//FAN RR/RL/OFF
@@ -931,7 +931,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-
+/*
 				case GETTEMP:
 				{
 					//This command reads temperature and humidity and display the value
@@ -1180,6 +1180,7 @@ void cli_Task(void* arg)
 					}
 					break;
 				}
+*/
 				case AUGER_MOTOR:
 				{
 					//AUGER RL/RR/OFF
@@ -1217,7 +1218,7 @@ void cli_Task(void* arg)
 					break;
 
 				}
-
+/*
 				case GETCSMSTATUS:  //Gets the current status of CSM
 				{
 					//GETCSMSTATUS
@@ -1652,6 +1653,7 @@ void cli_Task(void* arg)
 				{
 					break;
 				}
+
 				case GETSHDSEQ_C:
 				{
 				    // Usage: GETSHDSEQ_C index
@@ -1676,11 +1678,12 @@ void cli_Task(void* arg)
 				            if (getShredderCtrlSeq(index, &shdSeq) == DG_SUCCESS)
 				            {
 				                // CC:durationSec,shdMotor,shdFlapMotor,flushSprayer,ctrlSeqRecType
-				                sprintf(response, "CC:%u,%u,%u,%u,%u\r\n",
+				                sprintf(response, "CC:%u,%u,%u,%u,%u,%u\r\n",
 				                        (unsigned)shdSeq.durationSec,
 				                        (unsigned)shdSeq.shdMotor,
 				                        (unsigned)shdSeq.shdFlapMotor,
 				                        (unsigned)shdSeq.flushSprayer,
+				                        (unsigned)shdSeq.shdAugMotor,
 				                        (unsigned)shdSeq.ctrlSeqRecType);
 				            }
 				            else
@@ -1709,7 +1712,7 @@ void cli_Task(void* arg)
 				case SETSHDSEQ_C:
 				{
 				    // Usage:
-				    // SETSHDSEQ_C index,durationSec,shdMotor,shdFlapMotor,flushSprayer,ctrlSeqRecType
+				    // SETSHDSEQ_C index,durationSec,shdMotor,shdFlapMotor,flushSprayer,shdaugMotor,ctrlSeqRecType
 				    //
 				    // Example:
 				    // SETSHDSEQ_C 0,10,1,1,0,2
@@ -1720,22 +1723,23 @@ void cli_Task(void* arg)
 
 				    // Temporaries for sscanf (wider than uint8_t)
 				    unsigned int indexTmp;
-				    unsigned int durTmp, motorTmp, flapTmp, flushTmp, ctrlTmp;
+				    unsigned int durTmp, motorTmp, flapTmp, flushTmp, shdaugTmp, ctrlTmp;
 
 				    int parsed;
 
 				    printf("cliProc.c: cmd received: %s\r\n", cmdString);
 
 				    parsed = sscanf(cmdString,
-				                    "SETSHDSEQ_C %u,%u,%u,%u,%u,%u",
+				                    "SETSHDSEQ_C %u,%u,%u,%u,%u,%u,%u",
 				                    &indexTmp,
 				                    &durTmp,
 				                    &motorTmp,
 				                    &flapTmp,
 				                    &flushTmp,
+									&shdaugTmp,
 				                    &ctrlTmp);
 
-				    if (parsed == 6)
+				    if (parsed == 7)
 				    {
 				        // Validate ranges (all uint8_t fields)
 				        if (indexTmp < MAX_SHD_SEQ &&
@@ -1743,6 +1747,7 @@ void cli_Task(void* arg)
 				            motorTmp <= 0xFF &&
 				            flapTmp  <= 0xFF &&
 				            flushTmp <= 0xFF &&
+							shdaugTmp <= 0xFF &&
 				            ctrlTmp  <= 0xFF)
 				        {
 				            index                 = (uint8_t)indexTmp;
@@ -1750,6 +1755,7 @@ void cli_Task(void* arg)
 				            shdSeq.shdMotor       = (uint8_t)motorTmp;
 				            shdSeq.shdFlapMotor   = (uint8_t)flapTmp;
 				            shdSeq.flushSprayer   = (uint8_t)flushTmp;
+				            shdSeq.shdAugMotor   = (uint8_t)shdaugTmp;
 				            shdSeq.ctrlSeqRecType = (uint8_t)ctrlTmp;
 
 				            if (setShredderCtrlSeq(index, &shdSeq) == DG_SUCCESS)
@@ -1777,7 +1783,6 @@ void cli_Task(void* arg)
 				    setRxStatus(RS232_RCV_IDLE);
 				    break;
 				}
-
 
 				case GETSHDTVAR_C:
 				{
@@ -1996,7 +2001,7 @@ void cli_Task(void* arg)
 					break;
 
 				}*/
-/*				case SHD_MOTOR:
+				case SHD_MOTOR:
 				{
 					//SHD RL/RR/OFF
 
@@ -2039,7 +2044,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
+				}
 
 				default:
 					strcpy(response, "CERROR:Command not supported\r\n>");

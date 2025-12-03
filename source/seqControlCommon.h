@@ -54,6 +54,11 @@
 #define SEQ_CTRL_SHD_MOTOR_CWR		1
 #define SEQ_CTRL_SHD_MOTOR_CCWR		2
 
+//Shredder Auger Motor Control Codes
+#define SEQ_CTRL_SHDAUG_MOTOR_OFF		0
+#define SEQ_CTRL_SHDAUG_MOTOR_CWR		1
+#define SEQ_CTRL_SHDAUG_MOTOR_CCWR		2
+
 //Shredder Flap Control Codes
 #define SEQ_CTRL_SHD_FLAP_OFF		0
 #define SEQ_CTRL_SHD_FLAP_OPEN		1

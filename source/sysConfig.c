@@ -5,6 +5,7 @@
  *      Author: Jawahar Arumugam
  */
 
+
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -12,31 +13,50 @@
 #include "timers.h"
 #include "semphr.h"
 
-
+/* Standard C includes */
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+/* NXP includes */
 #include "board.h"
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "fsl_debug_console.h"
 #include "fsl_spc.h"
+#include "fsl_lpi2c.h"
+#include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
-#include "fsl_lpi2c.h"
 
+/* Chewie Includes */
 #include "dgCommon.h"
+#include "version.h"
 #include "modulecom.h"
+#include "dgtimer.h"
 #include "GPIOSignals.h"
 #include "seqControlCommon.h"
-
-#include "cliProc.h"
-
-#include "sysConfig.h"
+#include "dgI2cDriver.h"
 #include "eeConfig.h"
+#include "rtc.h"
+#include "ASB_HMI_common.h"
+#include "sysStart.h"
+#include "dgUartDriverCommon.h"
+#include "CliUartDriver.h"
+#include "cliProc.h"
+#include "sysConfig.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "actuatorCtrl.h"
 #include "sensorMod.h"
+#include "augerAPI.h"
 #include "shredder.h"
-
-
+#include "shredderAPI.h"
 
 
 /*******************************************************************************
@@ -51,92 +71,6 @@ dgConfigMem_t allConfig;
 
 #else   //Default Configuration for Chewie Control System
 
-/*const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 19}, 	//M-Phase, Cat0
-											{60.0, 53.0, 0, 240, 90},	//T-Phase, Cat0
-											{40.0, 48.0, 0, 30, 50},		//P-Phase, Cat0
-											{0,0,0,0,0},					//Dummy
-											},
-										   {{35.0, 60.0, 0, 210, 18},	//M-Phase, Cat1
-											{58.0, 55.0, 0, 840, 11},	//T-Phase, Cat1
-											{40.0, 50.0, 0, 30, 17},		//P-Phase, Cat1
-											{0,0,0,0,0},					//Dummy
-										   },
-										   {{35.0, 60.0, 0, 240, 18},	//M-Phase, Cat2
-											{55.0, 55.0, 0, 600, 12},	//T-Phase, Cat2
-											{38.0, 50.0, 0, 240, 18},		//P-Phase, Cat2
-											{0,0,0,0,0},					//Dummy
-										   },
-										   {{35.0, 58.0, 0, 180, 18},	//M-Phase, Cat3
-											{58.0, 53.0, 0, 840, 10},	//T-Phase, Cat3
-											{40.0, 48.0, 0, 300, 15},		//P-Phase, Cat3
-											{0,0,0,0,0},					//Dummy
-										   },
-										   {{35.0, 55.0, 0, 240, 20},	//M-Phase, Cat4
-											{63.0, 50.0, 0, 1140, 14},	//T-Phase, Cat4
-											{45.0, 45.0, 0, 420, 18},		//P-Phase, Cat4
-											{0,0,0,0,0},					//Dummy
-										   },
-										   {{35.0, 55.0, 0, 180, 20},	//M-Phase, Cat5
-										   {60.0, 50.0, 0, 1020, 12},	//T-Phase, Cat5
-										   {40.0, 48.0, 0, 360, 18},		//P-Phase, Cat5
-										   {0,0,0,0,0},					//Dummy
-										   	},
-											{{35.0, 60.0, 0, 180, 18},	//M-Phase, Cat6
-											{57.0, 55.0, 0, 720, 10},	//T-Phase, Cat6
-											{40.0, 50.0, 0, 30, 15},		//P-Phase, Cat6
-											 {0,0,0,0,0},					//Dummy
-											},
-											{{30.0, 50.0, 0, 18, 20},	//M-Phase, Cat7
-											{55.0, 50.0, 0, 140, 10},	//T-Phase, Cat7
-											{35.0, 45.0, 0, 180, 15},		//P-Phase, Cat7
-											{0,0,0,0,0},					//Dummy
-											},
-                                            };
-
-
-
-
-const dgChewieAbout_t chewieDefault = {"CHEWIE", "MVP3", "ASBV1.0", "AIB0.0","HMI0.0", 0, 0};
-
-
-const dgActuatorCtrlSeq_t controlSeq = {
-	{ //temp_wr_hum_wr
-		{5, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{10, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_wr_hum_ar
-		{5, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CCWR, SEQ_CTRL_START, 0,0},
-		{10, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_wr_hum_br
-		{5, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_ONCE, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{5, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_ar_hum_wr
-		{1, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_START, 0,0},
-		{9, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_ar_hum_ar
-		{1, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CCWR, SEQ_CTRL_START, 0,0},
-		{9, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_ar_hum_br
-		{1, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_ONCE, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{4, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_OFF, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_br_hum_wr
-		{3, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_ON, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{1, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_br_hum_ar
-		{3, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_ON, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{1, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_END, 0,0}
-	},
-	{  //temp_br_hum_br
-		{3, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_ON, SEQ_CTRL_SPRAYER_ONCE, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START, 0,0},
-		{1, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_END, 0,0},
-	},
-};*/
 
 
 const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 19}, 	//M-Phase, Cat0
@@ -247,18 +181,20 @@ const dgTransferCtrlSeq_t trfCtrlSeqDefault[] = { {2, SEQ_CTRL_CTMOTOR_CCW, SEQ_
 
 //Duration specified in seconds
 const dgShredderCtrlSeq_t shdCtrlSeqDefault[] = {
-		{ 10,  SEQ_CTRL_SHD_MOTOR_CCWR,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_START },
-		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 2,  SEQ_CTRL_SHD_MOTOR_CWR, SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 2,  SEQ_CTRL_SHD_MOTOR_CWR, SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_ON,  SEQ_CTRL_MID },
-		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 6,  SEQ_CTRL_SHD_MOTOR_CCWR,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_ON,  SEQ_CTRL_MID },
-		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 10, SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 13, SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OPEN,  SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_MID },
-		{ 1,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_CLOSE, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_END },
+		{ 10,  SEQ_CTRL_SHD_MOTOR_CCWR,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_CCWR, SEQ_CTRL_START },
+		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 2,  SEQ_CTRL_SHD_MOTOR_CWR, SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 2,  SEQ_CTRL_SHD_MOTOR_CWR, SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_ON,  SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 6,  SEQ_CTRL_SHD_MOTOR_CCWR,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_ON,  SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 4,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 10, SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OFF, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 13, SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_OPEN,  SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_MID },
+		{ 1,  SEQ_CTRL_SHD_MOTOR_OFF,  SEQ_CTRL_SHD_FLAP_CLOSE, SEQ_CTRL_FLUSH_OFF, SEQ_CTRL_SHDAUG_MOTOR_OFF, SEQ_CTRL_END },
 		};
+
+
 
 #endif
 
