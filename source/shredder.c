@@ -28,6 +28,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
+#include "fsl_utick.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -43,6 +44,7 @@
 #include "sysStart.h"
 #include "dgUartDriverCommon.h"
 #include "CliUartDriver.h"
+#include "hmiUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
 #include "mclsSPIDriver.h"

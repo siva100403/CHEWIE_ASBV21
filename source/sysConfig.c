@@ -57,6 +57,9 @@
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
+#include "adcs.h"
+#include "limitSwitchMod.h"
+#include "transferCS.h"
 
 
 /*******************************************************************************

@@ -28,6 +28,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
+#include "fsl_utick.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -193,8 +194,8 @@ static void drv89xxFaultHandler(void *pvParameters)
 int initDrv89xxFaulthandler(void)
 {
 	//Create HMICmdProc task task
-	TaskHandle_t drv89xxFhTaskHandle;
-	BaseType_t result;
+	//TaskHandle_t drv89xxFhTaskHandle;
+	//BaseType_t result;
 
 /*	result = xTaskCreate(drv89xxFaultHandler, "drv89xxFaultHandler", configMINIMAL_STACK_SIZE + 100, NULL, task_PRIORITY, &drv89xxFhTaskHandle);
     if ( result !=    pdPASS)

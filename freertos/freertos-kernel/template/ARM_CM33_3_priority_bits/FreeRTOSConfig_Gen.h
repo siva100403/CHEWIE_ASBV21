@@ -57,7 +57,7 @@
 #define configUSE_TICKLESS_IDLE                 0
 #define configCPU_CLOCK_HZ                      (SystemCoreClock)
 #define configTICK_RATE_HZ                      ((TickType_t)200)
-#define configMAX_PRIORITIES                    5
+#define configMAX_PRIORITIES                    10  //Changed by Jawahar from 5 to 10
 #define configMINIMAL_STACK_SIZE                ((unsigned short)90)
 #define configMAX_TASK_NAME_LEN                 20
 #define configUSE_16_BIT_TICKS                  0
@@ -78,7 +78,7 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         0
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
-#define configTOTAL_HEAP_SIZE                   ((size_t)(10240))
+#define configTOTAL_HEAP_SIZE                   ((size_t)(30720))  ////Changed by Jawahar from 10240 to 30720
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */

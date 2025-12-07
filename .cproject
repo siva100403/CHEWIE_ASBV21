@@ -118,8 +118,6 @@
 								<option id="gnu.c.compiler.option.preprocessor.preprocess.987233108" name="Preprocess only (-E)" superClass="gnu.c.compiler.option.preprocessor.preprocess" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1789730555" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.339689733" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/uart}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities/str}&quot;"/>
@@ -150,8 +148,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/eiq/tensorflow-lite/third_party/neutron/common/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/eiq/tensorflow-lite/third_party/neutron/driver/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template/ARM_CM33_3_priority_bits}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.files.840691047" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false"/>
 								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.358556827" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true"/>
@@ -213,8 +213,6 @@
 								<option id="com.crt.advproject.gas.arch.1069219925" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm33" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.622888924" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.1551075871" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/uart}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities/str}&quot;"/>
@@ -247,6 +245,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template/ARM_CM33_3_priority_bits}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.warnings.nowarn.1090648171" name="Suppress warnings (-W)" superClass="gnu.both.asm.option.warnings.nowarn"/>
 								<option id="gnu.both.asm.option.version.1801985166" name="Announce version (-v)" superClass="gnu.both.asm.option.version"/>
@@ -270,7 +270,6 @@
 								<option id="gnu.cpp.link.option.strip.1608884836" name="Omit all symbol information (-s)" superClass="gnu.cpp.link.option.strip"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.1706945396" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="executorch"/>
-									<listOptionValue builtIn="false" value="tflm"/>
 									<listOptionValue builtIn="false" value="NeutronDriver"/>
 									<listOptionValue builtIn="false" value="NeutronFirmware"/>
 								</option>
@@ -339,7 +338,6 @@
 								<option id="gnu.c.link.option.noshared.1092546454" name="No shared libraries (-static)" superClass="gnu.c.link.option.noshared"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.292447004" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="executorch"/>
-									<listOptionValue builtIn="false" value="tflm"/>
 									<listOptionValue builtIn="false" value="NeutronDriver"/>
 									<listOptionValue builtIn="false" value="NeutronFirmware"/>
 								</option>
@@ -529,8 +527,6 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1612790127" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.856572124" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/uart}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities/str}&quot;"/>
@@ -561,8 +557,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/eiq/tensorflow-lite/third_party/neutron/common/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/eiq/tensorflow-lite/third_party/neutron/driver/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template/ARM_CM33_3_priority_bits}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.files.1486678361" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1907589994" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-common" valueType="string"/>
@@ -621,8 +619,6 @@
 								<option id="com.crt.advproject.gas.arch.1632716728" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm33" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.888854091" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.737487440" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/uart}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities/str}&quot;"/>
@@ -655,6 +651,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/freertos-kernel/template/ARM_CM33_3_priority_bits}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.warnings.nowarn.2015689031" name="Suppress warnings (-W)" superClass="gnu.both.asm.option.warnings.nowarn"/>
 								<option id="gnu.both.asm.option.version.1737019772" name="Announce version (-v)" superClass="gnu.both.asm.option.version"/>
@@ -676,7 +674,6 @@
 								<option id="gnu.cpp.link.option.strip.828361960" name="Omit all symbol information (-s)" superClass="gnu.cpp.link.option.strip"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.653893747" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="executorch"/>
-									<listOptionValue builtIn="false" value="tflm"/>
 									<listOptionValue builtIn="false" value="NeutronDriver"/>
 									<listOptionValue builtIn="false" value="NeutronFirmware"/>
 								</option>
@@ -744,7 +741,6 @@
 								<option id="gnu.c.link.option.noshared.1412196895" name="No shared libraries (-static)" superClass="gnu.c.link.option.noshared"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.1196776762" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="executorch"/>
-									<listOptionValue builtIn="false" value="tflm"/>
 									<listOptionValue builtIn="false" value="NeutronDriver"/>
 									<listOptionValue builtIn="false" value="NeutronFirmware"/>
 								</option>
@@ -847,7 +843,7 @@
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MCXN547</sdkName>
 		<sdkVersion>25.06.00</sdkVersion>
-		<sdkComponents>project_template.MCXN547.MCXN547;platform.drivers.lpflexcomm_lpuart.MCXN547;component.lpuart_adapter.MCXN547;utility.str.MCXN547;platform.devices.MCXN547_system.MCXN547;utility.debug_console.MCXN547;component.serial_manager_uart.MCXN547;component.lists.MCXN547;platform.drivers.gpio.MCXN547;platform.drivers.lpflexcomm_lpi2c.MCXN547;platform.drivers.lpflexcomm_lpspi.MCXN547;platform.drivers.mcx_spc.MCXN547;platform.drivers.common.MCXN547;device.MCXN547_startup.MCXN547;platform.drivers.port.MCXN547;platform.drivers.lpflexcomm.MCXN547;component.serial_manager.MCXN547;platform.utilities.assert.MCXN547;CMSIS_Include_core_cm.MCXN547;utility.debug_console_template_config.MCXN547;platform.drivers.reset.MCXN547;platform.drivers.clock.MCXN547;device.MCXN547_CMSIS.MCXN547;driver.camera-common.MCXN547;driver.video-common.MCXN547;driver.camera-device-common.MCXN547;driver.camera-device-ov7670.MCXN547;driver.camera-device-sccb.MCXN547;platform.drivers.ctimer.MCXN547;platform.drivers.crc.MCXN547;platform.drivers.flexspi.MCXN547;platform.drivers.lpflexcomm_lpuart_freertos.MCXN547;middleware.freertos-kernel.config.MCXN547;middleware.freertos-kernel.heap_1.MCXN547;platform.drivers.mrt.MCXN547;platform.drivers.pwm.MCXN547;platform.drivers.utick.MCXN547;middleware.eiq.MCXN547;middleware.eiq.executorch.MCXN547;middleware.eiq.executorch.binary.MCXN547;middleware.eiq.executorch.source.MCXN547;middleware.freertos-kernel.MCXN547;middleware.eiq.tensorflow_lite_micro.MCXN547;middleware.eiq.tensorflow_lite_micro.refenerce.MCXN547;middleware.eiq.tensorflow_lite_micro.binary.MCXN547;middleware.eiq.tensorflow_lite_micro.source.MCXN547;middleware.eiq.tensorflow_lite_micro.debug_log.MCXN547;middleware.eiq.tensorflow_lite_micro.library.MCXN547;middleware.eiq.tensorflow_lite_micro.neutron.MCXN547;middleware.freertos-kernel.cm33_non_trustzone.MCXN547;</sdkComponents>
+		<sdkComponents>project_template.MCXN547.MCXN547;platform.drivers.lpflexcomm_lpuart.MCXN547;component.lpuart_adapter.MCXN547;utility.str.MCXN547;platform.devices.MCXN547_system.MCXN547;utility.debug_console.MCXN547;component.serial_manager_uart.MCXN547;component.lists.MCXN547;platform.drivers.gpio.MCXN547;platform.drivers.lpflexcomm_lpi2c.MCXN547;platform.drivers.lpflexcomm_lpspi.MCXN547;platform.drivers.mcx_spc.MCXN547;platform.drivers.common.MCXN547;device.MCXN547_startup.MCXN547;platform.drivers.port.MCXN547;platform.drivers.lpflexcomm.MCXN547;component.serial_manager.MCXN547;platform.utilities.assert.MCXN547;CMSIS_Include_core_cm.MCXN547;utility.debug_console_template_config.MCXN547;platform.drivers.reset.MCXN547;platform.drivers.clock.MCXN547;device.MCXN547_CMSIS.MCXN547;driver.camera-common.MCXN547;driver.video-common.MCXN547;driver.camera-device-common.MCXN547;driver.camera-device-ov7670.MCXN547;driver.camera-device-sccb.MCXN547;platform.drivers.ctimer.MCXN547;platform.drivers.crc.MCXN547;platform.drivers.flexspi.MCXN547;platform.drivers.lpflexcomm_lpuart_freertos.MCXN547;middleware.freertos-kernel.config.MCXN547;middleware.freertos-kernel.heap_1.MCXN547;platform.drivers.mrt.MCXN547;platform.drivers.pwm.MCXN547;platform.drivers.utick.MCXN547;middleware.eiq.MCXN547;middleware.eiq.executorch.MCXN547;middleware.eiq.executorch.binary.MCXN547;middleware.eiq.executorch.source.MCXN547;middleware.freertos-kernel.MCXN547;middleware.eiq.tensorflow_lite_micro.MCXN547;middleware.eiq.tensorflow_lite_micro.refenerce.MCXN547;middleware.eiq.tensorflow_lite_micro.source.MCXN547;middleware.eiq.tensorflow_lite_micro.library.MCXN547;middleware.eiq.tensorflow_lite_micro.neutron.MCXN547;middleware.freertos-kernel.cm33_non_trustzone.MCXN547;middleware.eiq.tensorflow_lite_micro.third_party.neutron_lib.binary.MCXN547;platform.drivers.inputmux_connections.MCXN547;platform.drivers.inputmux.MCXN547;</sdkComponents>
 		<package>MCXN547VNL</package>
 		<core>cm33</core>
 		<coreId>cm33_core0_MCXN547</coreId>

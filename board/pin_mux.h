@@ -488,6 +488,21 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN_MASK (1U << 16U)      /*!<@brief PORT pin mask */
                                                                    /* @} */
 
+/*! @name PORT4_17 (number 39), MOTOR1_DIR_CTRL
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_GPIO_PIN 17U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_GPIO_PIN_MASK (1U << 17U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_PIN 17U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_MOTOR1_DIR_CTRL_PIN_MASK (1U << 17U)      /*!<@brief PORT pin mask */
+                                                                 /* @} */
+
 /*! @name PORT5_0 (number 48), MOTOR2_ONOFF_CTRL
   @{ */
 
@@ -517,6 +532,329 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_MOTOR2_DIR_CTRL_PIN 1U                   /*!<@brief PORT pin number */
 #define BOARD_INITPINS_MOTOR2_DIR_CTRL_PIN_MASK (1U << 1U)      /*!<@brief PORT pin mask */
                                                                 /* @} */
+
+/*! @name PORT1_14 (number 7), TDCOUT
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDCOUT_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDCOUT_PIN 14U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDCOUT_PIN_MASK (1U << 14U)      /*!<@brief PORT pin mask */
+                                                        /* @} */
+
+/*! @name PORT1_15 (number 8), TDC_CHSEL
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC_CHSEL_GPIO GPIO1                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC_CHSEL_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TDC_CHSEL_GPIO_PIN 15U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC_CHSEL_GPIO_PIN_MASK (1U << 15U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC_CHSEL_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC_CHSEL_PIN 15U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC_CHSEL_PIN_MASK (1U << 15U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
+
+/*! @name PORT1_30 (number 10), TDC_RESET
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC_RESET_GPIO GPIO1                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC_RESET_INIT_GPIO_VALUE 1U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TDC_RESET_GPIO_PIN 30U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC_RESET_GPIO_PIN_MASK (1U << 30U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC_RESET_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC_RESET_PIN 30U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC_RESET_PIN_MASK (1U << 30U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
+
+/*! @name PORT1_31 (number 11), TDC_TRIGGER
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC_TRIGGER_GPIO GPIO1                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC_TRIGGER_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TDC_TRIGGER_GPIO_PIN 31U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC_TRIGGER_GPIO_PIN_MASK (1U << 31U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC_TRIGGER_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC_TRIGGER_PIN 31U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC_TRIGGER_PIN_MASK (1U << 31U)      /*!<@brief PORT pin mask */
+                                                             /* @} */
+
+/*! @name PORT2_0 (number 14), TDC1_EN
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC1_EN_GPIO GPIO2               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC1_EN_INIT_GPIO_VALUE 0U       /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TDC1_EN_GPIO_PIN 0U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC1_EN_GPIO_PIN_MASK (1U << 0U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC1_EN_PORT PORT2               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC1_EN_PIN 0U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC1_EN_PIN_MASK (1U << 0U)      /*!<@brief PORT pin mask */
+                                                        /* @} */
+
+/*! @name PORT2_1 (number 15), TDC2_EN
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC2_EN_GPIO GPIO2               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC2_EN_INIT_GPIO_VALUE 0U       /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TDC2_EN_GPIO_PIN 1U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC2_EN_GPIO_PIN_MASK (1U << 1U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC2_EN_PORT PORT2               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC2_EN_PIN 1U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC2_EN_PIN_MASK (1U << 1U)      /*!<@brief PORT pin mask */
+                                                        /* @} */
+
+/*! @name PORT2_2 (number 16), CAMERA_MCLK
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_MCLK_PORT PORT2               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_MCLK_PIN 2U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_MCLK_PIN_MASK (1U << 2U)      /*!<@brief PORT pin mask */
+                                                            /* @} */
+
+/*! @name PORT2_5 (number 19), TDC_ERR
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TDC_ERR_GPIO GPIO2               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TDC_ERR_GPIO_PIN 5U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TDC_ERR_GPIO_PIN_MASK (1U << 5U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC_ERR_PORT PORT2               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC_ERR_PIN 5U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC_ERR_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
+                                                        /* @} */
+
+/*! @name PORT4_12 (number 35), TDC_CLK
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TDC_CLK_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TDC_CLK_PIN 12U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TDC_CLK_PIN_MASK (1U << 12U)      /*!<@brief PORT pin mask */
+                                                         /* @} */
+
+/*! @name PORT3_11 (number 67), PSRAM_D3
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_D3_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_D3_PIN 11U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_D3_PIN_MASK (1U << 11U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT3_10 (number 68), PSRAM_D2
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_D2_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_D2_PIN 10U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_D2_PIN_MASK (1U << 10U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT3_9 (number 69), PSRAM_D1
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_D1_PORT PORT3               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_D1_PIN 9U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_D1_PIN_MASK (1U << 9U)      /*!<@brief PORT pin mask */
+                                                         /* @} */
+
+/*! @name PORT3_8 (number 70), PSRAM_D0
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_D0_PORT PORT3               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_D0_PIN 8U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_D0_PIN_MASK (1U << 8U)      /*!<@brief PORT pin mask */
+                                                         /* @} */
+
+/*! @name PORT3_7 (number 71), PSRAM_SCK
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_SCK_PORT PORT3               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_SCK_PIN 7U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_SCK_PIN_MASK (1U << 7U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT3_0 (number 75), PSRAM_CS
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_PSRAM_CS_PORT PORT3               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_PSRAM_CS_PIN 0U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_PSRAM_CS_PIN_MASK (1U << 0U)      /*!<@brief PORT pin mask */
+                                                         /* @} */
+
+/*! @name PORT0_4 (number 80), CAMERA_VSYNC
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_VSYNC_PORT PORT0               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_VSYNC_PIN 4U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_VSYNC_PIN_MASK (1U << 4U)      /*!<@brief PORT pin mask */
+                                                             /* @} */
+
+/*! @name PORT0_5 (number 81), CAMERA_PCLK
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_PCLK_PORT PORT0               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_PCLK_PIN 5U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_PCLK_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
+                                                            /* @} */
+
+/*! @name PORT0_6 (number 82), CAMERA_HSYNC
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_HSYNC_PORT PORT0               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_HSYNC_PIN 6U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_HSYNC_PIN_MASK (1U << 6U)      /*!<@brief PORT pin mask */
+                                                             /* @} */
+
+/*! @name PORT0_19 (number 87), TCA9803_EN
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_TCA9803_EN_GPIO GPIO0                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_TCA9803_EN_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_TCA9803_EN_GPIO_PIN 19U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_TCA9803_EN_GPIO_PIN_MASK (1U << 19U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_TCA9803_EN_PORT PORT0                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_TCA9803_EN_PIN 19U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_TCA9803_EN_PIN_MASK (1U << 19U)      /*!<@brief PORT pin mask */
+                                                            /* @} */
+
+/*! @name PORT1_1 (number 93), CAMERA_PWDN
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_CAMERA_PWDN_GPIO GPIO1               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_PWDN_INIT_GPIO_VALUE 0U       /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_CAMERA_PWDN_GPIO_PIN 1U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_CAMERA_PWDN_GPIO_PIN_MASK (1U << 1U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_PWDN_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_PWDN_PIN 1U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_PWDN_PIN_MASK (1U << 1U)      /*!<@brief PORT pin mask */
+                                                            /* @} */
+
+/*! @name PORT1_2 (number 94), CAMERA_RST
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_CAMERA_RST_GPIO GPIO1               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_RST_INIT_GPIO_VALUE 0U       /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_CAMERA_RST_GPIO_PIN 2U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_CAMERA_RST_GPIO_PIN_MASK (1U << 2U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_RST_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_RST_PIN 2U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_RST_PIN_MASK (1U << 2U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
+
+/*! @name PORT1_3 (number 95), CAMERA_LED
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_LED_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_LED_PIN 3U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_LED_PIN_MASK (1U << 3U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
+
+/*! @name PORT1_4 (number 97), CAMERA_D0
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D0_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D0_PIN 4U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D0_PIN_MASK (1U << 4U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_5 (number 98), CAMERA_D1
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D1_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D1_PIN 5U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D1_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_6 (number 99), CAMERA_D2
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D2_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D2_PIN 6U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D2_PIN_MASK (1U << 6U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_7 (number 100), CAMERA_D3
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D3_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D3_PIN 7U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D3_PIN_MASK (1U << 7U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_8 (number 1), CAMERA_D4
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D4_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D4_PIN 8U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D4_PIN_MASK (1U << 8U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_9 (number 2), CAMERA_D5
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D5_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D5_PIN 9U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D5_PIN_MASK (1U << 9U)      /*!<@brief PORT pin mask */
+                                                          /* @} */
+
+/*! @name PORT1_10 (number 3), CAMERA_D6
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D6_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D6_PIN 10U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D6_PIN_MASK (1U << 10U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
+
+/*! @name PORT1_11 (number 4), CAMERA_D7
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_CAMERA_D7_PORT PORT1                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_CAMERA_D7_PIN 11U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_CAMERA_D7_PIN_MASK (1U << 11U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

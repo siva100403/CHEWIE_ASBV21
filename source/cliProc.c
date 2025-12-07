@@ -28,6 +28,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
+#include "fsl_utick.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -1933,7 +1934,7 @@ void cli_Task(void* arg)
 					}
 					break;
 				}*/
-/*				case ADCS:
+				case ADCS:
 				{
 					//ADCS START/STOP
 
@@ -1965,9 +1966,9 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
+				}
 
-/*				case SHDCS:
+				case SHDCS:
 				{
 					//SHDCS START/STOP
 
@@ -2000,7 +2001,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
-				}*/
+				}
 				case SHD_MOTOR:
 				{
 					//SHD RL/RR/OFF

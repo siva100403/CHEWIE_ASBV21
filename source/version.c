@@ -81,3 +81,11 @@ void getHwVersion(char * version)
  * 2. CLI added for controlling the DRV89xx connected devices
  *
  *******************************************************************/
+
+/************************Ver 0.3.3 07-12-2025********************
+ * New Features
+ * 1. Limit Switch integrated (To be tested)
+ * 2. TCS, ADCS integrated (To be tested)
+ *
+ *******************************************************************/
+

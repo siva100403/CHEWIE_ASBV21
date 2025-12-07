@@ -33,6 +33,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
+#include "fsl_utick.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -48,6 +49,7 @@
 #include "sysStart.h"
 #include "dgUartDriverCommon.h"
 #include "CliUartDriver.h"
+#include "hmiUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
 #include "mclsSPIDriver.h"
@@ -62,6 +64,8 @@
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
+#include "limitSwitchMod.h"
+#include "transferCS.h"
 
 
 /* TODO: insert other definitions and declarations here. */
@@ -139,28 +143,12 @@ static void print_task(void *pvParameters)
     vTaskDelay( 1000 ); //For other tasks to get started
 
 
-/*    	//Initialize CLI Module
-    	if(initCli()==DG_SUCCESS)
-    	{
-    		printf("chewieMain.c:: initCli() passed\r\n");
-    	}
-    	else
-    	{
-    		printf("chewieMain.c:: initCli() failed\r\n");
-
-    	}
 
 
-		if(initCliUart() == DG_SUCCESS)
-		{
-    		printf("chewieMain.c:: initCliUart() passed\r\n");
-		}
-		else
-		{
-    		printf("chewieMain.c:: initCliUart() failed\r\n");
-		}*/
+    initLimitSwitchModule();
+	printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
 
-
+	uint8_t lidStatusLocal;
 
     while(1)
     {
@@ -175,7 +163,11 @@ static void print_task(void *pvParameters)
     	LID_POWER_OFF();
     	SPARE2_RELAY_OFF();*/
 
-        vTaskDelay( 500 );
+    	lidStatusLocal = getLidSwicthStatus();
+    	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);
+
+
+        vTaskDelay( 200 );
 
 /*    	LS_DRIVE_LOW();
     	HEATER_ON();
@@ -187,9 +179,9 @@ static void print_task(void *pvParameters)
     	LID_POWER_ON();
     	SPARE2_RELAY_ON();*/
 
-        vTaskDelay( 500);
+        //vTaskDelay( 500);
 
-    	printf("chewieMain.c:(): inside print_task\r\n");
+    	//printf("chewieMain.c:(): inside print_task\r\n");
     }
 
 

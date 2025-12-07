@@ -6,7 +6,6 @@
  */
 
 
-
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -29,7 +28,8 @@
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
-
+#include "fsl_lpspi.h"
+#include "fsl_utick.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -37,20 +37,39 @@
 #include "modulecom.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "seqControlCommon.h"
 #include "dgI2cDriver.h"
-#include <dgUartDriverCommon.h>
+#include "eeConfig.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
-#include "hmiUartDriver.h"
 #include "sysStart.h"
+#include "dgUartDriverCommon.h"
+#include "CliUartDriver.h"
+#include "hmiUartDriver.h"
+#include "cliProc.h"
+#include "sysConfig.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "actuatorCtrl.h"
+#include "sensorMod.h"
+#include "augerAPI.h"
+#include "shredder.h"
+#include "shredderAPI.h"
+#include "adcs.h"
+#include "limitSwitchMod.h"
+#include "transferCS.h"
 
 
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-//extern dgRs232TrBuf_t HMItrBuf;
-dgRs232TrBuf_t HMItrBuf;	//TODO make it extern
+extern dgRs232TrBuf_t HMItrBuf;
+
 
 /*******************************************************************************
  * Code
