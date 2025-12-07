@@ -34,11 +34,13 @@
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
 #include "fsl_utick.h"
+#include "fsl_flexspi.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
 #include "version.h"
 #include "modulecom.h"
+#include "psramDriver.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
 #include "seqControlCommon.h"
@@ -68,6 +70,7 @@
 #include "transferCS.h"
 
 
+
 /* TODO: insert other definitions and declarations here. */
 int initPrintMod(void);
 
@@ -89,6 +92,15 @@ int main(void) {
 
     //Initialize Module store
     initModuleStore();
+    if(PSRAM_Init()==kStatus_Success)
+    {
+    	printf("chewieMain.c:initSysStart(): PSRAM Init success\r\n");
+    }
+    else
+    {
+    	printf("chewieMain.c:initSysStart(): PSRAM Init Fail\r\n");
+    }
+
 
     if(initSysStart()==DG_SUCCESS)
     {
@@ -149,35 +161,33 @@ static void print_task(void *pvParameters)
 	printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
 
 	uint8_t lidStatusLocal;
+	uint8_t buffer[16];
+	uint8_t inbuffer[16];
+	int value;
 
+	value =0;
     while(1)
     {
+    	for(int i=0; i<16; i++)
+    	{
+    		inbuffer[i]=value++;
+    	}
 
-/*    	LS_DRIVE_HIGH();
-    	HEATER_OFF();
-    	SHD_STOP();
-    	SHD_DIR_CW();
-    	LID_MOTOR_DIR_CLOSE();
-    	SPARE1_RELAY_OFF();
-    	HMI_INT_INACTIVE();
-    	LID_POWER_OFF();
-    	SPARE2_RELAY_OFF();*/
+    	if(PSRAM_Write(0x005555, inbuffer, 8) == DG_SUCCESS)
+    	{
+        	printf("chewieMain.c:():print_task():psram write success\r\n");
 
+    	}
     	lidStatusLocal = getLidSwicthStatus();
     	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);
+    	if(PSRAM_Read(0x005555, buffer, 8)==DG_SUCCESS)
+    	{
+        	printf("chewieMain.c:():print_task():psram=%d,%d,%d\r\n",buffer[0],buffer[1],buffer[2]);
+    	}
+
+        vTaskDelay( 500 );
 
 
-        vTaskDelay( 200 );
-
-/*    	LS_DRIVE_LOW();
-    	HEATER_ON();
-    	SHD_START();
-    	SHD_DIR_CCW();
-    	LID_MOTOR_DIR_OPEN();
-    	SPARE1_RELAY_ON();
-    	HMI_INT_ACTIVE();
-    	LID_POWER_ON();
-    	SPARE2_RELAY_ON();*/
 
         //vTaskDelay( 500);
 
