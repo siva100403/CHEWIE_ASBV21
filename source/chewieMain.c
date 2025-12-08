@@ -163,27 +163,33 @@ static void print_task(void *pvParameters)
 	uint8_t lidStatusLocal;
 	uint8_t buffer[16];
 	uint8_t inbuffer[16];
+	uint8_t *dm;
 	int value;
 
 	value =0;
+	dm = (uint8_t*)0x80000000;
     while(1)
     {
     	for(int i=0; i<16; i++)
     	{
     		inbuffer[i]=value++;
+        	dm[i] = value;
     	}
 
-    	if(PSRAM_Write(0x005555, inbuffer, 8) == DG_SUCCESS)
+    	if(PSRAM_Write_QPI(0x005555, inbuffer, 8) == DG_SUCCESS)
     	{
         	printf("chewieMain.c:():print_task():psram write success\r\n");
 
     	}
     	lidStatusLocal = getLidSwicthStatus();
     	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);
-    	if(PSRAM_Read(0x005555, buffer, 8)==DG_SUCCESS)
+    	if(PSRAM_Read_QPI(0x005555, buffer, 8)==DG_SUCCESS)
     	{
         	printf("chewieMain.c:():print_task():psram=%d,%d,%d\r\n",buffer[0],buffer[1],buffer[2]);
     	}
+
+    	printf("chewieMain.c:():print_task():dmaccess=%d,%d,%d\r\n",dm[0],dm[1],dm[2]);
+
 
         vTaskDelay( 500 );
 

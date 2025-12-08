@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.2" );
+strcpy(swVer,"0.3.4" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
 }
@@ -89,3 +89,8 @@ void getHwVersion(char * version)
  *
  *******************************************************************/
 
+/************************Ver 0.3.4 08-12-2025********************
+ * New Features
+ * 1. PSRAM Driver added
+ *
+ *******************************************************************/
