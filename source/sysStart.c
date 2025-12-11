@@ -13,7 +13,7 @@
 #include "timers.h"
 #include "semphr.h"
 
-/* C includes */
+/* Standard C includes */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,29 +28,51 @@
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
 #include "fsl_device_registers.h"
+#include "fsl_lpspi.h"
+#include "fsl_utick.h"
+#include "fsl_flexspi.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
 #include "version.h"
 #include "modulecom.h"
+#include "psramDriver.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "motorControl.h"
+#include "seqControlCommon.h"
 #include "dgI2cDriver.h"
+#include "eeConfig.h"
+#include "sht40Driver.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
 #include "dgUartDriverCommon.h"
 #include "CliUartDriver.h"
+#include "hmiUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
 #include "mclsSPIDriver.h"
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
+#include "mclsSPIDriver.h"
+#include "drv89xxDriver.h"
+#include "drv89xxRegisters.h"
+#include "actuatorCtrl.h"
+#include "sensorMod.h"
+#include "sensorModAPI.h"
+#include "sht40Driver.h"
+#include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
-
-
+#include "limitSwitchMod.h"
+#include "transferCS.h"
+#include "transferCSAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
+#include "hatcsMod.h"
+#include "hatcsModAPI.h"
 
 
 
@@ -250,7 +272,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task():initDrv89xxFaulthandler() failed\r\n");
 	}
 
-/*	//Initialize SHT40 Temperature, Humidity sensor
+	//Initialize SHT40 Temperature, Humidity sensor
 	if(initSht40()==DG_SUCCESS)
 	{
 		printf("sysStart_task(): initSht40() passed\r\n");
@@ -263,7 +285,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initSht40() failed\r\n");
 		devHealthReg[TEMPSENSOR_DEV].presenceStatus = DEVICE_NOTPRESENT;
 		devHealthReg[TEMPSENSOR_DEV].operationStatus = DEVICE_NOTWORKING;
-	}*/
+	}
 
 /*	//Initialize HMI Command Processing Module
 	if(initHMICmdProc()==DG_SUCCESS)
@@ -321,7 +343,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[SHREDDER_MOD].presenceStatus = MODULE_NOTPRESENT;
 		moduleHealthReg[SHREDDER_MOD].operationStatus = MODULE_NOTWORKING;
 	}
-/*    //Initialize Limit switch module
+    //Initialize Limit switch module
     if(initLimitSwitchModule() == DG_SUCCESS)
 	{
 		printf("sysStart_task(): initLimitSwitchModule() passed\r\n");
@@ -333,9 +355,8 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initLimitSwitchModule() failed\r\n");
 		devHealthReg[LIMITSWITCH_MOD].presenceStatus = DEVICE_PRESENT;
 		devHealthReg[LIMITSWITCH_MOD].operationStatus = DEVICE_NOTWORKING;
-	}*/
+	}
 
-/*
 	if(initSensor() == DG_SUCCESS)
 	{
 		printf("sysStart_task(): initSensor() passed\r\n");
@@ -347,7 +368,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initSensor() failed\r\n");
 		moduleHealthReg[SENSOR_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[SENSOR_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 
     if(initAdcs() == DG_SUCCESS)
     {

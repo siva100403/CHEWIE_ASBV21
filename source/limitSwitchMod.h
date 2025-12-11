@@ -73,13 +73,6 @@ uint8_t getLidSwicthStatus(void);
 
 
 
-//Return Values for getLidSwitchStatus
-#define LIDCLOSED		0
-#define LIDCLOSING		1
-#define LIDOPENING		2
-#define LIDOPEN			3
-
-
 
 uint8_t getStorageTraySwicthStatus(void);
 #define STORAGE_TRAY_CLOSE	0

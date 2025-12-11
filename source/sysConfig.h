@@ -281,6 +281,7 @@ int getCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *out);
 int setCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *value);
 
 int storeAllconfigEEPROM();
+int loadDefaultConfig();
 
 
 #endif /* SYSCONFIG_H_ */

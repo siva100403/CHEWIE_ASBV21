@@ -36,8 +36,10 @@
 #include "modulecom.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "motorControl.h"
 #include "seqControlCommon.h"
 #include "dgI2cDriver.h"
+#include "sht40Driver.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
@@ -57,6 +59,11 @@
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
+#include "limitSwitchMod.h"
+#include "transferCS.h"
+#include "transferCSAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
 
 /*******************************************************************************
  * Global Variables
@@ -196,6 +203,10 @@ int getCmdCode(char* token)
 	{
 		cmdCode = SAVECONFIGEE_C;
 	}
+	else if (strcmp(&token[0], "FD_CONFIG\0")==0)
+	{
+		cmdCode = FD_CONFIG;
+	}
 	else if (strcmp(&token[0], "HEATER\0")==0)
 	{
 		cmdCode = HEATER;
@@ -239,6 +250,14 @@ int getCmdCode(char* token)
 	else if (strcmp(&token[0], "AIRVALVE3\0")==0)
 	{
 		cmdCode = AIR_VALVE3;
+	}
+	else if (strcmp(&token[0], "MOTOR1\0")==0)
+	{
+		cmdCode = MOTOR1;
+	}
+	else if (strcmp(&token[0], "MOTOR2\0")==0)
+	{
+		cmdCode = MOTOR2;
 	}
 	else if (strcmp(&token[0], "GETTEMP\0")==0)
 	{
@@ -709,11 +728,13 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "OPEN\0")==0)
 					{
-						airValve2On();
+						LID_POWER_OFF();
+						//airValve2On();
 					}
 					else if (strcmp(&token[0], "CLOSE\0")==0)
 					{
-						airValve2Off();
+						LID_POWER_ON();
+						//airValve2Off();
 					}
 					else
 					{
@@ -742,11 +763,13 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "OPEN\0")==0)
 					{
-						airValve3On();
+						LID_MOTOR_DIR_OPEN();
+						//airValve3On();
 					}
 					else if (strcmp(&token[0], "CLOSE\0")==0)
 					{
-						airValve3Off();
+						LID_MOTOR_DIR_CLOSE();
+						//airValve3Off();
 					}
 					else
 					{
@@ -932,7 +955,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-/*
+
 				case GETTEMP:
 				{
 					//This command reads temperature and humidity and display the value
@@ -953,6 +976,7 @@ void cli_Task(void* arg)
 						break;
 					}
 				}
+/*
 				case GETSENSORSTATUS:
 				{
 					//This command gets the status of sensor module
@@ -1218,6 +1242,82 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 
+				}
+				case MOTOR1:
+				{
+					//MOTRO1 RL/RR/OFF
+
+					// Extract from command string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+					{
+						strcpy(response, "CERROR:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					if (strcmp(&token[0], "RL\0")==0)
+					{
+						MOTOR1_REVERSE();
+						MOTOR1_START();
+					}
+					else if (strcmp(&token[0], "RR\0")==0)
+					{
+						MOTOR1_FORWARD();
+						MOTOR1_START();
+					}
+					else if (strcmp(&token[0], "OFF\0")==0)
+					{
+						MOTOR1_STOP();
+					}
+					else
+					{
+						strcpy(response, "CERROR:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					strcpy(response, "CC:\r\n>");
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+				}
+				case MOTOR2:
+				{
+					//MOTRO2 RL/RR/OFF
+
+					// Extract from command string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+					{
+						strcpy(response, "CERROR:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					if (strcmp(&token[0], "RL\0")==0)
+					{
+						MOTOR2_REVERSE();
+						MOTOR2_START();
+					}
+					else if (strcmp(&token[0], "RR\0")==0)
+					{
+						MOTOR2_FORWARD();
+						MOTOR2_START();
+					}
+					else if (strcmp(&token[0], "OFF\0")==0)
+					{
+						MOTOR2_STOP();
+					}
+					else
+					{
+						strcpy(response, "CERROR:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					strcpy(response, "CC:\r\n>");
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
 				}
 /*
 				case GETCSMSTATUS:  //Gets the current status of CSM
@@ -1964,6 +2064,26 @@ void cli_Task(void* arg)
 					strcpy(response, "CC:\r\n>");
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
+					break;
+
+				}
+				case FD_CONFIG:
+				{
+					//FD_CONFIG
+
+					if(loadDefaultConfig()== DG_SUCCESS)
+					{
+						strcpy(response, "CC:\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+					}
+					else
+					{
+						strcpy(response, "CERROR:Execution Failed\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
 					break;
 
 				}

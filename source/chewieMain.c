@@ -43,9 +43,11 @@
 #include "psramDriver.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "motorControl.h"
 #include "seqControlCommon.h"
 #include "dgI2cDriver.h"
 #include "eeConfig.h"
+#include "sht40Driver.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
@@ -62,12 +64,19 @@
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
 #include "sensorMod.h"
+#include "sensorModAPI.h"
+#include "sht40Driver.h"
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
 #include "limitSwitchMod.h"
 #include "transferCS.h"
+#include "transferCSAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
+#include "hatcsMod.h"
+#include "hatcsModAPI.h"
 
 
 
@@ -155,48 +164,31 @@ static void print_task(void *pvParameters)
     vTaskDelay( 1000 ); //For other tasks to get started
 
 
+    //initLimitSwitchModule();
+	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
+	LID_POWER_ON();
+	LID_MOTOR_DIR_OPEN();
 
+	motor1Stop();
+	motor2Stop();
 
-    initLimitSwitchModule();
-	printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
+	TC78H660_Active();
 
 	uint8_t lidStatusLocal;
-	uint8_t buffer[16];
-	uint8_t inbuffer[16];
-	uint8_t *dm;
-	int value;
+	float temp, hum;
 
-	value =0;
-	dm = (uint8_t*)0x80000000;
     while(1)
     {
-    	for(int i=0; i<16; i++)
-    	{
-    		inbuffer[i]=value++;
-        	dm[i] = value;
-    	}
 
-    	if(PSRAM_Write_QPI(0x005555, inbuffer, 8) == DG_SUCCESS)
-    	{
-        	printf("chewieMain.c:():print_task():psram write success\r\n");
-
-    	}
     	lidStatusLocal = getLidSwicthStatus();
     	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);
-    	if(PSRAM_Read_QPI(0x005555, buffer, 8)==DG_SUCCESS)
+
+/*    	if(readShtTempHumidityHighPrecision(&temp, &hum) == DG_SUCCESS)
     	{
-        	printf("chewieMain.c:():print_task():psram=%d,%d,%d\r\n",buffer[0],buffer[1],buffer[2]);
-    	}
+    		printf("chewieMain.c:temp=%f, hum=%f\r\n",temp, hum);
+    	}*/
 
-    	printf("chewieMain.c:():print_task():dmaccess=%d,%d,%d\r\n",dm[0],dm[1],dm[2]);
-
-
-        vTaskDelay( 500 );
-
-
-
-        //vTaskDelay( 500);
-
+    	vTaskDelay(1000);
     	//printf("chewieMain.c:(): inside print_task\r\n");
     }
 

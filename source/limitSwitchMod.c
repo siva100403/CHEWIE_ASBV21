@@ -162,7 +162,7 @@ static void callback2mSec(void)
     		//send event to lidModule
     		//sendLidSwitchEvent(lidSwitchStatus);
     		//send event to shredder Module
-    		//event_lid_close(LIMITSWITCH_MOD);
+    		event_lid_open(LIMITSWITCH_MOD);
     	}
     }
     else
@@ -188,7 +188,9 @@ static void callback2mSec(void)
     	switch(combinedStatus)
     	{
     	case 0x00:
-    		lidStatus = LID_STATUS_INBETWEEN;
+    		//Both limit switch can not be in open condition.
+    		printf("limitSwitchMod.c:callback2mSec():Both limit switch in OPEN condition\r\n");
+    		lidStatus = LID_STATUS_ERROR;
     	case 0x01:
     		lidStatus = LID_STATUS_OPEN;
     		break;
@@ -196,9 +198,7 @@ static void callback2mSec(void)
     		lidStatus = LID_STATUS_CLOSED;
     		break;
     	case 0x03:
-    		//Both limit switch can not be in closed condition.
-    		printf("limitSwitchMod.c:callback2mSec():Both limit switch in CLOSED condition\r\n");
-    		lidStatus = LID_STATUS_ERROR;
+    		lidStatus = LID_STATUS_INBETWEEN;
     		break;
     	default:
     		break;

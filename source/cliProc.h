@@ -87,6 +87,10 @@ struct cmd_buffer
 #define GETSHDTVAR_C	41
 #define SETSHDTVAR_C	42
 #define SAVECONFIGEE_C	43
+#define FD_CONFIG		44
+#define MOTOR1			45
+#define MOTOR2			46
+
 
 
 
