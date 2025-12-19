@@ -27,7 +27,8 @@
 #define LIDMOD_STATE_OPEN_WAIT		5			//To ensure motor goes to OFF before reversing
 #define LIDMOD_STATE_CLOSE_WAIT		6			//To ensure motor goes to OFF before reversing
 #define LIDMOD_STATE_OPEN_DELAY		7			//Lid closed just now. Hence delay is required to OPEN
-
+#define LIDMOD_STATE_READY			8			//After MODULE_START it goes to READY state
+#define LIDMOD_STATE_ERROR			9
 
 
 /************************ Function Prototypes ********************/

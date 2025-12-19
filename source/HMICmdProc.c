@@ -60,20 +60,12 @@
 #include "shredderAPI.h"
 #include "adcs.h"
 #include "limitSwitchMod.h"
+#include "hatcsMod.h"
+#include "hatcsModAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
-
-/*
-
-#include "lidModuleAPI.h"
-#include "lidModule.h"
-#include "sensorModAPI.h"
-#include "sensorMod.h"
-#include "csmMod.h"
-#include "csmModAPI.h"
-#include "transferCS.h"
-*/
-
 
 
 //Buffer used to communicate between CLI processing module and the RS232 ISR
@@ -185,7 +177,7 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 		return DG_SUCCESS;
 		break;
 	case PROXIMITY_EVENTS:
-/*		dgProximityEvents_t *proximityEevents;
+		dgProximityEvents_t *proximityEevents;
 		proximityEevents = (dgProximityEvents_t *) &packetBuffer[PAYLOAD_START];
 		printf("HMICmdProc.c:commandProcessor():Sending proximity event to LidModule\r\n");
 		*payloadSize = 0;
@@ -198,7 +190,7 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 		{
 			printf("HMICmdProc.c:commandProcessor():Received fail res from Lidmodule \r\n");
 			return DG_FAIL;
-		}*/
+		}
 
 		break;
 	case ACTUATOR_CTRL_REQ:

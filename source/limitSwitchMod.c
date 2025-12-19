@@ -35,16 +35,20 @@
 #include "dgCommon.h"
 #include "version.h"
 #include "modulecom.h"
+#include "psramDriver.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "motorControl.h"
 #include "seqControlCommon.h"
 #include "dgI2cDriver.h"
 #include "eeConfig.h"
+#include "sht40Driver.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
 #include "dgUartDriverCommon.h"
 #include "CliUartDriver.h"
+#include "hmiUartDriver.h"
 #include "cliProc.h"
 #include "sysConfig.h"
 #include "mclsSPIDriver.h"
@@ -55,11 +59,21 @@
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
 #include "sensorMod.h"
+#include "sensorModAPI.h"
+#include "sht40Driver.h"
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
 #include "limitSwitchMod.h"
+#include "transferCS.h"
+#include "transferCSAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
+#include "hatcsMod.h"
+#include "hatcsModAPI.h"
+#include "HMICmdProc.h"
+#include "HMICmdProcAPI.h"
 
 
 
@@ -99,6 +113,7 @@ uint8_t lidCloseDbCount;
 uint8_t lidOpenDbCount;
 uint8_t sttvDbCount;
 uint8_t flapDbCount;
+uint8_t lidSensingEnable;
 
 
 #define TWO_MS_TIMER_PERIOD		(2000-1)     // uSec-1
@@ -108,106 +123,109 @@ uint8_t flapDbCount;
 
 static void callback2mSec(void)
 {
+	static uint8_t starting = 1;
 	uint8_t lidStatusChangeFlag;
 
-	lidStatusChangeFlag = 0;  //Defualt - No change in lid status
+
+	lidStatusChangeFlag = 0;  //Default - No change in lid status
 
 	RED_LED_TOGGLE();
-    //Read LIDCLOSE sensor and debounce
-    if(READ_LS_SENSE_LIDCLOSE() == LIMITSWITCH_CLOSE)
-    {
-    	lidCloseDbCount++;
-    	lidCloseDbCount = (lidCloseDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidCloseDbCount;
-    	//Check whether there is a change in switch status
-    	if((lidCloseDbCount == DEBOUNCE_COUNT) && (lidCloseStatus != LID_CLOSED))
-    	{
-    		// Change in Limit switch status and hence update the status variable.
-    		lidCloseStatus = LID_CLOSED;
-    		lidStatusChangeFlag = 1; //Lid status changed
-    		//send event to lidModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
-    		//send event to shredder Module
-    		//event_lid_close(LIMITSWITCH_MOD);
-    	}
-    }
-    else
-    {
-    	lidCloseDbCount--;
-    	lidCloseDbCount = (lidCloseDbCount <0)? 0: lidCloseDbCount;
-    	//Check whether there is a change in switch status
-    	if((lidCloseDbCount == 0) && (lidCloseStatus != LID_NOTCLOSED))
-    	{
-    		// Change in Limit switch status and hence update the status variable.
-    		lidCloseStatus = LID_NOTCLOSED;
-    		lidStatusChangeFlag = 1; //Lid status changed
-    		//send event to lidModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
-    		//send event to shredder Module
-    		//event_lid_open(LIMITSWITCH_MOD);
 
-    	}
-    }
+	if(lidSensingEnable == LID_SENSING_ENA)
+	{
+	    //Read LIDCLOSE sensor and debounce
+	    if(READ_LS_SENSE_LIDCLOSE() == LIMITSWITCH_CLOSE)
+	    {
+	    	lidCloseDbCount++;
+	    	lidCloseDbCount = (lidCloseDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidCloseDbCount;
+	    	//Check whether there is a change in switch status
+	    	if((lidCloseDbCount == DEBOUNCE_COUNT) && (lidCloseStatus != LID_CLOSED))
+	    	{
+	    		// Change in Limit switch status and hence update the status variable.
+	    		lidCloseStatus = LID_CLOSED;
+	    		lidStatusChangeFlag = 1; //Lid status changed
+	    	}
+	    }
+	    else
+	    {
+	    	lidCloseDbCount--;
+	    	lidCloseDbCount = (lidCloseDbCount <0)? 0: lidCloseDbCount;
+	    	//Check whether there is a change in switch status
+	    	if((lidCloseDbCount == 0) && (lidCloseStatus != LID_NOTCLOSED))
+	    	{
+	    		// Change in Limit switch status and hence update the status variable.
+	    		lidCloseStatus = LID_NOTCLOSED;
+	    		lidStatusChangeFlag = 1; //Lid status changed
+	    	}
+	    }
 
-    //Read LIDOPEN sensor and debounce
-    if(READ_LS_SENSE_LIDOPEN() == LIMITSWITCH_CLOSE)
-    {
-    	lidOpenDbCount++;
-    	lidOpenDbCount = (lidOpenDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidOpenDbCount;
-    	//Check whether there is a change in switch status
-    	if((lidOpenDbCount == DEBOUNCE_COUNT) && (lidOpenStatus != LID_OPEN))
-    	{
-    		// Change in Limit switch status and hence update the status variable.
-    		lidOpenStatus = LID_OPEN;
-    		lidStatusChangeFlag = 1; //Lid status changed
-    		//send event to lidModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
-    		//send event to shredder Module
-    		event_lid_open(LIMITSWITCH_MOD);
-    	}
-    }
-    else
-    {
-    	lidOpenDbCount--;
-    	lidOpenDbCount = (lidOpenDbCount <0)? 0: lidOpenDbCount;
-    	//Check whether there is a change in switch status
-    	if((lidOpenDbCount == 0) && (lidOpenStatus != LID_NOTOPEN))
-    	{
-    		// Change in Limit switch status and hence update the status variable.
-    		lidOpenStatus = LID_NOTOPEN;
-    		lidStatusChangeFlag = 1; //Lid status changed
+	    //Read LIDOPEN sensor and debounce
+	    if(READ_LS_SENSE_LIDOPEN() == LIMITSWITCH_CLOSE)
+	    {
+	    	lidOpenDbCount++;
+	    	lidOpenDbCount = (lidOpenDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidOpenDbCount;
+	    	//Check whether there is a change in switch status
+	    	if((lidOpenDbCount == DEBOUNCE_COUNT) && (lidOpenStatus != LID_OPEN))
+	    	{
+	    		// Change in Limit switch status and hence update the status variable.
+	    		lidOpenStatus = LID_OPEN;
+	    		lidStatusChangeFlag = 1; //Lid status changed
+	    	}
+	    }
+	    else
+	    {
+	    	lidOpenDbCount--;
+	    	lidOpenDbCount = (lidOpenDbCount <0)? 0: lidOpenDbCount;
+	    	//Check whether there is a change in switch status
+	    	if((lidOpenDbCount == 0) && (lidOpenStatus != LID_NOTOPEN))
+	    	{
+	    		// Change in Limit switch status and hence update the status variable.
+	    		lidOpenStatus = LID_NOTOPEN;
+	    		lidStatusChangeFlag = 1; //Lid status changed
+	    	}
+	    }
+	    //Check whether there is a change in lid status and send event to Lid module and shredder Module
+	    if((lidStatusChangeFlag == 1)||(starting == 1))
+	    {
+	    	uint8_t combinedStatus;
 
 
-    	}
-    }
-    //Check whether there is a change in lid status and send event to Lid module and shredder Module
-    if(lidStatusChangeFlag == 1)
-    {
-    	uint8_t combinedStatus;
-    	//Combine lidOpenStatus and lidCloseStatus to lidStatus
-    	combinedStatus = ((lidCloseStatus<<1) & 0x02)+(lidOpenStatus & 0x01);
-    	switch(combinedStatus)
-    	{
-    	case 0x00:
-    		//Both limit switch can not be in open condition.
-    		printf("limitSwitchMod.c:callback2mSec():Both limit switch in OPEN condition\r\n");
-    		lidStatus = LID_STATUS_ERROR;
-    	case 0x01:
-    		lidStatus = LID_STATUS_OPEN;
-    		break;
-    	case 0x02:
-    		lidStatus = LID_STATUS_CLOSED;
-    		break;
-    	case 0x03:
-    		lidStatus = LID_STATUS_INBETWEEN;
-    		break;
-    	default:
-    		break;
-    	}
-    	//send event to lidModule
-    	//sendLidSwitchEvent(lidSwitchStatus);
-    	//send event to shredder Module
-    	//event_lid_open(LIMITSWITCH_MOD);
-    }
+	    	//Combine lidOpenStatus and lidCloseStatus to lidStatus
+	    	combinedStatus = ((lidCloseStatus<<1) & 0x02)+(lidOpenStatus & 0x01);
+	    	switch(combinedStatus)
+	    	{
+	    	case 0x00:
+	    		//Both limit switch can not be in open condition.
+	    		//printf("limitSwitchMod.c:callback2mSec():Both limit switch in OPEN condition\r\n");
+	    		lidStatus = LID_STATUS_ERROR;
+	    	case 0x01:
+	    		lidStatus = LID_STATUS_OPEN;
+	    		//send event to shredder module
+	        	//event_lid_open(LIMITSWITCH_MOD);
+	    		break;
+	    	case 0x02:
+	    		lidStatus = LID_STATUS_CLOSED;
+	    		//send Lid_close event to shredder module
+	    		//event_lid_close(LIMITSWITCH_MOD);
+	    		break;
+	    	case 0x03:
+	    		lidStatus = LID_STATUS_INBETWEEN;
+	    		//send Lid_open event to shredder module
+	        	//event_lid_open(LIMITSWITCH_MOD);
+	    		break;
+	    	default:
+	    		break;
+	    	}
+	    	//send event to lidModule
+	    	if(starting == 0)
+	    	{
+		        sendLidSwitchEvent(lidStatus);
+	    	}
+
+
+	    	starting = 0;
+	    }
+	}
 
 
     //Read FLAP sensor and debounce
@@ -221,7 +239,7 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		flapStatus = FLAP_POSITION_CLOSED;
     		//send event to transferModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
+    		///*TODO*/
     	}
     }
     else
@@ -234,7 +252,7 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		flapStatus = FLAP_POSITION_NOTCLOSED;
     		//send event to transferModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
+    		///*TODO*/
     	}
     }
 
@@ -249,7 +267,7 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		sttvStatus = STTV_POSITION_CLOSED;
     		//send event to transferModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
+    		///*TODO*/
     	}
     }
     else
@@ -262,11 +280,9 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		sttvStatus = STTV_POSITION_NOTCLOSED;
     		//send event to transferModule
-    		//sendLidSwitchEvent(lidSwitchStatus);
+    		///*TODO*/
     	}
     }
-
-
 }
 
 
@@ -282,9 +298,20 @@ void stop2mSecTimer(void)
     UTICK_Deinit(UTICK0);
 }
 
+void enableLidStatusSensing(void)
+{
+	lidSensingEnable = LID_SENSING_ENA;
+}
+
+void disableLidStatusSensing(void)
+{
+	lidSensingEnable = LID_SENSING_DIS;
+}
+
 
 uint8_t getLidSwicthStatus(void)
 {
+	printf("lsMod.c:lidstatus=0x%X, lidCloseSt=0x%X, LidOpenSt=0x%X\r\n",lidStatus,lidCloseStatus,lidOpenStatus);
 	return lidStatus;
 }
 
@@ -303,6 +330,7 @@ int initLimitSwitchModule(void)
 	sttvStatus = READ_LS_SENSE_ST();
 	flapStatus = READ_LS_SENSE_FLAP();
 	lidStatus = LID_STATUS_UNKNOWN;
+	lidSensingEnable = LID_SENSING_DIS;
 
 	lidCloseDbCount = 0;
 	lidOpenDbCount = 0;

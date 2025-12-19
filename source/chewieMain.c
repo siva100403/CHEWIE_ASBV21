@@ -77,6 +77,8 @@
 #include "lidModuleAPI.h"
 #include "hatcsMod.h"
 #include "hatcsModAPI.h"
+#include "HMICmdProc.h"
+#include "HMICmdProcAPI.h"
 
 
 
@@ -156,9 +158,9 @@ static void print_task(void *pvParameters)
 {
 
 
-    GREEN_LED_ON();
+/*    GREEN_LED_ON();
     RED_LED_ON();
-    BLUE_LED_ON();
+    BLUE_LED_ON();*/
 
 
     vTaskDelay( 1000 ); //For other tasks to get started
@@ -166,9 +168,6 @@ static void print_task(void *pvParameters)
 
     //initLimitSwitchModule();
 	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
-	LID_POWER_ON();
-	LID_MOTOR_DIR_OPEN();
-
 	motor1Stop();
 	motor2Stop();
 
@@ -180,15 +179,16 @@ static void print_task(void *pvParameters)
     while(1)
     {
 
-    	lidStatusLocal = getLidSwicthStatus();
-    	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);
+/*    	lidStatusLocal = getLidSwicthStatus();
+    	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);*/
 
 /*    	if(readShtTempHumidityHighPrecision(&temp, &hum) == DG_SUCCESS)
     	{
     		printf("chewieMain.c:temp=%f, hum=%f\r\n",temp, hum);
     	}*/
+    	getLidSwicthStatus();
+    	vTaskDelay(400);
 
-    	vTaskDelay(1000);
     	//printf("chewieMain.c:(): inside print_task\r\n");
     }
 

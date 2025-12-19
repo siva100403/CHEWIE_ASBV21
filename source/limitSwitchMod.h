@@ -66,10 +66,16 @@
 #define LID_STATUS_CLOSING		5
 #define LID_STATUS_ERROR		6
 
+/*-------Lid Sensing Enable/Disable Macro--------------------------------*/
+#define LID_SENSING_ENA			1
+#define LID_SENSING_DIS			0
+
 /*************************** Function Prototypes *************************/
 
 
 uint8_t getLidSwicthStatus(void);
+void enableLidStatusSensing(void);
+void disableLidStatusSensing(void);
 
 
 

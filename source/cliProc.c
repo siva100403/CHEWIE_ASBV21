@@ -64,6 +64,8 @@
 #include "transferCSAPI.h"
 #include "lidModule.h"
 #include "lidModuleAPI.h"
+#include "HMICmdProc.h"
+#include "HMICmdProcAPI.h"
 
 /*******************************************************************************
  * Global Variables
@@ -784,7 +786,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-/*
+
 				case LID:
 				{
 					//Usage: LID OPEN/CLOSE
@@ -820,7 +822,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-
+/*
 				case TCS:
 				{
 					//Usage: TCS START/STOP

@@ -30,16 +30,20 @@
 #include "fsl_device_registers.h"
 #include "fsl_lpspi.h"
 #include "fsl_utick.h"
+#include "fsl_flexspi.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
 #include "version.h"
 #include "modulecom.h"
+#include "psramDriver.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
+#include "motorControl.h"
 #include "seqControlCommon.h"
 #include "dgI2cDriver.h"
 #include "eeConfig.h"
+#include "sht40Driver.h"
 #include "rtc.h"
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
@@ -56,13 +60,21 @@
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
 #include "sensorMod.h"
+#include "sensorModAPI.h"
+#include "sht40Driver.h"
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
 #include "limitSwitchMod.h"
 #include "transferCS.h"
-
+#include "transferCSAPI.h"
+#include "lidModule.h"
+#include "lidModuleAPI.h"
+#include "hatcsMod.h"
+#include "hatcsModAPI.h"
+#include "HMICmdProc.h"
+#include "HMICmdProcAPI.h"
 
 
 /*******************************************************************************
@@ -162,7 +174,7 @@ void HMI_LPUART_IRQHandler(void)
         				else
         				{
             				//Received the command in full. Send the command to HMI task
-            				//sendRcvBuffer(HMItrBuf.rxBufPtr, HMItrBuf.rxCount); //TODO insert
+            				sendRcvBuffer(HMItrBuf.rxBufPtr, HMItrBuf.rxCount);
             				HMItrBuf.rxState = RS232_PROCESSING_CMD;
             				//HMItrBuf.rxCount=0;
             				break;
@@ -218,7 +230,7 @@ void HMI_LPUART_IRQHandler(void)
         		{
         			//Buffer is over. Wait for all the bits  to get shifted out
         			HMItrBuf.txState = RS232_TX_END_WAIT;
-            		//sendTxCompleteEvent(); //TODO insert
+            		sendTxCompleteEvent();
         		}
     			break;
     		case RS232_TX_COMPLETED:

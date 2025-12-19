@@ -73,6 +73,8 @@
 #include "lidModuleAPI.h"
 #include "hatcsMod.h"
 #include "hatcsModAPI.h"
+#include "HMICmdProc.h"
+#include "HMICmdProcAPI.h"
 
 
 
@@ -287,7 +289,7 @@ static void sysStart_task(void *pvParameters)
 		devHealthReg[TEMPSENSOR_DEV].operationStatus = DEVICE_NOTWORKING;
 	}
 
-/*	//Initialize HMI Command Processing Module
+	//Initialize HMI Command Processing Module
 	if(initHMICmdProc()==DG_SUCCESS)
 	{
 		printf("sysStart_task(): initHMICmdProc() passed\r\n");
@@ -300,10 +302,10 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initHMICmdProc() failed\r\n");
 		moduleHealthReg[HMICMDPROC_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[HMICMDPROC_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 
 
-/*	//Initialize UART used for HMI communication
+	//Initialize UART used for HMI communication
     if(initHMIUart() == DG_SUCCESS)
     {
 		devHealthReg[HMI_UART_DEV].presenceStatus = DEVICE_PRESENT;
@@ -313,9 +315,9 @@ static void sysStart_task(void *pvParameters)
     {
 		devHealthReg[HMI_UART_DEV].presenceStatus = DEVICE_PRESENT;
 		devHealthReg[HMI_UART_DEV].operationStatus = DEVICE_NOTWORKING;
-    }*/
+    }
 
-/*    //Initialize Lid module and associated components
+    //Initialize Lid module and associated components
     if(initLidModule() == DG_SUCCESS)
 	{
 		printf("sysStart_task(): initLidModule() passed\r\n");
@@ -328,7 +330,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[LID_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[LID_MOD].operationStatus = MODULE_NOTWORKING;
 	}
-    */
+
     //vTaskDelay(500 / portTICK_PERIOD_MS);
     //Initialize shredder module and associated components
     if(initShd() == DG_SUCCESS)
@@ -397,7 +399,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[CSM_MOD].operationStatus = MODULE_NOTWORKING;
 	}*/
 
-/*	if(initHatcs() == DG_SUCCESS)
+	if(initHatcs() == DG_SUCCESS)
 	{
 		printf("sysStart_task():initHatcs() success!.\r\n");
 		moduleHealthReg[HATCS_MOD].presenceStatus = MODULE_PRESENT;
@@ -408,8 +410,8 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task():initHatcs() failed!.\r\n");
 		moduleHealthReg[HATCS_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[HATCS_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
-/*	if(initCt() == DG_SUCCESS)
+	}
+	if(initCt() == DG_SUCCESS)
 	{
 		printf("sysStart_task():initCt success!.\r\n");
 		moduleHealthReg[CT_MOD].presenceStatus = MODULE_PRESENT;
@@ -420,7 +422,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task():initCt failed!.\r\n");
 		moduleHealthReg[CT_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[CT_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 
 /*	//Read the CSM state stored in RTC RAM
 	dgDateTime_t updateTime;
@@ -444,14 +446,13 @@ static void sysStart_task(void *pvParameters)
 			moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
 		}
 	}*/
-
-/*
+	vTaskDelay(2);  //10 mSec delay for the Limit switch module to get the Lid status after de-bouncing
 	//Start Lid Module
 	if(moduleHealthReg[LID_MOD].operationStatus == MODULE_IDLE)
 	{
 		moduleStart(LID_MOD);
 		moduleHealthReg[LID_MOD].operationStatus = MODULE_WORKING;
-	}*/
+	}
 
 
 

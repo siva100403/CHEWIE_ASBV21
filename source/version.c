@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.5" );
+strcpy(swVer,"0.3.6" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
 }
@@ -99,5 +99,13 @@ void getHwVersion(char * version)
  * New Features
  * 1. FD_CONFIG CLI added to initialize config EEPROM with default values
  * 2. sht40 initialization is working
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.6 19-12-2025********************
+ * New Features
+ * 1. Lid integrated and modified for Lid motor power ON/OFF
+ * 2. TC78H660 Motor Driver included
+ * 3. HMICmdProc integrated
  *
  *******************************************************************/
