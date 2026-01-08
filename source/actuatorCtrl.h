@@ -18,8 +18,10 @@ int DCsprayerOff();
 int flushSprayerOn();
 int flushSprayerOff();
 
-int stMotorOn();
-int stMotorOff();
+int stMotorCWR();
+int stMotorCCWR();
+int stMotorStop();
+
 
 int airValve1On();
 int airValve1Off();
@@ -30,17 +32,17 @@ int airValve2Off();
 int airValve3On();
 int airValve3Off();
 
-int augerMotorCWR();
-int augerMotorCCWR();
-int augerMotorStop();
+//int augerMotorCWR();
+//int augerMotorCCWR();
+//int augerMotorStop();
 
 int flapMotorCWR();
 int flapMotorCCWR();
 int flapMotorStop();
 
-int fanMotorCWR();
-int fanMotorCCWR();
-int fanMotorStop();
+//int fanMotorCWR();
+//int fanMotorCCWR();
+//int fanMotorStop();
 
 int shdAugMotorCWR();
 int shdAugMotorCCWR();

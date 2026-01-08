@@ -25,7 +25,7 @@
 
 //CT Motor Control Codes
 #define SEQ_CTRL_CTMOTOR_OFF	0
-#define SEQ_CTRL_CTMOTOR_CCW	1
+#define SEQ_CTRL_CTMOTOR_CWR	1
 #define SEQ_CTRL_CTMOTOR_CCWR	2
 
 //Sprayer Control Codes
@@ -38,7 +38,8 @@
 
 //ST Motor control codes
 #define SEQ_CTRL_STMOTOR_OFF	0
-#define SEQ_CTRL_STMOTOR_ON		1
+#define SEQ_CTRL_STMOTOR_CWR	1
+#define SEQ_CTRL_STMOTOR_CCWR	2
 
 //Fan Control Codes
 #define SEQ_CTRL_FAN_OFF		0

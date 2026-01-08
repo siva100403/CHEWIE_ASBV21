@@ -165,7 +165,7 @@ typedef struct actuatorCtrlSeq
 
 typedef struct transferCtrlSeq
 {
-	uint8_t duration; 			//in minutes
+	uint16_t duration; 			//in 100s of mSec
 	uint8_t ctCtrl;				// TRSEQ_CTMOTOR_CCW, TRSEQ_CTMOTOR_OFF
 	uint8_t stCtrl;				// TRSEQ_STMOTOR_ON, TRSEQ_STMOTOR_OFF
 	uint8_t ctrlSeqRecType;		// TRSEQ_CTRL_START, TRSEQ_CTRL_MID, TRSEQ_CTRL_END
@@ -178,7 +178,7 @@ typedef struct transferCtrlSeq
 #define MAX_SHD_SEQ		16
 typedef struct shredderCtrlSeq
 {
-	uint8_t durationSec; 			//in seconds
+	uint16_t durationSec; 			//in seconds
 	uint8_t shdMotor;
 	uint8_t shdFlapMotor;
 	uint8_t flushSprayer;

@@ -63,6 +63,7 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "motorControl.h"
 #include "sensorMod.h"
 #include "sensorModAPI.h"
 #include "sht40Driver.h"
@@ -79,6 +80,10 @@
 #include "hatcsModAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
+#include "csmMod.h"
+#include "csmModAPI.h"
+#include "measure.h"
+#include "alert.h"
 
 
 
@@ -168,10 +173,7 @@ static void print_task(void *pvParameters)
 
     //initLimitSwitchModule();
 	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
-	motor1Stop();
-	motor2Stop();
 
-	TC78H660_Active();
 
 	uint8_t lidStatusLocal;
 	float temp, hum;
@@ -186,7 +188,7 @@ static void print_task(void *pvParameters)
     	{
     		printf("chewieMain.c:temp=%f, hum=%f\r\n",temp, hum);
     	}*/
-    	getLidSwicthStatus();
+    	//getLidSwicthStatus();
     	vTaskDelay(400);
 
     	//printf("chewieMain.c:(): inside print_task\r\n");

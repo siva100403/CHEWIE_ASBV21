@@ -206,12 +206,12 @@ static void callback2mSec(void)
 	    	case 0x02:
 	    		lidStatus = LID_STATUS_CLOSED;
 	    		//send Lid_close event to shredder module
-	    		//event_lid_close(LIMITSWITCH_MOD);
+	    		event_lid_close(LIMITSWITCH_MOD);
 	    		break;
 	    	case 0x03:
 	    		lidStatus = LID_STATUS_INBETWEEN;
 	    		//send Lid_open event to shredder module
-	        	//event_lid_open(LIMITSWITCH_MOD);
+	        	event_lid_open(LIMITSWITCH_MOD);
 	    		break;
 	    	default:
 	    		break;
@@ -239,7 +239,7 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		flapStatus = FLAP_POSITION_CLOSED;
     		//send event to transferModule
-    		///*TODO*/
+    		event_ls_flapclose(UNKNOWN);
     	}
     }
     else
@@ -267,7 +267,7 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		sttvStatus = STTV_POSITION_CLOSED;
     		//send event to transferModule
-    		///*TODO*/
+    		event_ls_stvalveClose(UNKNOWN);
     	}
     }
     else

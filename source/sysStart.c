@@ -59,6 +59,7 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "motorControl.h"
 #include "sensorMod.h"
 #include "sensorModAPI.h"
 #include "sht40Driver.h"
@@ -75,6 +76,10 @@
 #include "hatcsModAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
+#include "csmMod.h"
+#include "csmModAPI.h"
+#include "measure.h"
+#include "alert.h"
 
 
 
@@ -191,6 +196,9 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initSysConfig() failed\r\n");
 	}
 
+
+
+
 	//Initialize CLI Module
 	if(initCli()==DG_SUCCESS)
 	{
@@ -224,6 +232,10 @@ static void sysStart_task(void *pvParameters)
 			devHealthReg[CLI_UART_DEV].operationStatus = DEVICE_NOTWORKING;
 		}
 	}
+
+	//Initialize and make TC78H660 active
+	TC78H660_Active();
+	printf("sysStart_task():TC78H660 made active r\n");
 
 	//Initialize LPSPI Device which is used by TDC1000 and DRV89XX devices
 	if(initSPI_MCLS() == DG_SUCCESS)
@@ -385,7 +397,7 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[ADCS_MOD].operationStatus = MODULE_NOTWORKING;
     }
 
-/*	//Initialize Composting Module
+	//Initialize Composting Module
 	if(initCSM() == DG_SUCCESS)
 	{
 		printf("sysStart_task(): initCSM() passed\r\n");
@@ -397,7 +409,7 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initCSM() failed\r\n");
 		moduleHealthReg[CSM_MOD].presenceStatus = MODULE_PRESENT;
 		moduleHealthReg[CSM_MOD].operationStatus = MODULE_NOTWORKING;
-	}*/
+	}
 
 	if(initHatcs() == DG_SUCCESS)
 	{
@@ -424,7 +436,20 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[CT_MOD].operationStatus = MODULE_NOTWORKING;
 	}
 
-/*	//Read the CSM state stored in RTC RAM
+	if(initTCS() == DG_SUCCESS)
+	{
+		printf("sysStart_task():initTCS success!.\r\n");
+		moduleHealthReg[TCS_MOD].presenceStatus = MODULE_PRESENT;
+		moduleHealthReg[TCS_MOD].operationStatus = MODULE_WORKING;
+	}
+	else
+	{
+		printf("sysStart_task():initTCS failed!.\r\n");
+		moduleHealthReg[TCS_MOD].presenceStatus = MODULE_PRESENT;
+		moduleHealthReg[TCS_MOD].operationStatus = MODULE_NOTWORKING;
+	}
+
+	//Read the CSM state stored in RTC RAM
 	dgDateTime_t updateTime;
 	dgCtStateVar_t csmStateVar;
 
@@ -445,7 +470,7 @@ static void sysStart_task(void *pvParameters)
 			csmStart(SYSSTART_MOD, csmStateVar.state, csmStateVar.curPhase, csmStateVar.remDur, csmStateVar.curWasteCat);
 			moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
 		}
-	}*/
+	}
 	vTaskDelay(2);  //10 mSec delay for the Limit switch module to get the Lid status after de-bouncing
 	//Start Lid Module
 	if(moduleHealthReg[LID_MOD].operationStatus == MODULE_IDLE)

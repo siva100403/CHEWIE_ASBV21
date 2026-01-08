@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.6" );
+strcpy(swVer,"0.3.8" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
 }
@@ -107,5 +107,19 @@ void getHwVersion(char * version)
  * 1. Lid integrated and modified for Lid motor power ON/OFF
  * 2. TC78H660 Motor Driver included
  * 3. HMICmdProc integrated
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.7 22-12-2025********************
+ * New Features
+ * 1. Motor Driver pin assignment modified
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.8 24-12-2025********************
+ * New Features
+ * 1. All Control functions integrated including CSM
+ * 2. Shredder CS: Duration parameter unit changed from seconds to 10s mSec
+ * 3. TCS CS: Duration parameter unit changed from seconds to 100s mSec
  *
  *******************************************************************/

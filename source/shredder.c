@@ -143,7 +143,7 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 	}
 
 	//Set timer
-	dgtimerStart(SHREDDER_MOD, CONV_SEC_TO_TICKS(shdCtrlSeq[controlSeqIndex].durationSec));
+	dgtimerStart(SHREDDER_MOD, ((shdCtrlSeq[controlSeqIndex].durationSec)*10)/portTICK_PERIOD_MS);
 
 	//Shredder Motor Control
 	if(shdCtrlSeq[controlSeqIndex].shdMotor == SEQ_CTRL_SHD_MOTOR_CCWR)
@@ -340,6 +340,10 @@ static void shredder_task(void *pvParameters)
 				{
 					shredderState = SHD_STATE_IDLE;
 				}
+				break;
+			case DG_LS_FLAPCLOSE:
+				//Received FLAPCLOSE event. Stop flap motor
+				flapMotorStop();
 				break;
 			default:
 				//Ignore the event

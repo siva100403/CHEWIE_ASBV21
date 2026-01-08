@@ -54,7 +54,9 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "motorControl.h"
 #include "sensorMod.h"
+#include "sensorModAPI.h"
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
@@ -66,6 +68,10 @@
 #include "lidModuleAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
+#include "csmMod.h"
+#include "csmModAPI.h"
+#include "measure.h"
+#include "alert.h"
 
 /*******************************************************************************
  * Global Variables
@@ -547,7 +553,7 @@ void cli_Task(void* arg)
 				}
 				case ST_MOTOR:
 				{
-					//STMOTOR START/STOP
+					//STMOTOR RR/RL/OFF
 
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
@@ -557,13 +563,17 @@ void cli_Task(void* arg)
 						setRxStatus(RS232_RCV_IDLE);
 						break;
 					}
-					if (strcmp(&token[0], "START\0")==0)
+					if (strcmp(&token[0], "RR\0")==0)
 					{
-						stMotorOn();
+						stMotorCWR();
 					}
-					else if (strcmp(&token[0], "STOP\0")==0)
+					if (strcmp(&token[0], "RL\0")==0)
 					{
-						stMotorOff();
+						stMotorCCWR();
+					}
+					else if (strcmp(&token[0], "OFF\0")==0)
+					{
+						stMotorStop();
 					}
 					else
 					{
@@ -611,7 +621,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-/*
+
 				case CTCS:
 				{
 					//CTCS START/STOP
@@ -645,7 +655,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-*/
+
 				case FLAP_MOTOR:
 				{
 					//FLAP OPEN/CLOSE/OFF
@@ -730,13 +740,11 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "OPEN\0")==0)
 					{
-						LID_POWER_OFF();
-						//airValve2On();
+						airValve2On();
 					}
 					else if (strcmp(&token[0], "CLOSE\0")==0)
 					{
-						LID_POWER_ON();
-						//airValve2Off();
+						airValve2Off();
 					}
 					else
 					{
@@ -765,13 +773,11 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "OPEN\0")==0)
 					{
-						LID_MOTOR_DIR_OPEN();
-						//airValve3On();
+						airValve3On();
 					}
 					else if (strcmp(&token[0], "CLOSE\0")==0)
 					{
-						LID_MOTOR_DIR_CLOSE();
-						//airValve3Off();
+						airValve3Off();
 					}
 					else
 					{
@@ -822,7 +828,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-/*
+
 				case TCS:
 				{
 					//Usage: TCS START/STOP
@@ -858,7 +864,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-*/
+
 				case SHDAUG_MOTOR:
 				{
 					//SHDAUG_MOTOR RR/RL/OFF
@@ -978,7 +984,7 @@ void cli_Task(void* arg)
 						break;
 					}
 				}
-/*
+
 				case GETSENSORSTATUS:
 				{
 					//This command gets the status of sensor module
@@ -1023,7 +1029,7 @@ void cli_Task(void* arg)
 						printf("cliProc.c:():GETSENSORSTATUS_CHTL cmd fail\r\n");
 						break;
 					}
-				}*/
+				}
 				case GETTIME:
 				{
 					//This command reads the current time from RTC and display
@@ -1111,7 +1117,7 @@ void cli_Task(void* arg)
 					}
 					break;
 				}
-/*				case CSMSTART:
+				case CSMSTART:
 				{
 					uint8_t phase, wasteCat, csmState;
 					uint16_t remainingDuration;
@@ -1207,7 +1213,7 @@ void cli_Task(void* arg)
 					}
 					break;
 				}
-*/
+
 				case AUGER_MOTOR:
 				{
 					//AUGER RL/RR/OFF
@@ -1846,7 +1852,7 @@ void cli_Task(void* arg)
 				    {
 				        // Validate ranges (all uint8_t fields)
 				        if (indexTmp < MAX_SHD_SEQ &&
-				            durTmp   <= 0xFF &&
+				            durTmp   <= 0xFFFF &&
 				            motorTmp <= 0xFF &&
 				            flapTmp  <= 0xFF &&
 				            flushTmp <= 0xFF &&
@@ -1854,7 +1860,7 @@ void cli_Task(void* arg)
 				            ctrlTmp  <= 0xFF)
 				        {
 				            index                 = (uint8_t)indexTmp;
-				            shdSeq.durationSec    = (uint8_t)durTmp;
+				            shdSeq.durationSec    = (uint16_t)durTmp;
 				            shdSeq.shdMotor       = (uint8_t)motorTmp;
 				            shdSeq.shdFlapMotor   = (uint8_t)flapTmp;
 				            shdSeq.flushSprayer   = (uint8_t)flushTmp;

@@ -134,6 +134,44 @@ int transferAbort(uint8_t srcModule)
 	return DG_FAIL;
 }
 
+
+
+int event_ls_stvalveClose(uint8_t srcModule)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	//Validate parameters
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = srcModule;
+	sendMsgBuf.command = DG_LS_STVALVECLOSE;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = TCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("transferCSAPI.c:transferAbort():Task handle is null for module with id: %d \r\n", srcModule);
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("transferCSAPI.c:transferAbort():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+
+	//xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	return DG_SUCCESS;
+
+}
+
 int checkTransferFeasibility(void)
 {
 

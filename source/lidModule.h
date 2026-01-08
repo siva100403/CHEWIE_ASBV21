@@ -11,8 +11,8 @@
 /************************ LID Module Constants ********************/
 #define PROXIMITY_LIDCLOSE_TIMEOUT		15 			//in Seconds
 #define NONPROXIMITY_LIDCLOSE_TIMEOUT	8			//in seconds
-#define LIDOPENING_DURATION				3000			//in mSec
-#define LIDCLOSING_DURATION				3000			//in mSec
+#define LIDOPENING_DURATION				4000			//in mSec
+#define LIDCLOSING_DURATION				4000			//in mSec
 #define LID_OPEN_DELAY					20			//in Ticks (100 mSec)
 #define LID_OPEN_WAIT					1000			//in mSec Time: To ensure motor goes to OFF before reversal
 #define LID_CLOSE_WAIT					1000			//in mSec: To ensure motor goes to OFF before reversal

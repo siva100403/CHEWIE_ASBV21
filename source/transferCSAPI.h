@@ -13,5 +13,6 @@
 int transferStart(uint8_t srcModule);
 int transferAbort(uint8_t srcModule);
 int checkTransferFeasibility(void);
+int event_ls_stvalveClose(uint8_t srcModule);
 
 #endif /* TRANSFERCSAPI_H_ */

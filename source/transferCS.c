@@ -56,6 +56,7 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "motorControl.h"
 #include "sensorMod.h"
 #include "augerAPI.h"
 #include "shredder.h"
@@ -84,12 +85,12 @@
 
 /***********************Configuration Parameters******************************/
 
-const dgTransferCtrlSeq_t trfCtrlSeq[] = { {2, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_ON, SEQ_CTRL_START },
-		                                   {1, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
-										   {2, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_ON, SEQ_CTRL_MID },
-										   {1, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
-										   {2, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_ON, SEQ_CTRL_MID },
-										   {1, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_END },
+const dgTransferCtrlSeq_t trfCtrlSeq[] = { {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_START },
+		                                   {600, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
+										   {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
+										   {600, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
+										   {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
+										   {600, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_END },
 };
 
 /*******************************************************************************
@@ -109,6 +110,10 @@ int executeTRFRSeqControl(uint8_t condition)
 
 	if(trfCtrlSeq[controlSeqIndex].ctCtrl == SEQ_CTRL_CTMOTOR_CCWR)
 	{
+		augerMotorCCWR();
+	}
+	if(trfCtrlSeq[controlSeqIndex].ctCtrl == SEQ_CTRL_CTMOTOR_CWR)
+	{
 		augerMotorCWR();
 	}
 	else if(trfCtrlSeq[controlSeqIndex].ctCtrl == SEQ_CTRL_CTMOTOR_OFF)
@@ -121,23 +126,28 @@ int executeTRFRSeqControl(uint8_t condition)
 		augerMotorStop();
 	}
 
-	if(trfCtrlSeq[controlSeqIndex].stCtrl == SEQ_CTRL_STMOTOR_ON)
+	if(trfCtrlSeq[controlSeqIndex].stCtrl == SEQ_CTRL_STMOTOR_CWR)
 	{
-		printf("transferCS.c:tcs_Task():ST Motor ON \r\n");
-		stMotorOn();
+		printf("transferCS.c:tcs_Task():ST Motor CWR \r\n");
+		stMotorCWR();
+	}
+	if(trfCtrlSeq[controlSeqIndex].stCtrl == SEQ_CTRL_STMOTOR_CCWR)
+	{
+		printf("transferCS.c:tcs_Task():ST Motor CCWR \r\n");
+		stMotorCCWR();
 	}
 	else if(trfCtrlSeq[controlSeqIndex].ctCtrl == SEQ_CTRL_STMOTOR_OFF)
 	{
 		printf("transferCS.c:tcs_Task():ST Motor OFF \r\n");
-		stMotorOff();
+		stMotorStop();;
 	}
 	else
 	{
-		stMotorOff();
+		stMotorStop();;
 	}
 
 	//Set timer
-	dgtimerStart(TCS_MOD, CONV_SEC_TO_TICKS(trfCtrlSeq[controlSeqIndex].duration*60));
+	dgtimerStart(TCS_MOD, (trfCtrlSeq[controlSeqIndex].duration*100)/portTICK_PERIOD_MS);
 
 	//Check if this is the last control in the sequence
 	if(trfCtrlSeq[controlSeqIndex].ctrlSeqRecType ==SEQ_CTRL_END)
@@ -155,7 +165,7 @@ int executeTRFRSeqControl(uint8_t condition)
 
 void executeTRFRSafeState()
 {
-	stMotorOff();
+	stMotorStop();
 	augerMotorStop();
 }
 
@@ -287,7 +297,20 @@ void tcs_Task(void* arg)
 				break;
 			}
 			break;
-
+		case DG_LS_STVALVECLOSE:
+			switch(tcsState)
+			{
+			case TCS_STATE_IDLE:
+				//ignore. We don't expect timer event idle
+				break;
+			case TCS_STATE_TRANSFERRING:
+				//Stop the ST motor
+				stMotorStop();
+				break;
+			case TCS_ERROR:
+				//In error state. we don't expect timer event. Ignore
+				break;
+			}
 		default:
 			break;
 		}
@@ -341,3 +364,4 @@ int initTCS(void)
     }
     return DG_SUCCESS;
 }
+

@@ -56,6 +56,7 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "motorControl.h"
 #include "sensorMod.h"
 #include "sensorModAPI.h"
 #include "sht40Driver.h"
