@@ -240,6 +240,7 @@ static void callback2mSec(void)
     		flapStatus = FLAP_POSITION_CLOSED;
     		//send event to transferModule
     		event_ls_flapclose(UNKNOWN);
+    		printf("limitswitchMod.c:Task():Event FlapClose occurred\r\n");
     	}
     }
     else
@@ -251,6 +252,7 @@ static void callback2mSec(void)
     	{
     		// Change in Limit switch status and hence update the status variable.
     		flapStatus = FLAP_POSITION_NOTCLOSED;
+    		printf("limitswitchMod.c:Task():Event FlapOpen occurred\r\n");
     		//send event to transferModule
     		///*TODO*/
     	}
@@ -268,6 +270,7 @@ static void callback2mSec(void)
     		sttvStatus = STTV_POSITION_CLOSED;
     		//send event to transferModule
     		event_ls_stvalveClose(UNKNOWN);
+    		printf("limitswitchMod.c:Task():Event st closed\r\n");
     	}
     }
     else
@@ -279,6 +282,7 @@ static void callback2mSec(void)
     	{
     		// Change in Limit switch status and hence update the status variable.
     		sttvStatus = STTV_POSITION_NOTCLOSED;
+    		printf("limitswitchMod.c:Task():Event st not closed\r\n");
     		//send event to transferModule
     		///*TODO*/
     	}
