@@ -1327,7 +1327,7 @@ void cli_Task(void* arg)
 					setRxStatus(RS232_RCV_IDLE);
 					break;
 				}
-/*
+
 				case GETCSMSTATUS:  //Gets the current status of CSM
 				{
 					//GETCSMSTATUS
@@ -1367,7 +1367,7 @@ void cli_Task(void* arg)
 						break;
 					}
 					break;
-				}*/
+				}
 				case GETAUGERCFG_C:
 				{
 				    dgCtConfigParam_t agrCfg;

@@ -199,7 +199,7 @@ typedef struct shredderTimingVar
 typedef struct shdConfigParams
 {
 	dgShredderTimingVar_t	shdTimingVars;
-	dgShredderCtrlSeq_t shdActCtrlSeq[MAX_SHD_SEQ];
+	dgShredderCtrlSeq_t shdActCtrlSeq[MAX_SHD_SEQ-1];
 }dgShdConfigParams_t;
 
 

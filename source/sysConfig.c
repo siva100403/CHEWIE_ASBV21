@@ -333,7 +333,7 @@ int verifyConfigAreaChecksum()
 	uint16_t checksum;
 	uint16_t *bufferPtr;
 
-	configAreaSize = (sizeof(dgConfigMem_t))/2;
+	configAreaSize =(sizeof(dgConfigMem_t))/2;
 	bufferPtr = (uint16_t *)&allConfig;
 	checksum = 0;
 
@@ -631,7 +631,7 @@ int loadDefaultConfig()
 	//Store in EEPROM config area
 	if(storeWorkingConfigEEPROM() == DG_SUCCESS)
 	{
-		printf("sysConfig.c:loadDefaultConfig():storeWorkingConfigEEPROM():Success");
+		printf("sysConfig.c:loadDefaultConfig():storeWorkingConfigEEPROM():Success\r\n");
 		return DG_SUCCESS;
 	}
 	printf("sysConfig.c:loadDefaultConfig():storeWorkingConfigEEPROM():Fail\r\n");

@@ -460,6 +460,7 @@ static void sysStart_task(void *pvParameters)
 	{
 		//Data in RTC RAM is improper. No need to start CSM
 		printf("sysStart_task():csmState variables read from RTC RAM is improper. CSM not started\r\n");
+		csmStart(SYSSTART_MOD, CSM_STATE_MPHASE, MESOPHILIC_PHASE, 240, WASTE_CAT0);
 	}
 	else
 	{

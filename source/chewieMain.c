@@ -177,21 +177,50 @@ static void print_task(void *pvParameters)
 
 	uint8_t lidStatusLocal;
 	float temp, hum;
+	uint8_t buffer[128], outbuffer[128];
+	int i,countr=0, countw=0;
+
+	printf("Chewiemain.c:size of shredder Control param=%d\r\n", sizeof(dgShdConfigParams_t));
 
     while(1)
     {
-
-/*    	lidStatusLocal = getLidSwicthStatus();
-    	printf("chewieMain.c:():print_task():Lidstatus=%d\r\n",lidStatusLocal);*/
-
-/*    	if(readShtTempHumidityHighPrecision(&temp, &hum) == DG_SUCCESS)
+/*
+    	for(i=0; i<128; i++)
     	{
-    		printf("chewieMain.c:temp=%f, hum=%f\r\n",temp, hum);
-    	}*/
+    		buffer[i]=countw++;
+    	}
+
+    	if(eeprom_mem_write_within_page(0x1000, buffer, 10)==DG_SUCCESS)
+    	{
+    		printf("EEPROM write success\r\n");
+       	}
+    	else
+    	{
+    		printf("EEPROM write failed\r\n");
+    	}
+
+    	if(eeprom_mem_read_within_page(0x1000, outbuffer, 10) == DG_SUCCESS)
+    	{
+    		printf("EEPROM read success\r\n");
+    	}
+    	else
+    	{
+    		printf("EEPROM read failed\r\n");
+    	}
+
+    	for(i=0;i<10; i++)
+    	{
+    		if(buffer[i]==outbuffer[i]) continue;
+
+    		printf("EEPROM compare failed at i=%d\r\n",i);
+    	}
+*/
+
+    	//storeWorkingConfigEEPROM()
     	//getLidSwicthStatus();
     	vTaskDelay(400);
 
-    	//printf("chewieMain.c:(): inside print_task\r\n");
+
     }
 
 

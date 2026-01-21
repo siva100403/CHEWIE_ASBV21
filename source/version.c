@@ -42,9 +42,9 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.8" );
+strcpy(swVer,"0.3.9" );
 strcpy(productModel,"CHEWIE");
-strcpy(asbHwVersion, "V 2.1");  //TODO: Read from EEPROM
+strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
 
 void getFwVersion(char * version)
@@ -121,5 +121,14 @@ void getHwVersion(char * version)
  * 1. All Control functions integrated including CSM
  * 2. Shredder CS: Duration parameter unit changed from seconds to 10s mSec
  * 3. TCS CS: Duration parameter unit changed from seconds to 100s mSec
+ *
+ *******************************************************************/
+
+/************************Ver 0.3.9 21-01-2026********************
+ * Bug fixes
+ * 1. Issue: ASM was always loading default config due checksum error. This was
+ *      dues to shredder config space exceeded the assigned 128 bytes when shredder
+ *      CS duration incresed from 8 bit to 16 bit.
+ *   Fix: Reduce the max shredder sequence from 16 to 15. (Temperory fix)
  *
  *******************************************************************/
