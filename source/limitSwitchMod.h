@@ -81,6 +81,7 @@ void disableLidStatusSensing(void);
 
 
 uint8_t getStorageTraySwicthStatus(void);
+uint8_t getFlapStatus(void);
 #define STORAGE_TRAY_CLOSE	0
 #define STORAGE_TRAY_OPEN	1
 

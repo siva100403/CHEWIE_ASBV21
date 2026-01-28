@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.3.9" );
+strcpy(swVer,"0.4.0" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -130,5 +130,15 @@ void getHwVersion(char * version)
  *      dues to shredder config space exceeded the assigned 128 bytes when shredder
  *      CS duration incresed from 8 bit to 16 bit.
  *   Fix: Reduce the max shredder sequence from 16 to 15. (Temperory fix)
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.0 28-01-2026********************
+ * Bug fixes
+ * 1. Issue: When FLAP is not in CLOSE condition, CLOSE event is getting generated
+ *      vice versa.
+ *   Fix: limitSwitchMod.c:2mSecCallback(): Now checking for LS232DRVR_OPEN.
+ *
+ * New Features:
  *
  *******************************************************************/

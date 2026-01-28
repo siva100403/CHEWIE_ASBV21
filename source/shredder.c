@@ -53,6 +53,7 @@
 #include "mclsSPIDriver.h"
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
+#include "limitSwitchMod.h"
 #include "actuatorCtrl.h"
 #include "sensorMod.h"
 #include "augerAPI.h"
@@ -280,8 +281,52 @@ static void shredder_task(void *pvParameters)
 			case DG_TIMER_EXPIRY:
 				//Ignored. Not expected in IDLE state
 				break;
+			case SHD_FLAP_SYNC:
+				//FLAP needs to be brought to CLOSE condition
+				//Check FLAP is in CLOSE condition
+				if(getFlapStatus() == FLAP_POSITION_CLOSED)
+				{
+					//Flap is in closed condition. No need to do anything
+				}
+				else
+				{
+					printf("shredder.c:shredderTask():FLAP is not in closed condition. Closing");
+					//Change state to SHD_STATE_FLAPSYNC
+					shredderState = SHD_STATE_FLAPSYNC;
+					//Initiate closing the flap
+					flapMotorCWR();
+					//This is to stop the motor after 1 rotation (~8 sec)
+					flapTimerStart(((8)*1000)/ portTICK_PERIOD_MS);  //8 sec for 1 rotation (8 RPM)
+					dgtimerStart(SHREDDER_MOD, CONV_SEC_TO_TICKS(9));
+				}
+				break;
 			default:
 				//Ignored. Unexpected event
+				break;
+			}
+			break;
+		case SHD_STATE_FLAPSYNC:
+			switch(rcvMsg.command)
+			{
+			case DG_TIMER_EXPIRY:
+				//Flap limit switch event not received. Some issue with limit switch
+				flapMotorStop();
+				printf("shredder.c:shredderTask():FlapSync state: Issue in Flap limit switch\r\n");
+				//Log error in the health register
+				setDeviceHealth(FLAP_CLOSE_SENSE_DEV, DEVICE_NOTWORKING, CNI_DEVICE_PRESENCE);
+				shredderState = SHD_STATE_IDLE;
+				break;
+			case DG_LID_OPEN:
+				break;
+			case DG_LS_FLAPCLOSE:
+				//Received FLAPCLOSE event. FLAP is synchronized
+				flapMotorStop();
+				dgtimerStop(SHREDDER_MOD);
+				setDeviceHealth(FLAP_CLOSE_SENSE_DEV, DEVICE_WORKING, DEVICE_PRESENT);
+				//Change state to IDLLE.
+				shredderState = SHD_STATE_IDLE;
+				break;
+			default:
 				break;
 			}
 			break;

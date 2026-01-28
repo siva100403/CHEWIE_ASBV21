@@ -81,8 +81,35 @@
 #include "measure.h"
 #include "alert.h"
 
+//Health register allocation
+dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
+dgHealthStatus_t 	moduleHealthReg[LAST_MODULE];
 
+uint8_t setDeviceHealth(uint8_t deviceId, uint8_t opStatus, uint8_t presenceStatus)
+{
+	//Input Validation
+	if((deviceId >= LAST_DEVICE) ||(opStatus >MODULE_IDLE) ||(presenceStatus >CNI_DEVICE_PRESENCE))
+	{
+		return DG_INVALID_PARAM;
+	}
 
+	devHealthReg[deviceId].presenceStatus = presenceStatus;
+	devHealthReg[deviceId].operationStatus = opStatus;
+	return DG_SUCCESS;
+}
+
+uint8_t getDeviceHealth(uint8_t deviceId, uint8_t* opStatus, uint8_t* presenceStatus)
+{
+	//Input Validation
+	if((deviceId >= LAST_DEVICE) ||(opStatus == NULL) ||(presenceStatus == NULL))
+	{
+		return DG_INVALID_PARAM;
+	}
+
+	*presenceStatus = devHealthReg[deviceId].presenceStatus;
+	*opStatus = devHealthReg[deviceId].operationStatus;
+	return DG_SUCCESS;
+}
 
 static void sysStart_task(void *pvParameters)
 {
@@ -90,9 +117,7 @@ static void sysStart_task(void *pvParameters)
 	dgMsg_t rcvMsg;					//Holds the currently received message
 	//static int sysStartState;		// This stores the state of system start and health module
 
-	//Health register allocation
-	dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
-	dgHealthStatus_t 	moduleHealthReg[LAST_MODULE];
+
 
 
 	//Initialize devHealthReg and moduleHealthReg
@@ -449,6 +474,12 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[TCS_MOD].operationStatus = MODULE_NOTWORKING;
 	}
 
+	//Delay for limit switch module
+	vTaskDelay(8);   //40mSec delay
+	//Send Flapsync command to shredder module
+	shdFlapSync(UNKNOWN);
+
+	vTaskDelay(1600);   //8 Sec delay for Flap Sync
 	//Read the CSM state stored in RTC RAM
 	dgDateTime_t updateTime;
 	dgCtStateVar_t csmStateVar;
@@ -472,7 +503,9 @@ static void sysStart_task(void *pvParameters)
 			moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
 		}
 	}
-	vTaskDelay(2);  //10 mSec delay for the Limit switch module to get the Lid status after de-bouncing
+	//vTaskDelay(8);  //40 mSec delay for the Limit switch module to get the Lid status after de-bouncing
+
+
 	//Start Lid Module
 	if(moduleHealthReg[LID_MOD].operationStatus == MODULE_IDLE)
 	{

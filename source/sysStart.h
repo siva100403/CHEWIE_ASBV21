@@ -80,5 +80,7 @@ typedef struct modHealthRegister
 
 /******************************* Function Prototypes ********************/
 int initSysStart(void);
+uint8_t setDeviceHealth(uint8_t deviceId, uint8_t opStatus, uint8_t presenceStatus);
+uint8_t getDeviceHealth(uint8_t deviceId, uint8_t* opStatus, uint8_t* presenceStatus);
 
 #endif /* SYSSTART_H_ */

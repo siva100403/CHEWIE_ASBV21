@@ -229,7 +229,7 @@ static void callback2mSec(void)
 
 
     //Read FLAP sensor and debounce
-    if(READ_LS_SENSE_FLAP() == LS232DRVR_CLOSE)
+    if(READ_LS_SENSE_FLAP() == LS232DRVR_OPEN)
     {
     	flapDbCount++;
     	flapDbCount = (flapDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: flapDbCount;
@@ -324,6 +324,10 @@ uint8_t getStorageTraySwicthStatus(void)
 	return sttvStatus;
 }
 
+uint8_t getFlapStatus(void)
+{
+	return flapStatus;
+}
 
 
 int initLimitSwitchModule(void)

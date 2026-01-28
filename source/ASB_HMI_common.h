@@ -85,7 +85,8 @@
 #define	DC_LSENSE_DEV			24 		//Digestion Chamber
 #define	ST_LSENSE_DEV			25		//Storage Tray Level Sensor CLI_UART_DEV
 #define	ADDITIVE_LSENSE_DEV		26
-#define LAST_DEVICE				27
+#define FLAP_CLOSE_SENSE_DEV	27
+#define LAST_DEVICE				28
 
 
 /************************* Control System IDs **************************/

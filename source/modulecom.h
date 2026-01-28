@@ -100,6 +100,7 @@
 #define DG_LID_OPEN					0x3C
 #define DG_LID_CLOSE				0x3D
 #define DG_LS_FLAPCLOSE				0x3E
+#define SHD_FLAP_SYNC				0x3F
 
 
 

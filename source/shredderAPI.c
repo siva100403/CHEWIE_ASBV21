@@ -169,3 +169,40 @@ int event_ls_flapclose(uint8_t srcModule)
 	return DG_SUCCESS;
 }
 
+int shdFlapSync(uint8_t srcModule)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = srcModule;
+	sendMsgBuf.command = SHD_FLAP_SYNC;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = SHREDDER_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("ShredderAPI.c:shdFlapSync():Message send failed \r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+	/*xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}*/
+	return DG_SUCCESS;
+}
+
