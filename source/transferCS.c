@@ -67,14 +67,13 @@
 
 
 /***************************Regen Soil Transfer Logic***************************
- * -----------------------------------------------------------------------------
- * | Transfer State | CT Motor | ST Motor | Duration | Rpt Cycles |
- * |----------------|----------|----------|----------|------------|
- * | IDLE           |  OFF     | OFF      | NA       | NA         |
- * |----------------|----------|----------|----------|------------|
- * | TRANSFERRING	| CWR      | ON       |  2 min   |     3      |
- * |                | OFF      | OFF      |  1 min   |            |
- * |----------------|----------|----------|----------|------------|
+ * Whenever transfer command is received (with the duration as parameter) following steps
+ * will be executed. If abort is called, it will stop augur motor immediatly and close
+ * ST valve. It is expected that CSM is in transfer state or in IDLE state.
+ * Step1: Open the ST valve (CCWR rotation for STV_OPEN_DURATION)
+ * Step2: Rotate Auger, CCWR DIR, for specified duration
+ * Step3: Stop Auger motor and Close ST Valve (CWR rotation for STV_CLOSE_DURATION
+ *        or Limit switch lever pressed
  */
 
 /********************** Resources Used ****************************************/
@@ -85,6 +84,8 @@
 
 /***********************Configuration Parameters******************************/
 
+/*
+
 const dgTransferCtrlSeq_t trfCtrlSeq[] = { {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_START },
 		                                   {600, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
 										   {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
@@ -92,11 +93,13 @@ const dgTransferCtrlSeq_t trfCtrlSeq[] = { {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTR
 										   {1200, SEQ_CTRL_CTMOTOR_CCWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
 										   {600, SEQ_CTRL_CTMOTOR_OFF,  SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_END },
 };
+*/
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
+/*
 
 
 int executeTRFRSeqControl(uint8_t condition)
@@ -162,12 +165,13 @@ int executeTRFRSeqControl(uint8_t condition)
 	return DG_INPROGRESS;
 }
 
-
+*/
 void executeTRFRSafeState()
 {
 	stMotorStop();
 	augerMotorStop();
 }
+
 
 
 void tcs_Task(void* arg)
@@ -176,11 +180,19 @@ void tcs_Task(void* arg)
 	QueueHandle_t tcsQHandle;
 	dgMsg_t rcvMsg;				// Holds the currently received message
 	uint8_t tcsState;
+	uint16_t transferDuration;
 
-
-	//Get the Qhandle for this task and store locally
-	tcsQHandle = getQHandle(TCS_MOD);
+	//Init variables
 	tcsState = TCS_STATE_IDLE;
+	transferDuration = TRANSFER_DUR_DEFAULT;
+
+	//Wait till module registration is complete
+	tcsQHandle = NULL;
+	while(tcsQHandle== NULL)
+	{
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+		tcsQHandle = getQHandle(TCS_MOD);
+	}
 
 
 	while (1)
@@ -198,8 +210,12 @@ void tcs_Task(void* arg)
 			switch(tcsState)
 			{
 			case TCS_STATE_IDLE:
+				//Get the transfer duration from rcvMsg
+				transferDuration = *(uint16_t*)rcvMsg.cmdParam;
+				printf("transferCS.c:tcs_Task():transfer duration:%dr\n",transferDuration);
+
 				//change state to transfer
-				tcsState = TCS_STATE_TRANSFERRING;
+				tcsState = TCS_STATE_OPENING;
 
 				*rcvMsg.result = DG_SUCCESS;
 				if(rcvMsg.taskHandleSM != NULL)
@@ -207,9 +223,12 @@ void tcs_Task(void* arg)
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
 				}
 
-				//Start the control seq execution with start
-				executeTRFRSeqControl(SEQ_ENGINE_START);
+				//Open the ST Valve
+				dgtimerStart(TCS_MOD, (STV_OPEN_DURATION)/portTICK_PERIOD_MS);
+				stMotorCCWR();
 				break;
+			case TCS_STATE_OPENING:
+			case TCS_STATE_CLOSING:
 			case TCS_STATE_TRANSFERRING:
 				//Already in transfer state. return success
 				*rcvMsg.result = DG_SUCCESS;
@@ -218,7 +237,7 @@ void tcs_Task(void* arg)
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
 				}
 				break;
-			case TCS_ERROR:
+			case TCS_STATE_ERROR:
 				//In error state. Cannot accept transfer command. return failure
 				*rcvMsg.result = DG_FAIL;
 				if(rcvMsg.taskHandleSM != NULL)
@@ -227,6 +246,12 @@ void tcs_Task(void* arg)
 				}
 				break;
 			default:
+				//Unknown stated. Cannot accept transfer command. return failure
+				*rcvMsg.result = DG_FAIL;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
 				break;
 			}
 			break;
@@ -256,7 +281,9 @@ void tcs_Task(void* arg)
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
 				}
 				break;
-			case TCS_ERROR:
+			case TCS_STATE_OPENING:
+			case TCS_STATE_CLOSING:
+			case TCS_STATE_ERROR:
 				//In error state. Cannot accept transfer command. return failure
 				*rcvMsg.result = DG_FAIL;
 				if(rcvMsg.taskHandleSM != NULL)
@@ -275,21 +302,34 @@ void tcs_Task(void* arg)
 			case TCS_STATE_IDLE:
 				//ignore. We don't expect timer event idle
 				break;
-
-			case TCS_STATE_TRANSFERRING:
-				//one control seq execution is over. Continue
-				if(executeTRFRSeqControl(SEQ_ENGINE_CONTINUE) == DG_ACTION_COMPLETE)
-				{
-					//Control sequence execution is complete.
-					//Inform CSM and terminate
-					//csmNotifyTransferComplete(TCS_MOD);
-					tcsState = TCS_STATE_IDLE;
-					dgtimerStop(TCS_MOD);
-				}
-				//Continue
+			case TCS_STATE_OPENING:
+				//Open duration is over. Stop motor and timer
+				stMotorStop();
+				dgtimerStop(TCS_MOD);
+				//Change state to transfer and start Augur motor
+				tcsState = TCS_STATE_TRANSFERRING;
+				dgtimerStart(TCS_MOD, (transferDuration*1000)/portTICK_PERIOD_MS);
+				augerMotorCCWR();
 				break;
 
-			case TCS_ERROR:
+			case TCS_STATE_TRANSFERRING:
+				//Transfer duration is over. Stop augur motor
+				augerMotorStop();
+				//Change to CLOSING state
+				tcsState = TCS_STATE_CLOSING;
+				dgtimerStart(TCS_MOD, (STV_CLOSE_DURATION)/portTICK_PERIOD_MS);
+				stMotorCWR();
+				break;
+
+			case TCS_STATE_CLOSING:
+				//Close duration is over. Stop motor and timer
+				stMotorStop();
+				dgtimerStop(TCS_MOD);
+				//Change state to transfer and start Augur motor
+				tcsState = TCS_STATE_IDLE;
+				break;
+
+			case TCS_STATE_ERROR:
 				//In error state. we don't expect timer event. Ignore
 				break;
 
@@ -298,19 +338,9 @@ void tcs_Task(void* arg)
 			}
 			break;
 		case DG_LS_STVALVECLOSE:
-			switch(tcsState)
-			{
-			case TCS_STATE_IDLE:
-				//ignore. We don't expect timer event idle
-				break;
-			case TCS_STATE_TRANSFERRING:
-				//Stop the ST motor
-				stMotorStop();
-				break;
-			case TCS_ERROR:
-				//In error state. we don't expect timer event. Ignore
-				break;
-			}
+			stMotorStop();
+			break;
+
 		default:
 			break;
 		}
@@ -321,8 +351,8 @@ void tcs_Task(void* arg)
 
 
 /******************************* initTCS() ******************************************************
-*Description: This function initialises transfer control system moduke. Create queue, task and  *
-* initialized the datastructures. This should be called at the time of power up initialization.	*				*
+*Description: This function initialises transfer control system module. Create queue, task and  *
+* initialized the data structures. This should be called at the time of power up initialization.	*				*
 * It does the following																			*
 * 																								*
 *	- Creates a Queue handle for receiving event messages from other modules					*
@@ -346,7 +376,7 @@ int initTCS(void)
         return DG_FAIL;
     }
     //TCS requires timer and hence create FreeRTOS SW timer
-    tcsTimerHandle = xTimerCreate("tcsTimer",TCS_TIMER_DEFAULT, pdFALSE, (void*)TCS_MOD, dgTimerCallback);
+    tcsTimerHandle = xTimerCreate("tcsTimer",TRANSFER_DUR_DEFAULT, pdFALSE, (void*)TCS_MOD, dgTimerCallback);
     if(tcsTimerHandle == NULL)
     {
         PRINTF("Timer creation failed!.\r\n");

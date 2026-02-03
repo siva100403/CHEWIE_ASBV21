@@ -15,11 +15,17 @@
 
 //TCS states
 #define TCS_STATE_IDLE			0
-#define TCS_STATE_TRANSFERRING	1
-#define TCS_ERROR				2
+#define TCS_STATE_OPENING		1
+#define TCS_STATE_TRANSFERRING	2
+#define TCS_STATE_CLOSING		3
+#define TCS_STATE_ERROR			4
 
-#define TCS_TIMER_DEFAULT		100
 
+//Control System parameters
+#define STV_OPEN_DURATION		2000  	// in mSec
+#define STV_CLOSE_DURATION		2000  	// in mSec
+#define TRANSFER_DUR_DEFAULT	20		// in Seconds
+#define TRANSFER_DUR_MAX		600 	// in Seconds
 
 
 

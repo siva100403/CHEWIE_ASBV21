@@ -259,7 +259,7 @@ static void callback2mSec(void)
     }
 
     //Read ST sensor and debounce
-    if(READ_LS_SENSE_ST() == LS232DRVR_CLOSE)
+    if(READ_LS_SENSE_ST() == LS232DRVR_OPEN)
     {
     	sttvDbCount++;
     	sttvDbCount = (sttvDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: sttvDbCount;

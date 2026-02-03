@@ -274,6 +274,8 @@ int executeActuatorSafeState(void)
 	//Stop Fan
 	fanMotorStop();
 	DCsprayerOff();
+	airValve1Off();
+	airValve3Off();
 
 	return DG_SUCCESS;
 }

@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.4.0" );
+strcpy(swVer,"0.4.1" );
 strcpy(productModel,"CHEWIE");
 strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -140,5 +140,14 @@ void getHwVersion(char * version)
  *   Fix: limitSwitchMod.c:2mSecCallback(): Now checking for LS232DRVR_OPEN.
  *
  * New Features:
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.1 03-02-2026********************
+ *
+ * New Features:
+ *   - TCS control system task has been modified to support new transfer mechanism
+ *     i.e from auger transfer to OPEN/CLOSE mechanism
+ *   - CSMSTOP command was not closing Airvalves. That has been fixed
  *
  *******************************************************************/

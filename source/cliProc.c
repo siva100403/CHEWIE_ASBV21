@@ -833,9 +833,11 @@ void cli_Task(void* arg)
 				{
 					//Usage: TCS START/STOP
 
+					uint16_t duration;
+
 					dgProximityEvents_t event;
 					// Extract from command string
-					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract command
 					{
 						strcpy(response, "CERROR:Less Parameters\r\n>");
 						sendCliResponse(response, strlen(response));
@@ -844,7 +846,22 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "START\0")==0)
 					{
-						transferStart(CLI_MOD);
+						if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract transfer duration
+						{
+							strcpy(response, "CERROR:Less Parameters\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						duration = atoi(token);
+						if(duration == 0)
+						{
+							strcpy(response, "CERROR:Invalid Parameter\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						transferStart(CLI_MOD, duration);
 
 					}
 					else if (strcmp(&token[0], "STOP\0")==0)

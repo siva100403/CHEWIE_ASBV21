@@ -10,7 +10,7 @@
 
 
 
-int transferStart(uint8_t srcModule);
+int transferStart(uint8_t srcModule, uint16_t trfrDuration);
 int transferAbort(uint8_t srcModule);
 int checkTransferFeasibility(void);
 int event_ls_stvalveClose(uint8_t srcModule);

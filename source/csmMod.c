@@ -194,7 +194,7 @@ void csm_Task(void* arg)
 						sensorStop(CSM_MOD);
 						hatcsStop(CSM_MOD);
 						//Initiate transfer
-						transferStart(CSM_MOD);
+						transferStart(CSM_MOD, 20);
 						//Does CT has to be turned ON to easy transfer?
 						*rcvMsg.result = DG_SUCCESS;
 					}
@@ -225,6 +225,7 @@ void csm_Task(void* arg)
 			sensorStop(CSM_MOD);
 			hatcsStop(CSM_MOD);
 			transferAbort(CSM_MOD);
+
 
 			//stop 1 min timer
 			dgtimerStop(CSM_MOD);
@@ -559,7 +560,7 @@ void csm_Task(void* arg)
 						sensorStop(CSM_MOD);
 						hatcsStop(CSM_MOD);
 						//Initiate transfer
-						transferStart(CSM_MOD);
+						transferStart(CSM_MOD, 20);
 						//Does CT has to be turned ON to easy transfer?
 
 					}
