@@ -199,6 +199,7 @@ static void callback2mSec(void)
 	    		//Both limit switch can not be in pressed condition.
 	    		//printf("limitSwitchMod.c:callback2mSec():Both limit switch in OPEN condition\r\n");
 	    		lidStatus = LID_STATUS_ERROR;
+	    		break;
 	    	case 0x01:
 	    		lidStatus = LID_STATUS_OPEN;
 	    		//send event to shredder module
@@ -218,10 +219,11 @@ static void callback2mSec(void)
 	    		break;
 	    	}
 	    	//send event to lidModule
-	    	if(starting == 0)
+	        sendLidSwitchEvent(lidStatus);
+/*	    	if(starting == 0)
 	    	{
 		        sendLidSwitchEvent(lidStatus);
-	    	}
+	    	}*/
 
 
 	    	starting = 0;

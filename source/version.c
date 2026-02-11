@@ -158,5 +158,7 @@ void getHwVersion(char * version)
  *   - Shredder.c:executeSHDSeqControl(): When sequence engine is stopped, shdAugur was not stopped
  *     i.e from auger transfer to OPEN/CLOSE mechanism
  *   - CSMSTOP command was not closing Airvalves. That has been fixed
+ *   - Lid Module: Values for Timer. Unit mismatch fixed
+ *   - GPIOSignals.h: LIDOPEN, LIDCLOSE LS signals interchanged. Fixed
  *
  *******************************************************************/

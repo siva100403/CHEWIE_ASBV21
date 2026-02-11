@@ -456,7 +456,7 @@ static void lidModule_task(void *pvParameters)
 
 				//enable lidstatus sensing by limitswitch sensing module
 				enableLidStatusSensing();
-				dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
+				dgtimerStart(LID_MOD, LIDCLOSING_DURATION/portTICK_PERIOD_MS);
 
 				//Go to READY state and wait for limit switch event
 				lidModuleState = LIDMOD_STATE_READY;
@@ -506,14 +506,15 @@ static void lidModule_task(void *pvParameters)
 				}
 				else if(*lidEvent  == LID_STATUS_OPEN)
 				{
-					lidModuleState = LIDMOD_STATE_CLOSING;
+					//lidModuleState = LIDMOD_STATE_CLOSING;
 					printf("lidModule.c:lidModule_task():LID is in open condition\r\n");
-					dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
+					//dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
 				}
 				else if(*lidEvent  == LID_STATUS_INBETWEEN)
 				{
-					lidModuleState = LIDMOD_STATE_CLOSING;
-					dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
+					//lidModuleState = LIDMOD_STATE_CLOSING;
+					//dgtimerStop(LID_MOD);
+					//dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
 					printf("lidModule.c:lidModule_task():LID is in-between\r\n");
 				}
 				else if(*lidEvent == LID_STATUS_ERROR)
@@ -812,11 +813,12 @@ static void lidModule_task(void *pvParameters)
 				break;
 			case DG_TIMER_EXPIRY:
 				//Timer expired. Now we can stop the motor
+				printf("lidModule.c:lidModule_task():Timer Expiry Event in state LIDMOD_STATE_CLOSING\r\n",rcvMsg.command);
 				LID_POWER_OFF();
 				lidModuleState = LIDMOD_STATE_ERROR;
 				break;
 			default:
-				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_CLOSETIMEOUT - Ignored)\r\n",rcvMsg.command);
+				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_CLOSING - Ignored)\r\n",rcvMsg.command);
 				break;
 			}
 			break;
