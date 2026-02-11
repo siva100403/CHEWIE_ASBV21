@@ -178,6 +178,46 @@ int event_ls_stvalveClose(uint8_t srcModule)
 
 }
 
+
+int tcsSTValveSync(uint8_t srcModule)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = srcModule;
+	sendMsgBuf.command = TCS_STV_SYNC;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = TCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("transferCSAPI.c:tcsSTValveSync():Task handle is null for module with id: %d \r\n", srcModule);
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("transferCSAPI.c:tcsSTValveSync():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+}
+
+
 int checkTransferFeasibility(void)
 {
 

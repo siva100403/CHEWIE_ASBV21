@@ -125,12 +125,16 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 		//Take all the actuator to safe state
 		SHD_STOP();
 #ifdef INCLUDE_FLAP_CONTROL
-		flapMotorStop();
+		//Check flap status. If not in closed condition, close it
+		//flapMotorStop();
 #endif /*INCLUDE_FLAP_CONTROL */
 
 #ifdef INCLUDE_FLUSH_CONTROL
 		//Stop spraying water
+		flushSprayerOff();
 #endif /*INCLUDE_FLUSH_CONTROL */
+		//Stop shdAug
+		shdAugMotorStop();
 		return DG_ACTION_COMPLETE;
 		break;
 	case SEQ_ENGINE_CONTINUE:
@@ -414,7 +418,7 @@ int initShd(void)
 	TimerHandle_t shdTimerHandle;
 	BaseType_t result;
 
-	result = xTaskCreate(shredder_task, "shredder_task", configMINIMAL_STACK_SIZE + 100, NULL, task_PRIORITY, &shdTaskHandle);
+	result = xTaskCreate(shredder_task, "shredder_task", configMINIMAL_STACK_SIZE + 300, NULL, task_PRIORITY, &shdTaskHandle);
 	if ( result !=    pdPASS)
 	{
 		printf("shredder Task creation failed!.\r\n");

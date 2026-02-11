@@ -129,12 +129,13 @@ static void callback2mSec(void)
 
 	lidStatusChangeFlag = 0;  //Default - No change in lid status
 
+	//RED_LED_ON();
 	RED_LED_TOGGLE();
 
 	if(lidSensingEnable == LID_SENSING_ENA)
 	{
 	    //Read LIDCLOSE sensor and debounce
-	    if(READ_LS_SENSE_LIDCLOSE() == LIMITSWITCH_CLOSE)
+	    if(READ_LS_SENSE_LIDCLOSE() == LIMITSWITCH_OPEN)   //Limit switch is pressed
 	    {
 	    	lidCloseDbCount++;
 	    	lidCloseDbCount = (lidCloseDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidCloseDbCount;
@@ -160,7 +161,7 @@ static void callback2mSec(void)
 	    }
 
 	    //Read LIDOPEN sensor and debounce
-	    if(READ_LS_SENSE_LIDOPEN() == LIMITSWITCH_CLOSE)
+	    if(READ_LS_SENSE_LIDOPEN() == LIMITSWITCH_OPEN)  //Limit switch pressed
 	    {
 	    	lidOpenDbCount++;
 	    	lidOpenDbCount = (lidOpenDbCount >DEBOUNCE_COUNT)? DEBOUNCE_COUNT: lidOpenDbCount;
@@ -194,21 +195,21 @@ static void callback2mSec(void)
 	    	combinedStatus = ((lidCloseStatus<<1) & 0x02)+(lidOpenStatus & 0x01);
 	    	switch(combinedStatus)
 	    	{
-	    	case 0x00:
-	    		//Both limit switch can not be in open condition.
+	    	case 0x03:
+	    		//Both limit switch can not be in pressed condition.
 	    		//printf("limitSwitchMod.c:callback2mSec():Both limit switch in OPEN condition\r\n");
 	    		lidStatus = LID_STATUS_ERROR;
 	    	case 0x01:
 	    		lidStatus = LID_STATUS_OPEN;
 	    		//send event to shredder module
-	        	//event_lid_open(LIMITSWITCH_MOD);
+	        	event_lid_open(LIMITSWITCH_MOD);
 	    		break;
 	    	case 0x02:
 	    		lidStatus = LID_STATUS_CLOSED;
 	    		//send Lid_close event to shredder module
 	    		event_lid_close(LIMITSWITCH_MOD);
 	    		break;
-	    	case 0x03:
+	    	case 0x00:
 	    		lidStatus = LID_STATUS_INBETWEEN;
 	    		//send Lid_open event to shredder module
 	        	event_lid_open(LIMITSWITCH_MOD);
@@ -258,7 +259,7 @@ static void callback2mSec(void)
     	}
     }
 
-    //Read ST sensor and debounce
+    //Read ST sensor and de-bounce
     if(READ_LS_SENSE_ST() == LS232DRVR_OPEN)
     {
     	sttvDbCount++;
@@ -287,12 +288,16 @@ static void callback2mSec(void)
     		///*TODO*/
     	}
     }
+	//RED_LED_OFF();
 }
 
 
 void start2mSecTimer(void)
 {
     UTICK_Init(UTICK0);
+	DisableIRQ(UTICK0_IRQn );
+	NVIC_SetPriority(UTICK0_IRQn , 4);
+	EnableIRQ(UTICK0_IRQn );
     UTICK_SetTick(UTICK0, kUTICK_Repeat, TWO_MS_TIMER_PERIOD, callback2mSec);
 }
 

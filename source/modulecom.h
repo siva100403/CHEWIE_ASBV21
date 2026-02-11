@@ -78,6 +78,7 @@
 #define TCS_START					0x28
 #define TCS_ABORT					0x29
 #define DG_LS_STVALVECLOSE			0x2A
+#define TCS_STV_SYNC				0x2B
 
 //Sensor Control Module Commands
 #define SENSOR_START				0x2C

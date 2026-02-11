@@ -129,6 +129,7 @@ void HMI_LPUART_IRQHandler(void)
 	uint32_t RS232PortFlags;
     uint8_t data;
 
+	GREEN_LED_ON();
     //RED_LED_ON();
     RS232PortFlags = LPUART_GetStatusFlags(HMI_LPUART);
 
@@ -271,7 +272,7 @@ void HMI_LPUART_IRQHandler(void)
         	//Noise Flag. Clear
         	LPUART_ClearStatusFlags(HMI_LPUART, LPUART_STAT_NF(0b1));
         }
-    //RED_LED_OFF();
+    GREEN_LED_OFF();
     SDK_ISR_EXIT_BARRIER;
 }
 

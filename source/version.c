@@ -42,9 +42,9 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-strcpy(swVer,"0.4.1" );
-strcpy(productModel,"CHEWIE");
-strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
+	strcpy(swVer,"0.4.2" );
+	strcpy(productModel,"CHEWIE");
+	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
 
 void getFwVersion(char * version)
@@ -147,6 +147,15 @@ void getHwVersion(char * version)
  *
  * New Features:
  *   - TCS control system task has been modified to support new transfer mechanism
+ *     i.e from auger transfer to OPEN/CLOSE mechanism
+ *   - CSMSTOP command was not closing Airvalves. That has been fixed
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.2 05-02-2026********************
+ *
+ * Bug fixes:
+ *   - Shredder.c:executeSHDSeqControl(): When sequence engine is stopped, shdAugur was not stopped
  *     i.e from auger transfer to OPEN/CLOSE mechanism
  *   - CSMSTOP command was not closing Airvalves. That has been fixed
  *

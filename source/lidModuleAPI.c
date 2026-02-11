@@ -134,11 +134,17 @@ int sendLidSwitchEvent(uint8_t switchEvent)
 		return DG_FAIL;
 	}
 
-	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+
+	if(sendMsgFromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
 		PRINTF("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
 		return DG_FAIL;
 	}
+/*	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
+		return DG_FAIL;
+	}*/
 	//No need to wait for response and hence return
 
 	return DG_SUCCESS;

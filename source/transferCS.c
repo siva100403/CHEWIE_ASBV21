@@ -296,6 +296,41 @@ void tcs_Task(void* arg)
 			}
 			break;
 
+		case TCS_STV_SYNC:
+			switch(tcsState)
+			{
+			case TCS_STATE_IDLE:
+				//Check - ST Valve in closed condition
+
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				break;
+			case TCS_STATE_TRANSFERRING:
+			case TCS_STATE_OPENING:
+			case TCS_STATE_CLOSING:
+			case TCS_STATE_ERROR:
+				//Sync is allowed only in IDLE state.Return failure
+				*rcvMsg.result = DG_FAIL;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				break;
+			default:
+				//Sync is allowed only in IDLE state.Return failure
+				*rcvMsg.result = DG_FAIL;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				break;
+			}
+			break;
+
+
 		case DG_TIMER_EXPIRY:
 			switch(tcsState)
 			{

@@ -1,4 +1,4 @@
-/*
+ /*
  * lidModule.c
  *
  *  Created on: 15-May-2025
@@ -839,7 +839,7 @@ int initLidModule(void)
 	BaseType_t result;
 
 	//Create lidModule task
-	result = xTaskCreate(lidModule_task, "lidModule_task", configMINIMAL_STACK_SIZE + 300, NULL, task_PRIORITY, &lidModuleTaskHandle);
+	result = xTaskCreate(lidModule_task, "lidModule_task", configMINIMAL_STACK_SIZE + 500, NULL, task_PRIORITY, &lidModuleTaskHandle);
     if ( result !=    pdPASS)
     {
         PRINTF("lidModule_task creation failed!.\r\n");
