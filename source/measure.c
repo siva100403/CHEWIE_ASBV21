@@ -145,3 +145,17 @@ int updateCounterLid(uint16_t lidCycles)
 {
 	return DG_SUCCESS;
 }
+
+int updateAdcsState(uint8_t state)
+{
+	rtcRAMWrite(ADCS_STATE_ADDR, state);
+	return DG_SUCCESS;
+}
+
+int getAdcsState(uint8_t *state)
+{
+	rtcRAMRead(ADCS_STATE_ADDR, state);
+	return DG_SUCCESS;
+}
+
+

@@ -24,7 +24,7 @@
 //Control System parameters
 #define STV_OPEN_DURATION		2000  	// in mSec
 #define STV_CLOSE_DURATION		2000  	// in mSec
-#define TRANSFER_DUR_DEFAULT	20		// in Seconds
+#define TRANSFER_DUR_DEFAULT	40		// in Seconds
 #define TRANSFER_DUR_MAX		600 	// in Seconds
 
 

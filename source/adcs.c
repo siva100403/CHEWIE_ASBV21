@@ -69,23 +69,21 @@
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
+#include "csmMod.h"
+#include "measure.h"
 
 
 /*******************************************************************************
  * ADCS configuration parameters
  ******************************************************************************/
 
-#define QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY  60 			// in minutes
+#define QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY  30 			// in minutes
 #define AMOUNT_OF_ADDITIVE_PER_DELIVERY			6			// in grams
 #define AMOUNT_OF_ADDITIVE_DELIVERED_PER_MIN	1			// in grams/min - property of additive delivery part
-#define ADDITIVE_DELIVERY_MIN_DUR				3			// in minutes
+#define ADDITIVE_DELIVERY_MIN_DUR				1			// in minutes
 #define ADDITIVE_DELIVERY_MAX_DUR				15			// in minutes
-/******************************* ADCS states *********************************/
-#define ADCS_STATE_IDLE				0     	//Default state after powerup
-#define ADCS_STATE_DELIVERING		1		//Currently delivering additives
-#define ADCS_STATE_QUIET_PERIOD		2		//Period during which Additives should not be delivered eventhough waste has been added
 
-
+#define ADDITIVE_MOTOR_ON_DUR					2			// in minutes
 
 /*******************************************************************************
  * Global Variables
@@ -100,7 +98,7 @@ static void adcs_task(void *pvParameters)
 {
 	QueueHandle_t adcsQHandle;
 	dgMsg_t rcvMsg;				//Holds the currently received message
-	static int adcsState;		//
+	static uint8_t adcsState;		//
 	static uint8_t additiveMotorOnDur;
 
 	//Compute Additive motor ON duration based on the amount of additives to be delivered
@@ -109,11 +107,22 @@ static void adcs_task(void *pvParameters)
 	additiveMotorOnDur = (additiveMotorOnDur < ADDITIVE_DELIVERY_MIN_DUR) ? ADDITIVE_DELIVERY_MIN_DUR:additiveMotorOnDur;
 	additiveMotorOnDur = (additiveMotorOnDur > ADDITIVE_DELIVERY_MAX_DUR) ? ADDITIVE_DELIVERY_MAX_DUR:additiveMotorOnDur;
 
+	additiveMotorOnDur = ADDITIVE_MOTOR_ON_DUR;
 	//Get the Qhandle for this task and store locally
 	adcsQHandle = getQHandle(ADCS_MOD);
 
-	//Initialize the state of CT to IDLE
-	adcsState = ADCS_STATE_IDLE;
+	getAdcsState(&adcsState);
+
+	if(adcsState == ADCS_STATE_QUIET_PERIOD)
+	{
+		dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY*60));
+	}
+	else
+	{
+		//DELIVERING state is considered as IDLE
+		adcsState = ADCS_STATE_IDLE;
+	}
+
 
 
 	while(1)
@@ -136,6 +145,8 @@ static void adcs_task(void *pvParameters)
 					additiveDispenseOn();
 					//change state to delivering
 					adcsState = ADCS_STATE_DELIVERING;
+					//Update RTC RAM
+					updateAdcsState(adcsState);
 					//start a timer
 					dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(additiveMotorOnDur*60));
 					break;
@@ -163,12 +174,14 @@ static void adcs_task(void *pvParameters)
 						additiveDispenseOff();
 						//change state to Idle
 						adcsState = ADCS_STATE_IDLE;
+						updateAdcsState(adcsState);
 						//stop timer
 						dgtimerStop(ADCS_MOD);
 						break;
 					case ADCS_STATE_QUIET_PERIOD:
 						//change state to Idle
 						adcsState = ADCS_STATE_IDLE;
+						updateAdcsState(adcsState);
 						//stop timer
 						dgtimerStop(ADCS_MOD);
 						break;
@@ -192,12 +205,14 @@ static void adcs_task(void *pvParameters)
 					additiveDispenseOff();
 					//change state to quite period
 					adcsState = ADCS_STATE_QUIET_PERIOD;
+					updateAdcsState(adcsState);
 					//start quite period timer
 					dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY*60));
 					break;
 				case ADCS_STATE_QUIET_PERIOD:
 					//Quite period is over. Change state to IDLE
 					adcsState = ADCS_STATE_IDLE;
+					updateAdcsState(adcsState);
 					break;
 				default:
 					printf("ADCS.c:adcs_task(): Invalid state:%d\r\n",adcsState);

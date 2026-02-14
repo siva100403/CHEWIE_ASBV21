@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.2" );
+	strcpy(swVer,"0.4.3" );
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -160,5 +160,24 @@ void getHwVersion(char * version)
  *   - CSMSTOP command was not closing Airvalves. That has been fixed
  *   - Lid Module: Values for Timer. Unit mismatch fixed
  *   - GPIOSignals.h: LIDOPEN, LIDCLOSE LS signals interchanged. Fixed
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.3 12-02-2026********************
+ *
+ * Modifications:
+ *   - hatcs.c:executeActuatorControl(): Code modified to control two fans.
+ *      When CWR direction specified in seq -> Heater FAN will be ON
+ *      When CCWR direction is specified in seq -> Airvalve FAN will be ON
+ *      When OFF in seq -> both FANs will be OFF
+ *      Heater FAN connected to SPARE2_RELAY CTRL
+ *      Airvalve FAN connected to FAN
+ *   - hatcs.c:executeActuatorSafeState(): Included heater fan OFF
+ *
+ *   - adcs.c: Modified the code to store adcs state in RTC RAM and
+ *      read&restore after power returns
+ *   - measure.c/measure.h: getAdcsState() and updateAdcsState() added for
+ *      storing and retrieving ADCS state in RTC RAM
+ *   -shredder.c:shredder_task():adcsStart() method called at the end of shredder
  *
  *******************************************************************/

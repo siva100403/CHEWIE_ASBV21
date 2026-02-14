@@ -404,7 +404,7 @@ void cli_Task(void* arg)
 	//Print version number and board details
 	getFwVersion(&version[0]);
 
-	strcpy(response, "\r\n\r\n****************  ASB V2.0 CLI  ****************\r\n\r\n");
+	strcpy(response, "\r\n\r\n****************  ASB V2.2.1 CLI  ****************\r\n\r\n");
 	sendCliResponse(response, strlen(response));
 	vTaskDelay(100);
 	strcpy(response, "************      FW version:");

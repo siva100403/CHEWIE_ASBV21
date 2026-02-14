@@ -59,6 +59,7 @@
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
+#include "adcs.h"
 
 
 #define INCLUDE_FLAP_CONTROL
@@ -388,6 +389,7 @@ static void shredder_task(void *pvParameters)
 				if(executeSHDSeqControl(SEQ_ENGINE_CONTINUE) == DG_ACTION_COMPLETE)
 				{
 					shredderState = SHD_STATE_IDLE;
+					adcsStart(SHREDDER_MOD);
 				}
 				break;
 			case DG_LS_FLAPCLOSE:

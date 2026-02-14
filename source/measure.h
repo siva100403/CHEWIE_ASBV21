@@ -30,6 +30,11 @@
 #define MATERIAL_LEVEL_STORE_ADDR	0x30	//Address in RTC RAM
 #define MATERIAL_LEVEL_STORE_SIZE	0x8		//8 bytes
 
+//Stores the state of ADCS. After power up this location is checked
+// to decide the state of ADCS
+#define ADCS_STATE_ADDR				0x39	//1 byte
+
+
 #define USAGE_COUNTER_STORE_ADDR	0x40	//Address in RTC RAM
 #define USAGE_COUNTER_STORE_SIZE	0x20	//32 bytes
 
@@ -75,6 +80,9 @@ int updateCounterShmotor(uint16_t shmotor);
 int updateCounterLid(uint16_t lidCycles);
 int updateChewieStateStore(dgCtStateVar_t *ctVar);
 int getChewieStateStore(dgDateTime_t *updateTime,dgCtStateVar_t *ctVar);
+
+int getAdcsState(uint8_t *state);
+int updateAdcsState(uint8_t state);
 
 
 #endif /* MEASURE_H_ */
