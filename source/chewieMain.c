@@ -219,7 +219,7 @@ static void print_task(void *pvParameters)
     	//storeWorkingConfigEEPROM()
     	//getLidSwicthStatus();
     	vTaskDelay(200);
-    	//getLidSwicthStatus();
+    	getLidSwicthStatus();
 
     	//printf("ChewieMain.c:lidSwitchStatus=%d, LSCLOSE=%d, LSOPEN=%d\r\n",getLidSwicthStatus(), READ_LS_SENSE_LIDCLOSE(), READ_LS_SENSE_LIDOPEN());
 

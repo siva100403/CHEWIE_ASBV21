@@ -181,3 +181,11 @@ void getHwVersion(char * version)
  *   -shredder.c:shredder_task():adcsStart() method called at the end of shredder
  *
  *******************************************************************/
+
+/************************Ver 0.4.4 14-02-2026********************
+ *
+ * Bugfix:
+ *   - limitswitchMod.c:callback2mSec():Lid Event message is not sent during
+ *      initialization. i.e. when starting==1
+ *
+ *******************************************************************/
