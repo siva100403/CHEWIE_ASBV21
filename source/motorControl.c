@@ -146,21 +146,21 @@ void TC78H660_Active(void)
 
 
 
-void fanMotorCWR(void)
+void stMotorCWR(void)
 {
 	//It assumes motor1 is in OFF condition
 	MOTOR1_FORWARD();
 	MOTOR1_START();
 }
 
-void fanMotorCCWR(void)
+void stMotorCCWR(void)
 {
 	//It assumes motor is in OFF condition
 	MOTOR1_REVERSE();
 	MOTOR1_START();
 }
 
-void fanMotorStop(void)
+void stMotorStop(void)
 {
 	MOTOR1_STOP();
 }

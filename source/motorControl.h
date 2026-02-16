@@ -45,9 +45,9 @@ void TC78H660_Stby(void);
 
 void TC78H660_Active(void);
 
-void fanMotorCWR(void);
-void fanMotorCCWR(void);
-void fanMotorStop(void);
+void stMotorCWR(void);
+void stMotorCCWR(void);
+void stMotorStop(void);
 
 void augerMotorCWR(void);
 void augerMotorCCWR(void);

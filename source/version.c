@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.3" );
+	strcpy(swVer,"0.4.5" );
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -187,5 +187,15 @@ void getHwVersion(char * version)
  * Bugfix:
  *   - limitswitchMod.c:callback2mSec():Lid Event message is not sent during
  *      initialization. i.e. when starting==1
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.5 15-02-2026********************
+ *
+ * Modifications:
+ *   - ST Motor and FAN Motor (used for sucking air from DC)inter changed
+ *      ST motor has been changed and it requires 2A motor driver
+ *   - motorControl.c/h: fanMotorCWR(), fanMotorCCWR(), fanMotorStop() renamed to st
+ *   - actuatorCtrl.c/h: stMotorCWR(), stMotorCCWR(), stMotorStop() renamed to fan
  *
  *******************************************************************/

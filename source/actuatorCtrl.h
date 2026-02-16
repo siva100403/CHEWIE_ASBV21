@@ -18,9 +18,9 @@ int DCsprayerOff();
 int flushSprayerOn();
 int flushSprayerOff();
 
-int stMotorCWR();
-int stMotorCCWR();
-int stMotorStop();
+int fanMotorCWR();
+int fanMotorCCWR();
+int fanMotorStop();
 
 
 int airValve1On();

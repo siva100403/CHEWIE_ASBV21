@@ -66,7 +66,7 @@ const dgSolenoidHbAlloc_t airValve3 = {DRV89XX_2, HALFBRIDGE_2};
 /************ HBridge Port assignment for bi-directional DC motor ************/
 const dgBiDirMotorHbAlloc_t shdAugMotor = {DRV89XX_2, HALFBRIDGE_3, HALFBRIDGE_4};
 const dgBiDirMotorHbAlloc_t flapMotor = {DRV89XX_1, HALFBRIDGE_5, HALFBRIDGE_7};
-const dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7};
+const dgBiDirMotorHbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7};
 //const dgBiDirMotorHbAlloc_t augerMotor = {DRV89XX_2, HALFBRIDGE_11, HALFBRIDGE_12};
 
 /*****HBRidge Port Assignment for parallel(2) driving of bi-directional motor ***/
@@ -136,19 +136,19 @@ int airValve3Off()
 	return halfBridgeCtrl(airValve3.spiDeviceId , airValve3.solHbridgeId, SOLENOID_OFF);
 }
 
-int stMotorCWR()
+int fanMotorCWR()
 {
-	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_FWD);
+	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_FWD);
 }
 
-int stMotorCCWR()
+int fanMotorCCWR()
 {
-	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_REV);
+	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_REV);
 }
 
-int stMotorStop()
+int fanMotorStop()
 {
-	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_COAST);
+	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_COAST);
 }
 
 int shdAugMotorCWR()
