@@ -1755,16 +1755,16 @@ void cli_Task(void* arg)
 
 				case GETTRFRCFG_C:
 				{
-				    dgTransferCtrlSeq_t trCfg;
+					dgTcsConfigParam_t trCfg;
 
-				    if (getTransferCtrlSeq(&trCfg) == DG_SUCCESS)
+				    if (getTransferCtrlParams(&trCfg) == DG_SUCCESS)
 				    {
-				        sprintf(response, "CC:%d,%d,%d,%d\r\n",
-				                trCfg.duration,
-				                trCfg.ctCtrl,
-				                trCfg.stCtrl,
-				                trCfg.ctrlSeqRecType);
+				        sprintf(response, "CC:%d,%d,%d\r\n",
+				                trCfg.stvOpenDur,
+				                trCfg.stvCloseDur,
+				                trCfg.transferDur);
 				        sendCliResponse(response, strlen(response));
+				        printf("cliProc.c:response %s\r\n",response);
 				    }
 				    else
 				    {
@@ -1777,7 +1777,61 @@ void cli_Task(void* arg)
 				}
 				case SETTRFRCFG_C:
 				{
-					break;
+					dgTcsConfigParam_t trCfg;
+
+				    // Temporaries for sscanf (wider than uint8_t)
+				    unsigned int stvOpenDur, stvCloseDur, transferDur;
+				    int parsed;
+
+				    printf("cliProc.c: cmd received: %s\r\n", cmdString);
+
+				    // Usage:
+				    // SETTRFRCFG_C stvOpenDur,stvCloseDur,transferDur
+				    // Example:
+				    // SETTRFRCFG_C 600,600,40  -mSec, mSec, Sec
+				    parsed = sscanf(cmdString,
+				                    "SETTRFRCFG_C %u,%u,%u",
+				                    &stvOpenDur,
+				                    &stvCloseDur,
+				                    &transferDur);
+
+				    if (parsed == 3)
+				    {
+				        // Validate as uint16_t
+				        if (stvOpenDur <= 0xFFFF &&
+				        	stvCloseDur  <= 0xFFFF &&
+							transferDur <= 0xFFFF )
+
+				        {
+				        	trCfg.stvOpenDur 	= (uint16_t)stvOpenDur;
+				        	trCfg.stvCloseDur   = (uint16_t)stvCloseDur;
+				        	trCfg.transferDur   = (uint16_t)transferDur;
+
+
+				            if (setTransferCtrlParams(&trCfg) == DG_SUCCESS)
+				            {
+				                strcpy(response, "CC:\r\n");  // Success acknowledgment
+				            }
+				            else
+				            {
+				                strcpy(response, "CE:\r\n");  // Validation / internal error
+				            }
+				        }
+				        else
+				        {
+				            // Out-of-range values
+				            strcpy(response, "CE:\r\n");
+				        }
+				    }
+				    else
+				    {
+				        // Parsing error
+				        strcpy(response, "CE:\r\n");
+				    }
+
+				    sendCliResponse(response, strlen(response));
+				    setRxStatus(RS232_RCV_IDLE);
+				    break;
 				}
 
 				case GETSHDSEQ_C:

@@ -478,6 +478,7 @@ static void sysStart_task(void *pvParameters)
 	vTaskDelay(8);   //40mSec delay
 	//Send Flapsync command to shredder module
 	shdFlapSync(UNKNOWN);
+	tcsSTValveSync(SYSSTART_MOD);
 
 	vTaskDelay(1600);   //8 Sec delay for Flap Sync
 	//Read the CSM state stored in RTC RAM
@@ -499,6 +500,10 @@ static void sysStart_task(void *pvParameters)
 		//vTaskDelay(1000);
 		if(moduleHealthReg[CSM_MOD].operationStatus == MODULE_IDLE)
 		{
+			if(csmStateVar.state == CSM_STATE_IDLE)
+			{
+				csmStateVar.state = CSM_STATE_MPHASE;
+			}
 			csmStart(SYSSTART_MOD, csmStateVar.state, csmStateVar.curPhase, csmStateVar.remDur, csmStateVar.curWasteCat);
 			moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
 		}

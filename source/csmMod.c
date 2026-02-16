@@ -588,13 +588,39 @@ void csm_Task(void* arg)
 					//Go back to IDLE state
 					ctVar.state = CSM_STATE_IDLE;
 					dgtimerStop(CSM_MOD);
-					ctVar.prevPhase = ctVar.curPhase;
-					ctVar.curPhase = PHASE_IDLE;
-					updateChewieStateStore(&ctVar);
+					//ctVar.prevPhase = ctVar.curPhase;
+					//ctVar.curPhase = PHASE_IDLE;
+					//updateChewieStateStore(&ctVar);
 					//Stop HATCS
 					//inform Humidity-Aeration-Temperature CS to go IDLE
 					sensorStop(CSM_MOD);
 					hatcsStop(CSM_MOD);
+
+					//Restart Chewie
+					ctVar.curPhase = MESOPHILIC_PHASE;
+					//Update the compost process parameters based on the updated waste category and phase
+					getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
+					//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
+					ctVar.schDur = currentProcessParam.phaseDur;
+
+					//Update the duration with remaining duration
+					//ctVar.remDur = (configparams->remDur < ctVar.schDur)? configparams->remDur:ctVar.schDur;
+					ctVar.remDur = ctVar.schDur;
+					//Update the csmState variable
+					ctVar.state = CSM_STATE_MPHASE;
+
+					//Update RTC RAM
+					updateChewieStateStore(&ctVar);
+					//Start 1 minute timer
+					dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
+					//Set the temperature/humidity threshold to sensor Module and start
+					if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
+					{
+						printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
+					}
+					sensorStart(CSM_MOD);
+					//Start the hatcs module which control the actuators to maintain the temp/humidity/aeration
+					hatcsStart(CSM_MOD);
 				}
 				break;
 			case CSM_STATE_ADDWASTE_I:

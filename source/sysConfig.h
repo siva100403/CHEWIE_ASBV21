@@ -163,14 +163,22 @@ typedef struct actuatorCtrlSeq
 }dgActuatorCtrlSeq_t;
 
 
-typedef struct transferCtrlSeq
+/*typedef struct transferCtrlSeq
 {
 	uint16_t duration; 			//in 100s of mSec
 	uint8_t ctCtrl;				// TRSEQ_CTMOTOR_CCW, TRSEQ_CTMOTOR_OFF
 	uint8_t stCtrl;				// TRSEQ_STMOTOR_ON, TRSEQ_STMOTOR_OFF
 	uint8_t ctrlSeqRecType;		// TRSEQ_CTRL_START, TRSEQ_CTRL_MID, TRSEQ_CTRL_END
 
-}dgTransferCtrlSeq_t;
+}dgTransferCtrlSeq_t;*/
+
+typedef struct tcsConfig
+{
+	uint16_t stvOpenDur;		//in mSec
+	uint16_t stvCloseDur;		//in mSec
+	uint16_t transferDur;		//in Sec
+
+}dgTcsConfigParam_t;
 
 
 /***********************Shredder CS Configuration Parameters ******************************/
@@ -228,7 +236,7 @@ typedef union augerCfg
 typedef union transferCfg
 {
 	uint8_t 			transferSpcae[128];
-	dgTransferCtrlSeq_t	transferParam;
+	dgTcsConfigParam_t	transferParams;
 }dgTransferConfig_t;
 
 
@@ -265,8 +273,8 @@ int getShredderTimingParam(dgShredderTimingVar_t *out);
 int setShredderTimingParam(const dgShredderTimingVar_t *value);
 
 // Transfer
-int getTransferCtrlSeq(dgTransferCtrlSeq_t *out);
-int setTransferCtrlSeq(const dgTransferCtrlSeq_t *value);
+int setTransferCtrlParams(const dgTcsConfigParam_t *value);
+int getTransferCtrlParams(dgTcsConfigParam_t *out);
 
 // Auger
 int getAugerConfig(dgCtConfigParam_t *out);

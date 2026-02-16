@@ -70,7 +70,7 @@
  * Whenever transfer command is received (with the duration as parameter) following steps
  * will be executed. If abort is called, it will stop augur motor immediatly and close
  * ST valve. It is expected that CSM is in transfer state or in IDLE state.
- * Step1: Open the ST valve (CCWR rotation for STV_OPEN_DURATION)
+ * Step1: Open the ST valve (CCWR rotation for STV_CLOSE_DURATION)
  * Step2: Rotate Auger, CCWR DIR, for specified duration
  * Step3: Stop Auger motor and Close ST Valve (CWR rotation for STV_CLOSE_DURATION
  *        or Limit switch lever pressed
@@ -81,6 +81,10 @@
 //AUGER Motor
 //ST Motor:
 
+
+/*************************** Global variables *******************/
+
+extern dgConfigMem_t allConfig;
 
 /***********************Configuration Parameters******************************/
 
@@ -166,6 +170,34 @@ int executeTRFRSeqControl(uint8_t condition)
 }
 
 */
+
+/*
+
+int flapTimerStart(TickType_t timeoutValue)
+{
+
+	if(xTimerChangePeriod(flapTimerHandle,timeoutValue, DGTIMER_BLOCKTIME )== pdFALSE)
+	{
+		PRINTF("shredder.c:flapTimerStart():Change period failed\r\n");
+		return DG_FAIL;
+	}
+	if(xTimerStart(flapTimerHandle,DGTIMER_BLOCKTIME) == pdFALSE)
+	{
+		PRINTF("shredder.c:flapTimerStart():Start failed\r\n");
+		return DG_FAIL;
+	}
+	return DG_SUCCESS;
+}
+
+
+void flapTimerCallback( TimerHandle_t xTimer)
+{
+	//Turn of flap motor
+	flapMotorStop();
+}
+*/
+
+
 void executeTRFRSafeState()
 {
 	stMotorStop();
@@ -180,7 +212,9 @@ void tcs_Task(void* arg)
 	QueueHandle_t tcsQHandle;
 	dgMsg_t rcvMsg;				// Holds the currently received message
 	uint8_t tcsState;
-	uint16_t transferDuration;
+	uint16_t transferDuration;  	// in Secs
+	uint16_t stvOpenDuration, stvCloseDuration;   //in mSec
+
 
 	//Init variables
 	tcsState = TCS_STATE_IDLE;
@@ -194,6 +228,11 @@ void tcs_Task(void* arg)
 		tcsQHandle = getQHandle(TCS_MOD);
 	}
 
+	//Initialize Transfer Control system configuration parameters
+	//Initialize Timeout variables
+	stvOpenDuration = allConfig.transferConfig.transferParams.stvOpenDur;
+	stvCloseDuration = allConfig.transferConfig.transferParams.stvCloseDur;
+	transferDuration = allConfig.transferConfig.transferParams.transferDur;
 
 	while (1)
 	{
@@ -211,7 +250,7 @@ void tcs_Task(void* arg)
 			{
 			case TCS_STATE_IDLE:
 				//Get the transfer duration from rcvMsg
-				transferDuration = *(uint16_t*)rcvMsg.cmdParam;
+				//transferDuration = *(uint16_t*)rcvMsg.cmdParam;
 				printf("transferCS.c:tcs_Task():transfer duration:%dr\n",transferDuration);
 
 				//change state to transfer
@@ -224,7 +263,7 @@ void tcs_Task(void* arg)
 				}
 
 				//Open the ST Valve
-				dgtimerStart(TCS_MOD, (STV_OPEN_DURATION)/portTICK_PERIOD_MS);
+				dgtimerStart(TCS_MOD, (stvOpenDuration)/portTICK_PERIOD_MS);
 				stMotorCCWR();
 				break;
 			case TCS_STATE_OPENING:
@@ -301,11 +340,24 @@ void tcs_Task(void* arg)
 			{
 			case TCS_STATE_IDLE:
 				//Check - ST Valve in closed condition
-
 				*rcvMsg.result = DG_SUCCESS;
 				if(rcvMsg.taskHandleSM != NULL)
 				{
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				if(getStorageTraySwicthStatus() == STTV_POSITION_CLOSED)
+				{
+					//STTV is in closed condition. No need to do anything
+				}
+				else
+				{
+					printf("transferCS.c:tcsTask():STTV is not in closed condition. Closing");
+					//Change state to SHD_STATE_FLAPSYNC
+					tcsState = TCS_STV_SYNC;
+
+					//Initiate closing stflap
+					stMotorCWR();
+					dgtimerStart(TCS_MOD, (stvOpenDuration+2)/portTICK_PERIOD_MS);
 				}
 				break;
 			case TCS_STATE_TRANSFERRING:
@@ -352,7 +404,7 @@ void tcs_Task(void* arg)
 				augerMotorStop();
 				//Change to CLOSING state
 				tcsState = TCS_STATE_CLOSING;
-				dgtimerStart(TCS_MOD, (STV_CLOSE_DURATION)/portTICK_PERIOD_MS);
+				dgtimerStart(TCS_MOD, (stvCloseDuration)/portTICK_PERIOD_MS);
 				stMotorCWR();
 				break;
 
@@ -361,6 +413,11 @@ void tcs_Task(void* arg)
 				stMotorStop();
 				dgtimerStop(TCS_MOD);
 				//Change state to transfer and start Augur motor
+				tcsState = TCS_STATE_IDLE;
+				break;
+
+			case TCS_STV_SYNC:
+				stMotorStop();
 				tcsState = TCS_STATE_IDLE;
 				break;
 
@@ -402,7 +459,7 @@ int initTCS(void)
 	//Create csm task task
 	TaskHandle_t tcsTaskHandle;
 	TimerHandle_t tcsTimerHandle;
-
+	TimerHandle_t stflapTimerHandle;
 
     if (xTaskCreate(tcs_Task, "tcs_Task", configMINIMAL_STACK_SIZE + 100, NULL, task_PRIORITY, &tcsTaskHandle) !=
         pdPASS)
@@ -418,6 +475,11 @@ int initTCS(void)
     	vTaskDelete(tcsTaskHandle);
         return DG_FAIL;
     }
+/*	stflapTimerHandle = xTimerCreate("stflapTimer",100, pdFALSE, NULL, stflapTimerCallback);
+	if(stflapTimerHandle == NULL)
+	{
+		printf("stFlap Timer creation failed!.\r\n");
+	}*/
     if(registerModule(TCS_MOD, tcsTaskHandle, tcsTimerHandle)!= DG_SUCCESS)
     {
     	//Registering the module failed. Hence kill the task and return error

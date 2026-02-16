@@ -174,13 +174,15 @@ const dgCtConfigParam_t ctParam = {30, 30, 3, 5, 60};    //Parameters are in sec
 
 /*********** Control Sequences for Storage Tray transfer Control System ******************/
 
-const dgTransferCtrlSeq_t trfCtrlSeqDefault[] = { {1200, SEQ_CTRL_CTMOTOR_CWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_START },
+/*const dgTransferCtrlSeq_t trfCtrlSeqDefault[] = { {1200, SEQ_CTRL_CTMOTOR_CWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_START },
 		                                   {600, SEQ_CTRL_CTMOTOR_OFF, SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
 										   {1200, SEQ_CTRL_CTMOTOR_CWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
 										   {600, SEQ_CTRL_CTMOTOR_OFF, SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_MID },
 										   {1200, SEQ_CTRL_CTMOTOR_CWR, SEQ_CTRL_STMOTOR_CWR, SEQ_CTRL_MID },
 										   {600, SEQ_CTRL_CTMOTOR_OFF, SEQ_CTRL_STMOTOR_OFF,SEQ_CTRL_END },
-};
+};*/
+
+const dgTcsConfigParam_t trCtrlParamDefault = {600, 600, 40}; //mSec, mSec, Sec
 
 //Duration specified in 10s of mSec
 const dgShredderCtrlSeq_t shdCtrlSeqDefault[] = {
@@ -424,15 +426,15 @@ int setShredderTimingParam(const dgShredderTimingVar_t *value) {
 }
 
 // Transfer
-int getTransferCtrlSeq(dgTransferCtrlSeq_t *out) {
+int getTransferCtrlParams(dgTcsConfigParam_t *out) {
     if (out == NULL) return DG_INVALID_PARAM;
-    *out = allConfig.transferConfig.transferParam;
+    *out = allConfig.transferConfig.transferParams;
     return DG_SUCCESS;
 }
 
-int setTransferCtrlSeq(const dgTransferCtrlSeq_t *value) {
+int setTransferCtrlParams(const dgTcsConfigParam_t *value) {
     if (value == NULL) return DG_INVALID_PARAM;
-    allConfig.transferConfig.transferParam = *value;
+    allConfig.transferConfig.transferParams = *value;
     return DG_SUCCESS;
 }
 
@@ -610,7 +612,7 @@ int loadDefaultConfig()
 	//Copy transferConfig default
 	dgTransferConfig_t *transferConfigPtr;
 	transferConfigPtr = &(allConfig.transferConfig);
-	memcpy((void*)(transferConfigPtr),(void*)&trfCtrlSeqDefault, sizeof(trfCtrlSeqDefault));
+	memcpy((void*)(transferConfigPtr),(void*)&trCtrlParamDefault, sizeof(trCtrlParamDefault));
 
 	//Copy additiveConfig default
 
