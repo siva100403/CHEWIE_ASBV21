@@ -37,10 +37,12 @@
 
 typedef struct dateTime
 {
+	uint16_t year;
 	uint8_t month;
 	uint8_t date;
 	uint8_t hour;
 	uint8_t minute;
+	uint8_t second;
 }dgDateTime_t;
 
 

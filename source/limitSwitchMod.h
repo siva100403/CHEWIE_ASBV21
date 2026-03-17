@@ -15,7 +15,7 @@
  *        - LOW - when Lid has not reached CLOSE position
  *  - LS_SENSE_LIDOPEN: Monitors the LID open status
  *        - HIGH - when Lid reached OPEN position
- *        - LOW  - when Lid has not reached OPEN positiom
+ *        - LOW  - when Lid has not reached OPEN position
  *  - LS_SENSE_FLAP: Indicates FLAP is in CLOSE(REST) position.
  *  				There is only one limit switch for FLAP. This requires LS_DRIVE to be driven
  *        - HIGH - when FLAP reached the CLOSE(REST)

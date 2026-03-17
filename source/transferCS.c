@@ -64,6 +64,7 @@
 #include "adcs.h"
 #include "limitSwitchMod.h"
 #include "transferCS.h"
+#include "actuatorStatusTracker.h"
 
 
 /***************************Regen Soil Transfer Logic***************************
@@ -255,6 +256,7 @@ void tcs_Task(void* arg)
 
 				//change state to transfer
 				tcsState = TCS_STATE_OPENING;
+				updateStValveStatus(OPENING);
 
 				*rcvMsg.result = DG_SUCCESS;
 				if(rcvMsg.taskHandleSM != NULL)
@@ -347,6 +349,7 @@ void tcs_Task(void* arg)
 				}
 				if(getStorageTraySwicthStatus() == STTV_POSITION_CLOSED)
 				{
+					updateStValveStatus(CLOSE);
 					//STTV is in closed condition. No need to do anything
 				}
 				else
@@ -354,7 +357,7 @@ void tcs_Task(void* arg)
 					printf("transferCS.c:tcsTask():STTV is not in closed condition. Closing");
 					//Change state to SHD_STATE_FLAPSYNC
 					tcsState = TCS_STV_SYNC;
-
+					updateStValveStatus(OPEN);
 					//Initiate closing stflap
 					stMotorCWR();
 					dgtimerStart(TCS_MOD, (stvOpenDuration+2)/portTICK_PERIOD_MS);
@@ -393,6 +396,7 @@ void tcs_Task(void* arg)
 				//Open duration is over. Stop motor and timer
 				stMotorStop();
 				dgtimerStop(TCS_MOD);
+				updateStValveStatus(OPEN);
 				//Change state to transfer and start Augur motor
 				tcsState = TCS_STATE_TRANSFERRING;
 				dgtimerStart(TCS_MOD, (transferDuration*1000)/portTICK_PERIOD_MS);
@@ -404,6 +408,7 @@ void tcs_Task(void* arg)
 				augerMotorStop();
 				//Change to CLOSING state
 				tcsState = TCS_STATE_CLOSING;
+				updateStValveStatus(CLOSING);
 				dgtimerStart(TCS_MOD, (stvCloseDuration)/portTICK_PERIOD_MS);
 				stMotorCWR();
 				break;
@@ -412,6 +417,7 @@ void tcs_Task(void* arg)
 				//Close duration is over. Stop motor and timer
 				stMotorStop();
 				dgtimerStop(TCS_MOD);
+				updateStValveStatus(CLOSE);
 				//Change state to transfer and start Augur motor
 				tcsState = TCS_STATE_IDLE;
 				break;
@@ -431,6 +437,7 @@ void tcs_Task(void* arg)
 			break;
 		case DG_LS_STVALVECLOSE:
 			stMotorStop();
+			updateStValveStatus(CLOSE);
 			break;
 
 		default:

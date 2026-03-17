@@ -67,6 +67,7 @@
 #include "hatcsModAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
+#include "actuatorStatusTracker.h"
 
 
 
@@ -160,10 +161,12 @@ static void lidModule_task(void *pvParameters)
 				{
 					dgtimerStop(LID_MOD);
 					lidModuleState = LIDMOD_STATE_CLOSE;
+					updateLidStatus(CLOSE);
 					printf("lidModule.c:lidModule_task():LID is in closed condition\r\n");
 				}
 				else if(*lidEvent  == LID_STATUS_OPEN)
 				{
+					updateLidStatus(OPEN);
 					//lidModuleState = LIDMOD_STATE_CLOSING;
 					printf("lidModule.c:lidModule_task():LID is in open condition\r\n");
 					//dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
@@ -173,11 +176,13 @@ static void lidModule_task(void *pvParameters)
 					//lidModuleState = LIDMOD_STATE_CLOSING;
 					//dgtimerStop(LID_MOD);
 					//dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(LIDCLOSING_DURATION));
+					updateLidStatus(OPEN);
 					printf("lidModule.c:lidModule_task():LID is in-between\r\n");
 				}
 				else if(*lidEvent == LID_STATUS_ERROR)
 				{
 					//TODO: Handle
+					updateLidStatus(ERROR);
 					printf("lidModule.c:lidModule_task():LID is in error condition\r\n");
 				}
 				else
@@ -209,6 +214,7 @@ static void lidModule_task(void *pvParameters)
 				LID_POWER_OFF();
 				dgtimerStop(LID_MOD);
 				lidModuleState = LIDMOD_STATE_ERROR;
+				updateLidStatus(ERROR);
 				break;
 			default:
 				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_READY - Ignored)\r\n",rcvMsg.command);
@@ -249,6 +255,7 @@ static void lidModule_task(void *pvParameters)
 
 					capProximityState = CAP_PROXIMITY_EVENT_DETECTED;
 					lidModuleState = LIDMOD_STATE_OPENING;
+					updateLidStatus(OPENING);
 					//Start timer to close the Lid if Proximity event is not removed
 					dgtimerStart(LID_MOD, LIDOPENING_DURATION/portTICK_PERIOD_MS);
 				}
@@ -329,6 +336,7 @@ static void lidModule_task(void *pvParameters)
 					//Stop timer
 					dgtimerStop(LID_MOD);
 					lidModuleState = LIDMOD_STATE_OPEN;
+					updateLidStatus(OPEN);
 					dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(PROXIMITY_LIDCLOSE_TIMEOUT));
 				}
 				else
@@ -341,6 +349,7 @@ static void lidModule_task(void *pvParameters)
 				//Lid open timer expired. Limit switch has not detected Open. It is an error condition
 				LID_POWER_OFF();
 				lidModuleState = LIDMOD_STATE_ERROR;
+				updateLidStatus(ERROR);
 				printf("lidModule.c:lidModule_task():Timer Expiry in state LIDMOD_STATE_OPENING - Error condition\r\n");
 				break;
 			default:
@@ -406,6 +415,7 @@ static void lidModule_task(void *pvParameters)
 				LID_MOTOR_DIR_CLOSE();
 				LID_POWER_ON();
 				lidModuleState = LIDMOD_STATE_CLOSING;
+				updateLidStatus(CLOSING);
 				dgtimerStart(LID_MOD, LIDCLOSING_DURATION/portTICK_PERIOD_MS);
 				break;
 			default:
@@ -461,6 +471,7 @@ static void lidModule_task(void *pvParameters)
 				if(*lidevent == LID_STATUS_CLOSED)
 				{
 					//Stop timer
+					updateLidStatus(CLOSE);
 					dgtimerStop(LID_MOD);
 					lidModuleState = LIDMOD_STATE_CLOSE;
 				}
@@ -474,6 +485,7 @@ static void lidModule_task(void *pvParameters)
 				printf("lidModule.c:lidModule_task():Timer Expiry Event in state LIDMOD_STATE_CLOSING\r\n",rcvMsg.command);
 				LID_POWER_OFF();
 				lidModuleState = LIDMOD_STATE_ERROR;
+				updateLidStatus(ERROR);
 				break;
 			default:
 				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_CLOSING - Ignored)\r\n",rcvMsg.command);

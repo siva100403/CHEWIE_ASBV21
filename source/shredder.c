@@ -60,6 +60,7 @@
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
+#include "actuatorStatusTracker.h"
 
 
 #define INCLUDE_FLAP_CONTROL
@@ -291,10 +292,12 @@ static void shredder_task(void *pvParameters)
 				//Check FLAP is in CLOSE condition
 				if(getFlapStatus() == FLAP_POSITION_CLOSED)
 				{
+					updateFlapStatus(CLOSE);
 					//Flap is in closed condition. No need to do anything
 				}
 				else
 				{
+					updateFlapStatus(OPEN);
 					printf("shredder.c:shredderTask():FLAP is not in closed condition. Closing");
 					//Change state to SHD_STATE_FLAPSYNC
 					shredderState = SHD_STATE_FLAPSYNC;
@@ -325,6 +328,7 @@ static void shredder_task(void *pvParameters)
 				break;
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. FLAP is synchronized
+				updateFlapStatus(CLOSE);
 				flapMotorStop();
 				dgtimerStop(SHREDDER_MOD);
 				setDeviceHealth(FLAP_CLOSE_SENSE_DEV, DEVICE_WORKING, DEVICE_PRESENT);
@@ -394,6 +398,7 @@ static void shredder_task(void *pvParameters)
 				break;
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
+				updateFlapStatus(CLOSE);
 				flapMotorStop();
 				break;
 			default:
