@@ -9,6 +9,7 @@
 #define ACTUATORCTRL_H_
 
 
+
 int additiveDispenseOn();
 int additiveDispenseOff();
 
@@ -48,6 +49,7 @@ int shdAugMotorCWR();
 int shdAugMotorCCWR();
 int shdAugMotorStop();
 int shdAugMotorSetspeed(uint8_t speed);
+
 
 
 

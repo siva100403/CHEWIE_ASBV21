@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.6" );
+	strcpy(swVer,"0.4.7" );
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -205,5 +205,13 @@ void getHwVersion(char * version)
  *
  * New Features:
  *   - TCS Control parameters can be modified from Config Tool
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.7 12-03-2026********************
+ *
+ * New Features:
+ *   - Cloud Integration:RTSS Stream Data API added
+ *   - Actuator Status tracking added
  *
  *******************************************************************/

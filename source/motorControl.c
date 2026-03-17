@@ -68,6 +68,7 @@
 #include "lidModule.h"
 #include "lidModuleAPI.h"
 #include "motorControl.h"
+#include "actuatorStatusTracker.h"
 
 /**************************Motor Driver TC78H660FNG***************************
  * Operated in PHASE MODE -> MODE = HIGH
@@ -93,6 +94,7 @@
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
 
 //Use the method below to configure the MODE pin of TC78H660 to input/output
 //While making TC78H660 active from STBY, MODE pin has to be configured as Output and after
@@ -167,6 +169,7 @@ void stMotorStop(void)
 
 void augerMotorCWR(void)
 {
+	updateAugerStatus( CWR);
 	//It assumes motor1 is in OFF condition
 	MOTOR2_FORWARD();
 	MOTOR2_START();
@@ -174,6 +177,7 @@ void augerMotorCWR(void)
 
 void augerMotorCCWR(void)
 {
+	updateAugerStatus( CCWR);
 	//It assumes motor is in OFF condition
 	MOTOR2_REVERSE();
 	MOTOR2_START();
@@ -181,6 +185,7 @@ void augerMotorCCWR(void)
 
 void augerMotorStop(void)
 {
+	updateAugerStatus(OFF);
 	MOTOR2_STOP();
 }
 

@@ -258,7 +258,6 @@ void HMI_LPUART_IRQHandler(void)
         		disHMITxInt();
 
         	}
-
         }
 
         //Handle errors
@@ -276,11 +275,25 @@ void HMI_LPUART_IRQHandler(void)
     SDK_ISR_EXIT_BARRIER;
 }
 
-
+void interruptHMI(void)
+{
+	//Assumed it is inactive
+    HMI_INT_ACTIVE();
+    //Delay of >100 nsec
+    for(int i=0; i<10; i++)
+    {
+        HMI_INT_ACTIVE();
+    }
+    HMI_INT_INACTIVE();
+}
 
 int initHMIUart()
 {
     lpuart_config_t config;
+
+    //Make HMI interrupt pin HIGH. HMI interrupt is triggered on a HIGH to LOW transition.
+    //Hence even if the PIN is active, Making it HIGH will not generate an interrupt
+    HMI_INT_INACTIVE();
 
 	HMItrBuf.txState = RS232_TX_IDLE;
 	HMItrBuf.rxState = RS232_RCV_IDLE;

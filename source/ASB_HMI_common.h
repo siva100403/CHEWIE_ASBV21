@@ -23,7 +23,8 @@
 #define CS_CTRL_REQ					8
 #define GET_ASB_VERSION				9
 #define GET_ASB_DATETIME			10
-#define ACMD_LAST					11       //For validation purpose. Should be one more than the last command
+#define GET_RTSS_DATA				11
+#define ACMD_LAST					12       //For validation purpose. Should be one more than the last command
 
 /******************************Packet structure*********************/
 
@@ -126,6 +127,21 @@ typedef struct sysStatus
 	uint8_t curPhase;
 
 }dgSysStatusPayload_t;
+
+//This structure is used to return the RTSS data for the ASB-HMI command GET_RTSS_DATA
+typedef struct rtssData
+{
+	float		curTemp;
+	float 		setTemp;
+	float		curHumidity;
+	float		setHumidity;
+	uint32_t 	actuatorStatus;
+	uint16_t 	remainingDur;       //in min
+	uint8_t 	curPhase;
+	uint8_t 	wasteCat;
+	dgDateTime_t	timeStamp;
+
+}dgRtssPayload_t;
 
 //This structure is used for sending proximity evenets
 
