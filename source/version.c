@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.6" );
+	strcpy(swVer,"0.4.7" );
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -205,5 +205,17 @@ void getHwVersion(char * version)
  *
  * New Features:
  *   - TCS Control parameters can be modified from Config Tool
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.7 18-03-2026********************
+ *
+ * New Features:
+ *   - SPARE2_RELAY ON OFF Cli command added for testing purpose
+ *   - CLI added for getting limit switch status
+ *
+ * Bug fixes:
+ *   - cliProc.c:TCS Start cmd: Due to coding error Sending proximityEvent to lid module. Removed
+ *   - transferCS.c: DG_TIMER_EXPIRY event, TCS_STATE_OPENING:dgtimerStart() not returning. Increased stack size
  *
  *******************************************************************/

@@ -335,7 +335,7 @@ void disableLidStatusSensing(void)
 
 uint8_t getLidSwicthStatus(void)
 {
-	printf("lsMod.c:lidstatus=0x%X, lidCloseSt=0x%X, LidOpenSt=0x%X\r\n",lidStatus,lidCloseStatus,lidOpenStatus);
+	//printf("lsMod.c:lidstatus=0x%X, lidCloseSt=0x%X, LidOpenSt=0x%X\r\n",lidStatus,lidCloseStatus,lidOpenStatus);
 	return lidStatus;
 }
 

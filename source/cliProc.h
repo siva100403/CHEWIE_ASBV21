@@ -90,6 +90,8 @@ struct cmd_buffer
 #define FD_CONFIG		44
 #define MOTOR1			45
 #define MOTOR2			46
+#define SPARE2_RELAY	47
+#define GETLS_STATUS	48
 
 
 

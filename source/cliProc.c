@@ -327,6 +327,15 @@ int getCmdCode(char* token)
 	{
 		cmdCode = SHDAUG_MOTOR_SPEED;
 	}
+	else if(strcmp(&token[0], "SPARE2_RELAY\0")==0)
+	{
+		cmdCode = SPARE2_RELAY;
+	}
+	else if(strcmp(&token[0], "GETLS_STATUS\0")==0)
+	{
+		cmdCode = GETLS_STATUS;
+	}
+
 	else
 	{
 		cmdCode = -1;
@@ -793,6 +802,41 @@ void cli_Task(void* arg)
 					break;
 				}
 
+
+				case SPARE2_RELAY:
+				{
+					//SPARE2_RELAY ON/OFF
+
+					// Extract from command string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+					{
+						strcpy(response, "CERROR:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					if (strcmp(&token[0], "ON\0")==0)
+					{
+						SPARE2_RELAY_ON();
+					}
+					else if (strcmp(&token[0], "OFF\0")==0)
+					{
+						SPARE2_RELAY_OFF();
+					}
+					else
+					{
+						strcpy(response, "CERROR:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					strcpy(response, "CC:\r\n>");
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+				}
+
 				case LID:
 				{
 					//Usage: LID OPEN/CLOSE
@@ -875,7 +919,7 @@ void cli_Task(void* arg)
 						setRxStatus(RS232_RCV_IDLE);
 						break;
 					}
-					sendProximityEvent(&event);
+					//sendProximityEvent(&event);
 					strcpy(response, "CC:\r\n>");
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
@@ -1067,6 +1111,7 @@ void cli_Task(void* arg)
 						break;
 					}
 				}
+
 				case SETTIME:
 				{
 					//This command reads the current time from RTC and display
@@ -1134,6 +1179,20 @@ void cli_Task(void* arg)
 					}
 					break;
 				}
+				case GETLS_STATUS:
+				{
+					//This command reads the all the limit switch status and displays
+					//usage: GETLS_STATUS
+					uint8_t s1, s2, s3;
+					s1 = getLidSwicthStatus();
+					s2 = getStorageTraySwicthStatus();
+					s3 = getFlapStatus();
+					sprintf(response, "CC:lid=%d, st=%d, flap=%d\r\n>", s1, s2,s3);
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+				}
+
 				case CSMSTART:
 				{
 					uint8_t phase, wasteCat, csmState;
