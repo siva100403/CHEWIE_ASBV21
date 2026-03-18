@@ -79,7 +79,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
-#include "alert.h"
+#include "alarm.h"
 
 
 /*******************************************************************************
@@ -629,7 +629,7 @@ void csm_Task(void* arg)
 				if(timeout == 0)
 				{
 					//Chewie remains in Waste adding state and hence generate alert to user
-					generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
+					//generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
 				}
 				break;
 			case CSM_STATE_ADDWASTE_M:
@@ -638,7 +638,7 @@ void csm_Task(void* arg)
 				if(timeout == 0)
 				{
 					//Chewie remains in Waste adding state and hence generate alert to user
-					generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
+					//generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
 				}
 				break;
 			case CSM_STATE_ADDWASTE_T:
@@ -647,7 +647,7 @@ void csm_Task(void* arg)
 				if(timeout == 0)
 				{
 					//Chewie remains in Waste adding state and hence generate alert to user
-					generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
+					//generateAlert(ALERT_WASTE_ADDITION_TOO_LONG);
 				}
 				break;
 				break;

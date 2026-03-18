@@ -77,7 +77,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
-#include "alert.h"
+#include "alarm.h"
 
 
 //Chewie functional modules raise alert using this method, when they find

@@ -79,7 +79,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
-#include "alert.h"
+#include "alarm.h"
 
 //Health register allocation
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
