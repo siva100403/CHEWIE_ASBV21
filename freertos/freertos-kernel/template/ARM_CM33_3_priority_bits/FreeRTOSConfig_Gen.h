@@ -78,7 +78,7 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         0
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
-#define configTOTAL_HEAP_SIZE                   ((size_t)(30720))  ////Changed by Jawahar from 10240 to 30720
+#define configTOTAL_HEAP_SIZE                   ((size_t)(31744))  ////Changed by Jawahar from 10240 to 30720
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */
@@ -100,7 +100,7 @@
 /* Software timer related definitions. */
 #define configUSE_TIMERS                        1
 #define configTIMER_TASK_PRIORITY               (configMAX_PRIORITIES - 1)
-#define configTIMER_QUEUE_LENGTH                10
+#define configTIMER_QUEUE_LENGTH                15  //Changed to 15 from 10 default
 #define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE * 2)
 
 /* Define to trap errors during development. */
