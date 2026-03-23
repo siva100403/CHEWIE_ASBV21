@@ -31,6 +31,7 @@
 #include "fsl_lpspi.h"
 #include "fsl_utick.h"
 #include "fsl_flexspi.h"
+#include "fsl_ctimer.h"
 
 /* Chewie Includes */
 #include "dgCommon.h"
@@ -145,24 +146,99 @@ void TC78H660_Active(void)
 }
 
 
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+volatile uint32_t g_pwmPeriod   = 0U;
+volatile uint32_t g_pulsePeriod = 0U;
 
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+status_t CTIMER_GetPwmPeriodValue(uint32_t pwmFreqHz, uint8_t dutyCyclePercent, uint32_t timerClock_Hz)
+{
+    /* Calculate PWM period match value */
+    g_pwmPeriod = (timerClock_Hz / pwmFreqHz) - 1U;
+
+    /* Calculate pulse width match value */
+    g_pulsePeriod = (g_pwmPeriod + 1U) * (100 - dutyCyclePercent) / 100;
+
+    return kStatus_Success;
+}
+
+//CTIMER3 is for PWM signal generation for TC78H660FNG
+//MAT0 output of CT3 should be connected to P4_16, Pin 38
+
+#define CTIMER_MAT_PWM_PERIOD_CHANNEL kCTIMER_Match_0
+#define CTIMER          	CTIMER3         /* Timer 3 */
+#define CTIMER_MAT_OUT  	kCTIMER_Match_0 /* Match output 0 */
+#define CTIMER_CLK_FREQ 	CLOCK_GetCTimerClkFreq(3U)
+#define CTIMER_FREQUENCY	20000
+#define CTIMER_DUTY_CYCLE_DEFAULT	50
+void initCTimer3()
+{
+    ctimer_config_t config;
+    uint32_t srcClock_Hz;
+    uint32_t timerClock;
+
+    /* Use FRO HF clock for  Ctimer3 */
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer3Clk, 1u);
+    CLOCK_AttachClk(kFRO_HF_to_CTIMER3);
+
+    /* CTimer3 counter */
+    srcClock_Hz = CTIMER_CLK_FREQ;
+
+    CTIMER_GetDefaultConfig(&config);
+    timerClock = srcClock_Hz / (config.prescale + 1);
+
+    CTIMER_Init(CTIMER, &config);
+
+    /* Get the PWM period match value and pulse width match value of 20Khz PWM signal with 50% dutycycle */
+    CTIMER_GetPwmPeriodValue(CTIMER_FREQUENCY, (uint8_t)CTIMER_DUTY_CYCLE_DEFAULT, timerClock);
+    CTIMER_SetupPwmPeriod(CTIMER, CTIMER_MAT_PWM_PERIOD_CHANNEL, CTIMER_MAT_OUT, g_pwmPeriod, g_pulsePeriod, false);
+}
+
+void pwmStart(uint8_t dutyCycle)
+{
+    ctimer_config_t config;
+    uint32_t srcClock_Hz;
+    uint32_t timerClock;
+
+    /* CTimer3 counter */
+    srcClock_Hz = CTIMER_CLK_FREQ;
+    CTIMER_GetDefaultConfig(&config);
+
+    timerClock = srcClock_Hz / (config.prescale + 1);
+    /* Get the PWM period match value and pulse width match value of 20Khz PWM signal with 50% dutycycle */
+    CTIMER_GetPwmPeriodValue(CTIMER_FREQUENCY, dutyCycle, timerClock);
+    CTIMER_SetupPwmPeriod(CTIMER, CTIMER_MAT_PWM_PERIOD_CHANNEL, CTIMER_MAT_OUT, g_pwmPeriod, g_pulsePeriod, false);
+    CTIMER_StartTimer(CTIMER);
+}
+
+void pwmStop()
+{
+    CTIMER_StopTimer(CTIMER);
+}
 void stMotorCWR(void)
 {
 	//It assumes motor1 is in OFF condition
 	MOTOR1_FORWARD();
-	MOTOR1_START();
+	//MOTOR1_START();
+	pwmStart(80);
 }
 
 void stMotorCCWR(void)
 {
 	//It assumes motor is in OFF condition
 	MOTOR1_REVERSE();
-	MOTOR1_START();
+	pwmStart(80);
+	//MOTOR1_START();
 }
 
 void stMotorStop(void)
 {
-	MOTOR1_STOP();
+	//MOTOR1_STOP();
+	pwmStop();
 }
 
 void augerMotorCWR(void)

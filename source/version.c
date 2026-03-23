@@ -42,7 +42,7 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.7" );
+	strcpy(swVer,"0.4.8" );
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -217,5 +217,14 @@ void getHwVersion(char * version)
  * Bug fixes:
  *   - cliProc.c:TCS Start cmd: Due to coding error Sending proximityEvent to lid module. Removed
  *   - transferCS.c: DG_TIMER_EXPIRY event, TCS_STATE_OPENING:dgtimerStart() not returning. Increased stack size
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.8 23-03-2026********************
+ *
+ * New Features:
+ *   - PWM enabled for 2A Motor driver 1
+ *
+
  *
  *******************************************************************/
