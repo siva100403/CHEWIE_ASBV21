@@ -200,7 +200,7 @@ void csm_Task(void* arg)
 					}
 					else
 					{
-						generateAlert(ALERT_TRANSFER_PENDING);
+						//generateAlert(ALERT_TRANSFER_PENDING);
 					}
 				}
 				else
@@ -566,7 +566,7 @@ void csm_Task(void* arg)
 					}
 					else
 					{
-						generateAlert(ALERT_TRANSFER_PENDING);
+						//generateAlert(ALERT_TRANSFER_PENDING);
 					}
 				}
 				else
@@ -583,7 +583,7 @@ void csm_Task(void* arg)
 				{
 					//transfer timeout is over. Transfer complete event not received.
 					//Generate Alert
-					generateAlert(ALERT_TRANSFER_TIMEOUT);
+					//generateAlert(ALERT_TRANSFER_TIMEOUT);
 
 					//Go back to IDLE state
 					ctVar.state = CSM_STATE_IDLE;

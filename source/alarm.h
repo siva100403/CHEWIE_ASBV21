@@ -61,7 +61,7 @@ typedef struct alarmDefinition
 {
 	uint8_t alarmNumber;
 	uint8_t alarmGroup;
-	unit8_t alarmCat;
+	uint8_t alarmCat;
 	char	alarmDescription[64];
 }dgAlarmDefintion_t;
 

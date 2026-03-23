@@ -82,6 +82,7 @@
 
 /*----------------------- Global Variables -------------------------*/
 
+/*
 const dgAlarmDefintion_t alarmDefTable[]= {
 		{HW_ALARM_TEMP_HUM_SESNOR, ALARM_GROUP_HWFAULT, ALARM_CAT_CRITICAL, "Temp/Humidity sensor fault"},
 		{HW_ALARM_RTC, ALARM_GROUP_HWFAULT, ALARM_CAT_MINOR, "Real time clock error"},
@@ -92,9 +93,10 @@ const dgAlarmDefintion_t alarmDefTable[]= {
 		{HW_ALARM_DRV89XX_2, ALARM_GROUP_HWFAULT, ALARM_CAT_MAJOR, "Camera Error"},
 		{HW_ALARM_TDC1000_1, ALARM_GROUP_HWFAULT, ALARM_CAT_MAJOR, "Camera Error"},
 		{HW_ALARM_TDC1000_2, ALARM_GROUP_HWFAULT, ALARM_CAT_MAJOR, "Camera Error"},
-		{HW_ALARM_LID, ALARM_GROUP_HWFAULT, ALARM_CAT_MAJOR, "Camera Error"},
+		{HW_ALARM_LID, ALARM_GROUP_HWFAULT, ALARM_CAT_MAJOR, "Camera Error"}
 
 };
+*/
 //Chewie functional modules raise alert using this method, when they find
 //errors or abnormal conditions.
 //This module will try to recover from the error/abnormal conditions, if not it notify
