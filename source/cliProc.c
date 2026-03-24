@@ -926,65 +926,7 @@ void cli_Task(void* arg)
 					break;
 				}
 
-				case SHDAUG_MOTOR:
-				{
-					//SHDAUG_MOTOR RR/RL/OFF
 
-					// Extract from command string
-					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
-					{
-						strcpy(response, "CERROR:Less Parameters\r\n>");
-						sendCliResponse(response, strlen(response));
-						setRxStatus(RS232_RCV_IDLE);
-						break;
-					}
-					if (strcmp(&token[0], "RL\0")==0)
-					{
-						shdAugMotorCCWR();
-					}
-					else if (strcmp(&token[0], "RR\0")==0)
-					{
-						shdAugMotorCWR();
-					}
-					else if (strcmp(&token[0], "OFF\0")==0)
-					{
-						shdAugMotorStop();
-					}
-					else
-					{
-						strcpy(response, "CERROR:Invalid Parameters\r\n>");
-						sendCliResponse(response, strlen(response));
-						setRxStatus(RS232_RCV_IDLE);
-						break;
-					}
-
-					strcpy(response, "CC:\r\n>");
-					sendCliResponse(response, strlen(response));
-					setRxStatus(RS232_RCV_IDLE);
-					break;
-				}
-
-				case SHDAUG_MOTOR_SPEED:
-				{
-					//SHDAUG_MOTORSPEED Speed(0-100)
-
-					// Extract from command string
-					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
-					{
-						strcpy(response, "CERROR:Less Parameters\r\n>");
-						sendCliResponse(response, strlen(response));
-						setRxStatus(RS232_RCV_IDLE);
-						break;
-					}
-					uint8_t speed=atoi(&token[0]);
-					speed &=0xFF;
-					shdAugMotorSetspeed(speed);
-
-					strcpy(response, "CC:\r\n>");
-					sendCliResponse(response, strlen(response));
-					setRxStatus(RS232_RCV_IDLE);
-					break;
-				}
 
 
 				case FAN_MOTOR:
@@ -1329,8 +1271,8 @@ void cli_Task(void* arg)
 				}
 				case MOTOR1:
 				{
-					//MOTRO1 RL/RR/OFF
-
+					//MOTRO1 RL/RR/OFF DUTY
+					uint8_t duty;
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
 					{
@@ -1341,17 +1283,39 @@ void cli_Task(void* arg)
 					}
 					if (strcmp(&token[0], "RL\0")==0)
 					{
+						if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Get wasteCat
+						{
+							strcpy(response, "CERROR:Less Parameters\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						duty=atoi(&token[0]);
+						if (duty > 100) {duty = 100;}
 						MOTOR1_REVERSE();
-						MOTOR1_START();
+						//MOTOR1_START();
+						pwmStart(duty);
 					}
 					else if (strcmp(&token[0], "RR\0")==0)
 					{
+						if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Get wasteCat
+						{
+							strcpy(response, "CERROR:Less Parameters\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						duty=atoi(&token[0]);
+						if (duty > 100) {duty = 100;}
 						MOTOR1_FORWARD();
-						MOTOR1_START();
+						//MOTOR1_START();
+						pwmStart(duty);
 					}
 					else if (strcmp(&token[0], "OFF\0")==0)
 					{
-						MOTOR1_STOP();
+						//MOTOR1_STOP();
+						pwmStart(0);
+						//pwmStop();
 					}
 					else
 					{

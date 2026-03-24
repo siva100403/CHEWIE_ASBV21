@@ -59,15 +59,15 @@ const dgSolenoidHbAlloc_t DCsprayer = {DRV89XX_1, HALFBRIDGE_8};
 
 const dgSolenoidHbAlloc_t flushSprayer = {DRV89XX_2, HALFBRIDGE_8};
 const dgSolenoidHbAlloc_t airValve3 = {DRV89XX_2, HALFBRIDGE_2};
-//const dgSolenoidHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_3};
+//const dgSolenoidHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_10};
 
 
 
 /************ HBridge Port assignment for bi-directional DC motor ************/
-const dgBiDirMotorHbAlloc_t shdAugMotor = {DRV89XX_2, HALFBRIDGE_3, HALFBRIDGE_4};
+const dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_3, HALFBRIDGE_4};
 const dgBiDirMotorHbAlloc_t flapMotor = {DRV89XX_1, HALFBRIDGE_5, HALFBRIDGE_7};
 const dgBiDirMotorHbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7};
-//const dgBiDirMotorHbAlloc_t augerMotor = {DRV89XX_2, HALFBRIDGE_11, HALFBRIDGE_12};
+//dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_12, HALFBRIDGE_11};
 
 /*****HBRidge Port Assignment for parallel(2) driving of bi-directional motor ***/
 //const dgBiDirMotorPar2HbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7, HALFBRIDGE_6, HALFBRIDGE_8};
@@ -121,6 +121,8 @@ int airValve2On()
 	return halfBridgeCtrl(airValve2.spiDeviceId , airValve2.solHbridgeId, SOLENOID_ON);
 }
 
+
+
 int airValve2Off()
 {
 	return halfBridgeCtrl(airValve2.spiDeviceId , airValve2.solHbridgeId, SOLENOID_OFF);
@@ -151,25 +153,22 @@ int fanMotorStop()
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_COAST);
 }
 
-int shdAugMotorCWR()
+int stMotorCWR()
 {
-	return fullBridgeCtrl(shdAugMotor.spiDeviceId, shdAugMotor.mpHbridgeId, shdAugMotor.mnHbridgeId, MOTOR_FWD);
+	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_FWD);
 }
 
-int shdAugMotorCCWR()
+int stMotorCCWR()
 {
-	return fullBridgeCtrl(shdAugMotor.spiDeviceId, shdAugMotor.mpHbridgeId, shdAugMotor.mnHbridgeId, MOTOR_REV);
+	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_REV);
 }
 
-int shdAugMotorStop()
+int stMotorStop()
 {
-	return fullBridgeCtrl(shdAugMotor.spiDeviceId, shdAugMotor.mpHbridgeId, shdAugMotor.mnHbridgeId, MOTOR_COAST);
+	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_COAST);
 }
 
-int shdAugMotorSetspeed(uint8_t speed)
-{
-	return setDutyCycleChl1_DRV89XX_1(speed);
-}
+
 
 
 int flapMotorCWR()
@@ -187,21 +186,5 @@ int flapMotorStop()
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_COAST);
 }
 
-/*int fanMotorCWR()
-{
-	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_FWD);
-	//return fullBridgePar2Ctrl(fanMotor.spiDeviceId, fanMotor.mp1HbridgeId,  fanMotor.mp2HbridgeId, fanMotor.mn1HbridgeId, fanMotor.mn2HbridgeId, MOTOR_FWD);
-}
 
-int fanMotorCCWR()
-{
-	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_REV);
-	//return fullBridgePar2Ctrl(fanMotor.spiDeviceId, fanMotor.mp1HbridgeId,  fanMotor.mp2HbridgeId, fanMotor.mn1HbridgeId, fanMotor.mn2HbridgeId, MOTOR_REV);
-}
-
-int fanMotorStop()
-{
-	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_COAST);
-	//return fullBridgePar2Ctrl(fanMotor.spiDeviceId, fanMotor.mp1HbridgeId,  fanMotor.mp2HbridgeId, fanMotor.mn1HbridgeId, fanMotor.mn2HbridgeId, MOTOR_COAST);
-}*/
 

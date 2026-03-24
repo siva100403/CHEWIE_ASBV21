@@ -473,21 +473,6 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_TC78H660_STBY_PIN_MASK (1U << 15U)      /*!<@brief PORT pin mask */
                                                                /* @} */
 
-/*! @name PORT4_16 (number 38), MOTOR1_ONOFF_CTRL
-  @{ */
-
-/* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO_PIN 16U              /*!<@brief GPIO pin number */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO_PIN_MASK (1U << 16U) /*!<@brief GPIO pin mask */
-
-/* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PORT PORT4                /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN 16U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN_MASK (1U << 16U)      /*!<@brief PORT pin mask */
-                                                                   /* @} */
-
 /*! @name PORT4_17 (number 39), MOTOR1_DIR_CTRL
   @{ */
 

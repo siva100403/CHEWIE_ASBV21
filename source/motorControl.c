@@ -121,7 +121,8 @@ void TC78H660_Stby(void)
 {
 	//Stop both motors and make the Controller Inactive
 
-	MOTOR1_STOP();
+	//MOTOR1_STOP();
+	pwmStop();
 	MOTOR2_STOP();
 	vTaskDelay(1);
 	TC78H660_STBY();
@@ -143,6 +144,8 @@ void TC78H660_Active(void)
 	// uSec delay is not possible with vTaskDelay
 	vTaskDelay(2);
 	modePinInit(DG_PIN_INPUT);
+
+	initCTimer3();
 }
 
 
@@ -169,7 +172,7 @@ status_t CTIMER_GetPwmPeriodValue(uint32_t pwmFreqHz, uint8_t dutyCyclePercent, 
 //CTIMER3 is for PWM signal generation for TC78H660FNG
 //MAT0 output of CT3 should be connected to P4_16, Pin 38
 
-#define CTIMER_MAT_PWM_PERIOD_CHANNEL kCTIMER_Match_0
+#define CTIMER_MAT_PWM_PERIOD_CHANNEL kCTIMER_Match_3
 #define CTIMER          	CTIMER3         /* Timer 3 */
 #define CTIMER_MAT_OUT  	kCTIMER_Match_0 /* Match output 0 */
 #define CTIMER_CLK_FREQ 	CLOCK_GetCTimerClkFreq(3U)
@@ -195,7 +198,16 @@ void initCTimer3()
 
     /* Get the PWM period match value and pulse width match value of 20Khz PWM signal with 50% dutycycle */
     CTIMER_GetPwmPeriodValue(CTIMER_FREQUENCY, (uint8_t)CTIMER_DUTY_CYCLE_DEFAULT, timerClock);
-    CTIMER_SetupPwmPeriod(CTIMER, CTIMER_MAT_PWM_PERIOD_CHANNEL, CTIMER_MAT_OUT, g_pwmPeriod, g_pulsePeriod, false);
+    if(CTIMER_SetupPwmPeriod(CTIMER, CTIMER_MAT_PWM_PERIOD_CHANNEL, CTIMER_MAT_OUT, g_pwmPeriod, g_pulsePeriod, false) != kStatus_Success)
+    {
+       	printf("motorControl.c:initCTimer3(): Fail\r\n");
+    }
+    else
+    {
+       	printf("motorControl.c:initCTimer3(): Success\r\n");
+    }
+
+
 }
 
 void pwmStart(uint8_t dutyCycle)
@@ -219,26 +231,27 @@ void pwmStop()
 {
     CTIMER_StopTimer(CTIMER);
 }
-void stMotorCWR(void)
+void hFanCWR(void)
 {
 	//It assumes motor1 is in OFF condition
 	MOTOR1_FORWARD();
 	//MOTOR1_START();
-	pwmStart(80);
+	pwmStart(70);
 }
 
-void stMotorCCWR(void)
+void hFanCCWR(void)
 {
 	//It assumes motor is in OFF condition
 	MOTOR1_REVERSE();
-	pwmStart(80);
+	pwmStart(70);
 	//MOTOR1_START();
 }
 
-void stMotorStop(void)
+void hFanStop(void)
 {
 	//MOTOR1_STOP();
-	pwmStop();
+	pwmStart(0);
+	//pwmStop();
 }
 
 void augerMotorCWR(void)

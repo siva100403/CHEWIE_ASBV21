@@ -135,7 +135,7 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 		flushSprayerOff();
 #endif /*INCLUDE_FLUSH_CONTROL */
 		//Stop shdAug
-		shdAugMotorStop();
+		//shdAugMotorStop();
 		return DG_ACTION_COMPLETE;
 		break;
 	case SEQ_ENGINE_CONTINUE:
@@ -210,16 +210,16 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 	//Shredder Auger Motor Control
 	if(shdCtrlSeq[controlSeqIndex].shdAugMotor == SEQ_CTRL_SHDAUG_MOTOR_CCWR)
 	{
-		shdAugMotorCCWR();
+		//shdAugMotorCCWR();
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdAugMotor == SEQ_CTRL_SHDAUG_MOTOR_CWR)
 	{
-		shdAugMotorCWR();
+		//shdAugMotorCWR();
 	}
 	else
 	{
 		//SEQ_CTRL_SHDAUG_MOTOR_OFF or any invalid value -> safe state
-		shdAugMotorStop();
+		//shdAugMotorStop();
 	}
 
 	//Check if this is the last control in the sequence

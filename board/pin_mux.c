@@ -170,7 +170,6 @@ BOARD_InitPins:
   - {pin_num: '36', peripheral: GPIO4, signal: 'GPIO, 13', pin_signal: PIO4_13/TRIG_IN8/FC2_P1/USB1_ID/CT4_MAT1/FLEXIO0_D21/PLU_OUT1/CAN0_TXD/ADC0_B5/ADC1_B5, direction: OUTPUT}
   - {pin_num: '37', peripheral: GPIO4, signal: 'GPIO, 15', pin_signal: PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/PLU_OUT3/ADC0_A1/CMP0_IN4P,
     direction: OUTPUT}
-  - {pin_num: '38', peripheral: GPIO4, signal: 'GPIO, 16', pin_signal: PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/PLU_OUT4/ADC0_A6, direction: OUTPUT}
   - {pin_num: '39', peripheral: GPIO4, signal: 'GPIO, 17', pin_signal: PIO4_17/TRIG_IN9/FC2_P3/USB1_OTG_OC/CT3_MAT1/FLEXIO0_D25/PLU_OUT5/ADC0_B6, direction: OUTPUT}
   - {pin_num: '48', peripheral: GPIO5, signal: 'GPIO, 0', pin_signal: PIO5_0/TRIG_IN10/LPTMR0_ALT2/EXTAL32K/ADC1_B8, identifier: MOTOR2_ONOFF_CTRL, direction: OUTPUT}
   - {pin_num: '49', peripheral: GPIO5, signal: 'GPIO, 1', pin_signal: PIO5_1/TRIG_OUT6/LPTMR1_ALT2/XTAL32K/ADC1_B9, direction: OUTPUT}
@@ -212,6 +211,7 @@ BOARD_InitPins:
   - {pin_num: '2', peripheral: SMARTDMA0, signal: 'SMARTDMA_PIO, 5', pin_signal: PIO1_9/TRACE_DATA1/FC4_P1/FC5_P5/CT_INP9/SCT0_OUT3/FLEXIO0_D17/SMARTDMA_PIO5/PLU_OUT1/ENET0_TXD3/I3C1_SCL/TSI0_CH18/ADC1_A9}
   - {pin_num: '3', peripheral: SMARTDMA0, signal: 'SMARTDMA_PIO, 6', pin_signal: PIO1_10/TRACE_DATA2/FC4_P2/FC5_P6/CT2_MAT0/SCT0_IN2/FLEXIO0_D18/SMARTDMA_PIO6/PLU_IN0/ENET0_TXER/CAN0_TXD/TSI0_CH19/ADC1_A10}
   - {pin_num: '4', peripheral: SMARTDMA0, signal: 'SMARTDMA_PIO, 7', pin_signal: PIO1_11/WUU0_IN11/TRACE_DATA3/FC4_P3/CT2_MAT1/SCT0_IN3/FLEXIO0_D19/SMARTDMA_PIO7/PLU_IN1/ENET0_RX_CLK/I3C1_PUR/CAN0_RXD/TSI0_CH20/ADC1_A11}
+  - {pin_num: '38', peripheral: CTIMER3, signal: 'MATCH, 0', pin_signal: PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/PLU_OUT4/ADC0_A6, identifier: ''}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -442,13 +442,6 @@ void BOARD_InitPins(void)
     };
     /* Initialize GPIO functionality on pin PIO4_15 (pin 37)  */
     GPIO_PinInit(BOARD_INITPINS_TC78H660_STBY_GPIO, BOARD_INITPINS_TC78H660_STBY_PIN, &TC78H660_STBY_config);
-
-    gpio_pin_config_t MOTOR1_ONOFF_CTRL_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-    /* Initialize GPIO functionality on pin PIO4_16 (pin 38)  */
-    GPIO_PinInit(BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO, BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN, &MOTOR1_ONOFF_CTRL_config);
 
     gpio_pin_config_t MOTOR1_DIR_CTRL_config = {
         .pinDirection = kGPIO_DigitalOutput,
@@ -1082,8 +1075,8 @@ void BOARD_InitPins(void)
                       /* Input Buffer Enable: Enables. */
                       | PORT_PCR_IBE(PCR_IBE_ibe1));
 
-    /* PORT4_16 (pin 38) is configured as PIO4_16 */
-    PORT_SetPinMux(BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PORT, BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN, kPORT_MuxAlt0);
+    /* PORT4_16 (pin 38) is configured as CT3_MAT0 */
+    PORT_SetPinMux(PORT4, 16U, kPORT_MuxAlt4);
 
     PORT4->PCR[16] = ((PORT4->PCR[16] &
                        /* Mask bits to zero which are setting */

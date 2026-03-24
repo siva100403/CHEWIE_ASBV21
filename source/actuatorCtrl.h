@@ -32,24 +32,15 @@ int airValve2Off();
 int airValve3On();
 int airValve3Off();
 
-//int augerMotorCWR();
-//int augerMotorCCWR();
-//int augerMotorStop();
 
 int flapMotorCWR();
 int flapMotorCCWR();
 int flapMotorStop();
 
-//int fanMotorCWR();
-//int fanMotorCCWR();
-//int fanMotorStop();
 
-int shdAugMotorCWR();
-int shdAugMotorCCWR();
-int shdAugMotorStop();
-int shdAugMotorSetspeed(uint8_t speed);
-
-
+int stMotorCWR(void);
+int stMotorCCWR(void);
+int stMotorStop(void);
 
 
 #endif /* ACTUATORCTRL_H_ */

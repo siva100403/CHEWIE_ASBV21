@@ -224,7 +224,9 @@ void getHwVersion(char * version)
  *
  * New Features:
  *   - PWM enabled for 2A Motor driver 1
- *
-
+ *   - Motor ports interchanged: hFAN connected to port1 of 2A motor driver
+ *                       		 stMotor driver ports moved to shdAugerMotor ports
+ *                       		 shdAugerMotor removed. Not required
+ *                       		 Spare2 Relay port is freed
  *
  *******************************************************************/

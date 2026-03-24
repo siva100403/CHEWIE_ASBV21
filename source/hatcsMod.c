@@ -200,18 +200,18 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 	{
 		case SEQ_CTRL_FAN_OFF:
 			fanMotorStop();
-			SPARE2_RELAY_OFF();
+			hFanStop();
 			printf("hatcsMod.c:executeActuatorControl():FAN_OFF\r\n");
 			break;
 		case SEQ_CTRL_FAN_CWR:
 			fanMotorStop();
-			SPARE2_RELAY_ON();
+			hFanCWR();
 			//fanMotorCWR();
 			printf("hatcsMod.c:executeActuatorControl():FAN_CWR\r\n");
 			break;
 		case SEQ_CTRL_FAN_CCWR:
 			fanMotorCCWR();
-			SPARE2_RELAY_OFF();
+			hFanStop();
 			printf("hatcsMod.c:executeActuatorControl():FAN_CCWR\r\n");
 			break;
 		default:
@@ -275,10 +275,10 @@ int executeActuatorSafeState(void)
 	ctStop(HATCS_MOD);
 	//Stop Heater
 	HEATER_OFF();
-	//Stop Fan
+	//Stop suction Fan
 	fanMotorStop();
 	//Stop Heater fan
-	SPARE2_RELAY_OFF();
+	hFanStop();
 	DCsprayerOff();
 	airValve1Off();
 	airValve3Off();
