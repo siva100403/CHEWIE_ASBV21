@@ -305,6 +305,11 @@ static void shredder_task(void *pvParameters)
 					dgtimerStart(SHREDDER_MOD, CONV_SEC_TO_TICKS(9));
 				}
 				break;
+			case DG_LS_FLAPCLOSE:
+				//Received FLAPCLOSE event. Stop flap motor
+				flapMotorStop();
+				printf("shredder.c:shredderTask():SHD_STATE_IDLE: Flap close event received\r\n");
+				break;
 			default:
 				//Ignored. Unexpected event
 				break;
@@ -313,6 +318,7 @@ static void shredder_task(void *pvParameters)
 		case SHD_STATE_FLAPSYNC:
 			switch(rcvMsg.command)
 			{
+
 			case DG_TIMER_EXPIRY:
 				//Flap limit switch event not received. Some issue with limit switch
 				flapMotorStop();
@@ -349,6 +355,11 @@ static void shredder_task(void *pvParameters)
 			case DG_TIMER_EXPIRY:
 				//Ignored. Not expected in IDLE state
 				break;
+			case DG_LS_FLAPCLOSE:
+				//Received FLAPCLOSE event. Stop flap motor
+				flapMotorStop();
+				printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				break;
 			default:
 				//Ignored. Unexpected event
 				break;
@@ -369,6 +380,11 @@ static void shredder_task(void *pvParameters)
 				//Shredder start delay is over. Start shredding
 				shredderState = SHD_STATE_ACTIVE;
 				executeSHDSeqControl(SEQ_ENGINE_START);
+				break;
+			case DG_LS_FLAPCLOSE:
+				//Received FLAPCLOSE event. Stop flap motor
+				flapMotorStop();
+				printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
 				break;
 			default:
 				break;
@@ -395,6 +411,7 @@ static void shredder_task(void *pvParameters)
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
 				flapMotorStop();
+				printf("shredder.c:shredderTask():SHD_STATE_ACTIVE: Flap close event received\r\n");
 				break;
 			default:
 				//Ignore the event
