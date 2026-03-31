@@ -29,5 +29,6 @@
 /****************Prototypes**************/
 
 int initHMIUart();
+void interruptHMI(void);
 
 #endif /* HMIUARTDRIVER_H_ */

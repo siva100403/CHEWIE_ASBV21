@@ -55,6 +55,7 @@
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
 #include "sensorMod.h"
+#include "sensorModAPI.h"
 #include "augerAPI.h"
 #include "shredder.h"
 #include "shredderAPI.h"
@@ -66,6 +67,10 @@
 #include "lidModuleAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
+#include "csmMod.h"
+#include "csmModAPI.h"
+#include "actuatorStatusTracker.h"
+
 
 
 //Buffer used to communicate between CLI processing module and the RS232 ISR
@@ -415,6 +420,35 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 		*payloadSize = sizeof(dgDateTime_t);
 		getRTCtimeMMDDHHMM(dateTime);
 		printf("HMICmdProc.c:CmdProc():GET_ASB_DATETIME:hour=%d, min=%d", dateTime->hour, dateTime->minute);
+		return DG_SUCCESS;
+		break;
+	case GET_RTSS_DATA:
+		dgRtssPayload_t *rtssData;
+		uint8_t sensorStatus, sensorModulestatus;
+		dgCsmParam_t csmstate;
+		rtssData = (dgRtssPayload_t*)payload;
+		*payloadSize = sizeof(dgRtssPayload_t);
+		//Update temperature and humidity
+		if(getSensorStatus(HMICMDPROC_MOD, &(rtssData->curTemp), &(rtssData->curHumidity), &(rtssData->setTemp), &(rtssData->setHumidity), &sensorStatus, &sensorModulestatus) != DG_SUCCESS)
+		{
+			return DG_FAIL;
+		}
+		//Update actuator status
+		rtssData->actuatorStatus = getActuatorStatus();
+
+		//Update CSM status
+		if(csmGetState(HMICMDPROC_MOD, &csmstate) == DG_SUCCESS)
+		{
+			rtssData->wasteCat = csmstate.wasteCat;
+			rtssData->curPhase = csmstate.phase;
+			rtssData->remainingDur = csmstate.remDur;
+		}
+		else
+		{
+			return DG_FAIL;
+		}
+		//Get current time
+		getRTCtimeMMDDHHMM(&(rtssData->timeStamp));
 		return DG_SUCCESS;
 		break;
 	case GET_SYSTEM_STATUS:

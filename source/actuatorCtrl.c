@@ -46,12 +46,13 @@
 #include "drv89xxDriver.h"
 #include "drv89xxRegisters.h"
 #include "actuatorCtrl.h"
+#include "actuatorStatusTracker.h"
 
 /*******************************************************************************
  * Global Variables
  ******************************************************************************/
 
-/***** HBridge Port assignment for Solenoid and Uni-directional DC motor ******/
+/*---- HBridge Port assignment for Solenoid and Uni-directional DC motor -----*/
 const dgSolenoidHbAlloc_t airValve1 = {DRV89XX_1, HALFBRIDGE_4};
 const dgSolenoidHbAlloc_t airValve2 = {DRV89XX_1, HALFBRIDGE_2};
 const dgSolenoidHbAlloc_t additiveDispensor = {DRV89XX_1, HALFBRIDGE_3};
@@ -63,61 +64,78 @@ const dgSolenoidHbAlloc_t airValve3 = {DRV89XX_2, HALFBRIDGE_2};
 
 
 
+
 /************ HBridge Port assignment for bi-directional DC motor ************/
 const dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_3, HALFBRIDGE_4};
+
+
 const dgBiDirMotorHbAlloc_t flapMotor = {DRV89XX_1, HALFBRIDGE_5, HALFBRIDGE_7};
 const dgBiDirMotorHbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7};
 //dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_12, HALFBRIDGE_11};
 
+
+
 /*****HBRidge Port Assignment for parallel(2) driving of bi-directional motor ***/
 //const dgBiDirMotorPar2HbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7, HALFBRIDGE_6, HALFBRIDGE_8};
+
+
 /*******************************************************************************
  * Implementation
  ******************************************************************************/
+
 int additiveDispenseOn()
 {
+	updateAdditiveMotorStatus(ON);
 	return halfBridgeCtrl(additiveDispensor.spiDeviceId , additiveDispensor.solHbridgeId, SOLENOID_ON);
 }
 
 int additiveDispenseOff()
 {
+	updateAdditiveMotorStatus(OFF);
 	return halfBridgeCtrl(additiveDispensor.spiDeviceId , additiveDispensor.solHbridgeId, SOLENOID_OFF);
 }
 
 
 int DCsprayerOn()
 {
+	updateDcSprayerStatus(ON);
 	return halfBridgeCtrl(DCsprayer.spiDeviceId , DCsprayer.solHbridgeId, SOLENOID_ON);
 }
 
 int DCsprayerOff()
 {
+	updateDcSprayerStatus(OFF);
 	return halfBridgeCtrl(DCsprayer.spiDeviceId , DCsprayer.solHbridgeId, SOLENOID_OFF);
 }
 
 int flushSprayerOn()
 {
+	updateFlushSprayerStatus(ON);
 	return halfBridgeCtrl(flushSprayer.spiDeviceId , flushSprayer.solHbridgeId, SOLENOID_ON);
 }
 
 int flushSprayerOff()
 {
+	updateFlushSprayerStatus(OFF);
 	return halfBridgeCtrl(flushSprayer.spiDeviceId , flushSprayer.solHbridgeId, SOLENOID_OFF);
 }
 
 int airValve1On()
 {
+	updateAirValve1Status(ON);
 	return halfBridgeCtrl(airValve1.spiDeviceId , airValve1.solHbridgeId, SOLENOID_ON);
 }
 
 int airValve1Off()
 {
+	updateAirValve1Status(OFF);
 	return halfBridgeCtrl(airValve1.spiDeviceId , airValve1.solHbridgeId, SOLENOID_OFF);
 }
 
 
 int airValve2On()
 {
+	updateAirValve2Status(ON);
 	return halfBridgeCtrl(airValve2.spiDeviceId , airValve2.solHbridgeId, SOLENOID_ON);
 }
 
@@ -125,31 +143,37 @@ int airValve2On()
 
 int airValve2Off()
 {
+	updateAirValve2Status(OFF);
 	return halfBridgeCtrl(airValve2.spiDeviceId , airValve2.solHbridgeId, SOLENOID_OFF);
 }
 
 int airValve3On()
 {
+	updateAirValve3Status(ON);
 	return halfBridgeCtrl(airValve3.spiDeviceId , airValve3.solHbridgeId, SOLENOID_ON);
 }
 
 int airValve3Off()
 {
+	updateAirValve3Status(OFF);
 	return halfBridgeCtrl(airValve3.spiDeviceId , airValve3.solHbridgeId, SOLENOID_OFF);
 }
 
 int fanMotorCWR()
 {
+	updateHtrFanStatus(CWR);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_FWD);
 }
 
 int fanMotorCCWR()
 {
+	updateHtrFanStatus(CCWR);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_REV);
 }
 
 int fanMotorStop()
 {
+	updateHtrFanStatus(OFF);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_COAST);
 }
 

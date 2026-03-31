@@ -9,6 +9,7 @@
 #define ACTUATORCTRL_H_
 
 
+
 int additiveDispenseOn();
 int additiveDispenseOff();
 
@@ -41,6 +42,7 @@ int flapMotorStop();
 int stMotorCWR(void);
 int stMotorCCWR(void);
 int stMotorStop(void);
+
 
 
 #endif /* ACTUATORCTRL_H_ */

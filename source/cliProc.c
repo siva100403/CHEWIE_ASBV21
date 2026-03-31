@@ -71,7 +71,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
-#include "alert.h"
+#include "alarm.h"
 
 /*******************************************************************************
  * Global Variables

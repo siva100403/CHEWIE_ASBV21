@@ -247,11 +247,18 @@ int getRTCtime(char *string)
 int getRTCtimeMMDDHHMM(dgDateTime_t *time)
 {
 	int ret;
-	uint8_t month, date, hour, minutes;
+	uint8_t year2d, month, date, hour, minutes, seconds;
 
 	if(time==NULL)
 	{
 		return DG_INVALID_PARAM;
+	}
+
+	/*year register */
+	ret=mcp7940_reg_read(RTCYEAR_REG, &year2d);
+	if(ret != DG_SUCCESS)
+	{
+		return(DG_FAIL);
 	}
 
 	/*month register */
@@ -281,6 +288,14 @@ int getRTCtimeMMDDHHMM(dgDateTime_t *time)
 		return(DG_FAIL);
 	}
 
+	/*sec register */
+	ret=mcp7940_reg_read(RTCSEC_REG , &seconds);
+	if(ret != DG_SUCCESS)
+	{
+		return(DG_FAIL);
+	}
+
+
 	//Formating the time
 	time->minute = (minutes & 0x0F) + ((minutes >>4) & 0x07)*10;
 	if(hour & 0x40)
@@ -298,10 +313,13 @@ int getRTCtimeMMDDHHMM(dgDateTime_t *time)
 		//24 hr format
 		time->hour = (hour & 0x0F) + ((hour >>4) & 0x03)*10;
 	}
+	time->second = (seconds & 0x0F) + ((seconds >> 4) & 0x03)*10;
 
 	time->date = (date & 0x0F) + ((date>>4) & 0x03)*10;
 
 	time->month = (month & 0x0F) + ((month>>4) & 0x03)*10;
+
+	time->year = 2000 + (year2d & 0x0F) + ((year2d>>4) & 0x0F)*10;
 
 	return (DG_SUCCESS);
 }

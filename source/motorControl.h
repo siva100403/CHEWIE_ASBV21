@@ -37,6 +37,7 @@
 #define MOTOR2_REVERSE()		GPIO_PinWrite(BOARD_INITPINS_MOTOR2_DIR_CTRL_GPIO, BOARD_INITPINS_MOTOR2_DIR_CTRL_PIN, GPIO_PIN_ZERO);
 
 
+
 /*********************************************************************
  ****  		 Function Prototype						 			******
  *********************************************************************/
@@ -58,6 +59,5 @@ void initCTimer3();
 void hFanCWR(void);
 void hFanCCWR(void);
 void hFanStop(void);
-
 
 #endif /* MOTORCONTROL_H_ */

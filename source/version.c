@@ -42,7 +42,9 @@ char asbHwVersion[16];
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.4.8a" );
+
+	strcpy(swVer,"0.5.0" );
+
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
 }
@@ -235,5 +237,28 @@ void getHwVersion(char * version)
  * Bug Fix:
  *   - Shredder.c: LS_FLAP_CLOSE event was not handled in all states.
  *     As a result, flap motor was not stopped on LS_FLAP_CLOSE event for the last sequence.
+ *****************************************************************/
+//Merged comment conflict - Start
+/************************Ver 0.4.7 12-03-2026********************
+ *
+ * New Features:
+ *   - Cloud Integration:RTSS Stream Data API added
+ *   - Actuator Status tracking added
+ *
+ *******************************************************************/
+
+/************************Ver 0.4.8 17-03-2026********************
+ *
+ * New Features:
+ *   - rtc.c:getRTCtimeMMDDHHMM(dgDateTime_t *time): modified to include year and seconds
+ *   - actuatorStatusTracker(): Modified to include Lid, StValve, Flap status
+ *
+ *
+ *******************************************************************/
+//Merged comment conflict - End
+
+/************************Ver 0.5.0 30-03-2026********************
+ * Merged Branch - of cCloudIntegration and LabTestChanges branches
+ *
  *
  *******************************************************************/

@@ -34,6 +34,7 @@
 #include "dgCommon.h"
 #include "version.h"
 #include "modulecom.h"
+#include "rtc.h"
 #include "dgtimer.h"
 #include "GPIOSignals.h"
 #include "eeConfig.h"
