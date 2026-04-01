@@ -82,6 +82,8 @@
 
 /*----------------------- Global Variables -------------------------*/
 
+dgActiveAlarm_t activeAlarmTable[LAST_ALARM];
+
 /*
 const dgAlarmDefintion_t alarmDefTable[]= {
 		{HW_ALARM_TEMP_HUM_SESNOR, ALARM_GROUP_HWFAULT, ALARM_CAT_CRITICAL, "Temp/Humidity sensor fault"},
@@ -97,6 +99,13 @@ const dgAlarmDefintion_t alarmDefTable[]= {
 
 };
 */
+
+/*************************** Implementation ***********************************/
+
+int initAlarm()
+{
+
+}
 //Chewie functional modules raise alert using this method, when they find
 //errors or abnormal conditions.
 //This module will try to recover from the error/abnormal conditions, if not it notify
