@@ -466,7 +466,7 @@ int initTCS(void)
 	//Create csm task task
 	TaskHandle_t tcsTaskHandle;
 	TimerHandle_t tcsTimerHandle;
-	TimerHandle_t stflapTimerHandle;
+	//TimerHandle_t stflapTimerHandle;
 
     if (xTaskCreate(tcs_Task, "tcs_Task", configMINIMAL_STACK_SIZE + 300, NULL, task_PRIORITY, &tcsTaskHandle) !=
         pdPASS)
