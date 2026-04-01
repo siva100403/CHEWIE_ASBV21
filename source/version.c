@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.0" );
+	strcpy(swVer,"0.5.0w" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -260,5 +260,12 @@ void getHwVersion(char * version)
 /************************Ver 0.5.0 30-03-2026********************
  * Merged Branch - of cCloudIntegration and LabTestChanges branches
  *
+ *
+ *******************************************************************/
+
+/************************Ver 0.5.0w 01-04-2026********************
+ * 1. hatcs.c: Modified to run hFAN and exhaust FAN simultaneously when airCircCtrl is OUT
+ *  Now airCircCtrl decides the exhaust FAN operation and not fanCtrl config
+ * 2. transferCS.c: augerMotor rotation direction changed from CCWR to CWR
  *
  *******************************************************************/

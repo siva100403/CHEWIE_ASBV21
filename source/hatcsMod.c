@@ -227,21 +227,25 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 		case SEQ_CTRL_AIR_OFF:
 			airValve1Off();
 			airValve3Off();
+			fanMotorStop();
 			printf("hatcsMod.c:executeActuatorControl():Air Control OFF\r\n");
 			break;
 		case SEQ_CTRL_AIR_IN:
 			airValve1On();
 			airValve3Off();
+			fanMotorStop();
 			printf("hatcsMod.c:executeActuatorControl():AIR_IN\r\n");
 			break;
 		case SEQ_CTRL_AIR_OUT:
 			airValve1On();
 			airValve3On();
+			fanMotorCCWR();
 			printf("hatcsMod.c:executeActuatorControl():AIR_OUT\r\n");
 			break;
 		case SEQ_CTRL_AIR_RECIRC:
 			airValve1Off();
 			airValve3On();
+			fanMotorStop();
 			printf("hatcsMod.c:executeActuatorControl():AIR_RECIRC\r\n");
 			break;
 		default:

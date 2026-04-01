@@ -400,7 +400,7 @@ void tcs_Task(void* arg)
 				//Change state to transfer and start Augur motor
 				tcsState = TCS_STATE_TRANSFERRING;
 				dgtimerStart(TCS_MOD, (transferDuration*1000)/portTICK_PERIOD_MS);
-				augerMotorCCWR();
+				augerMotorCWR();
 				break;
 
 			case TCS_STATE_TRANSFERRING:
