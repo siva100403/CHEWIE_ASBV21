@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.0w" );
+	strcpy(swVer,"0.5.1w" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -267,5 +267,11 @@ void getHwVersion(char * version)
  * 1. hatcs.c: Modified to run hFAN and exhaust FAN simultaneously when airCircCtrl is OUT
  *  Now airCircCtrl decides the exhaust FAN operation and not fanCtrl config
  * 2. transferCS.c: augerMotor rotation direction changed from CCWR to CWR
+ *
+ *******************************************************************/
+
+ /************************Ver 0.5.1w 02-04-2026********************
+ * 1.motorControl.h: Added method to read error status of TC78H660
+ * 2.shredder.c:executeSHDSeqControl(): Flap is closed irrespective of the status when SEQ_ENGINE_STOP is received.
  *
  *******************************************************************/

@@ -127,8 +127,9 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 		//Take all the actuator to safe state
 		SHD_STOP();
 #ifdef INCLUDE_FLAP_CONTROL
-		//Check flap status. If not in closed condition, close it
-		//flapMotorStop();
+		//Close Flap
+		flapMotorCWR();
+		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
 #endif /*INCLUDE_FLAP_CONTROL */
 
 #ifdef INCLUDE_FLUSH_CONTROL

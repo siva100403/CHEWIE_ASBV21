@@ -205,7 +205,15 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 			break;
 		case SEQ_CTRL_FAN_CWR:
 			fanMotorStop();
-			hFanCWR();
+			if(controlCode[controlSeqIndex].airCircCtrl == SEQ_CTRL_AIR_OUT)
+			{
+				hFanCWR(100);
+			}
+			else
+			{
+				hFanCWR(70);
+			}
+
 			//fanMotorCWR();
 			printf("hatcsMod.c:executeActuatorControl():FAN_CWR\r\n");
 			break;
