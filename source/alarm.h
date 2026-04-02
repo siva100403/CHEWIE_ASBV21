@@ -16,13 +16,14 @@
  ************************************************************************/
 
 
-#define ALERT_TRANSFER_PENDING_
+
 
 
 //Alarm Groups
 #define ALARM_GROUP_HWFAULT			1		//Hardware fault
 #define ALARM_GROUP_OP				2		//Operation related like Storage tray full, water not available, etc
 #define ALARM_GROUP_CONFIG			3    	//System Configuration related alarm
+#define ALARM_VER_MISMATCH			4		// Version mismatch with other sub-systems or API
 
 
 //Alarm Category
@@ -46,7 +47,7 @@
 #define HW_ALARM_DRV89XX_2			8
 #define HW_ALARM_TDC1000_1			9
 #define HW_ALARM_TDC1000_2			10
-#define HW_ALARM_LID				11
+#define HWS_ALARM_LID				11
 
 #define OPS_ALARM_TRAY_FULL			20
 #define OPS_ALARM_ADDITIVE_LOW		21
@@ -55,6 +56,7 @@
 #define OPS_ALARM_TEMP_CTRL			24
 #define OPS_ALARM_FOREIGN_MAT		25
 #define OPS_ALARM_SHD_OVERLOAD		26
+#define LAST_ALARM					27
 
 
 typedef struct alarmDefinition
@@ -70,6 +72,7 @@ typedef struct activeAlarm
 	uint8_t alarmNumber;
 	dgDateTime_t alarmTime;
 	uint8_t alarmStatus;
+	char	alarmComment[32];
 
 }dgActiveAlarm_t;
 
