@@ -412,6 +412,19 @@ static void hatcs_task(void *pvParameters)
 					break;
 
 				case HATCS_STATE_ACTIVE:
+					//Check for 2A Motor driver error flag
+	                if((READ_TC78H660_ERR_STATUS() & 0x01) == 0)
+	                {
+	                	HEATER_OFF();
+	                    printf("hatcs.c:hatcs_task():TC78H660 Error Flag active\r\n");
+						sendCliResponse("2A Motor driver Error Flag Active\r\n", 35);
+						//Correct the error
+						TC78H660_Stby();
+						hFanStop();
+						augerMotorStop();
+						vTaskDelay(1);   //About 5mSec delay
+						TC78H660_Active();
+	                }
 					executeActuatorControl(hatSensorState, DG_BOOL_FALSE);
 					break;
 

@@ -119,7 +119,7 @@ int csmStart(uint8_t srcModule, uint8_t state, uint8_t phase, uint16_t remaining
 	sendMsgBuf.cmdParam = (void*)&param;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmStart():Task handle is null for module with id: %d \r\n", srcModule);
@@ -173,7 +173,7 @@ int csmStop(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmStop():Task handle is null for module with id: %d \r\n", srcModule);
@@ -285,7 +285,7 @@ int csmGetState(uint8_t srcModule, dgCsmParam_t *state)
 	sendMsgBuf.cmdParam = (void*)state;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmGetState():Task handle is null for module with id: %d \r\n", srcModule);
@@ -322,7 +322,7 @@ int csmNotifyWasteAddStart(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyWasteAddStart():Task handle is null for module with id: %d \r\n", srcModule);
@@ -364,7 +364,7 @@ int csmNotifyWasteAddEnd(uint8_t srcModule, uint8_t wasteCat)
 	sendMsgBuf.cmdParam = (void*)&param;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyWasteAddEnd():Task handle is null for module with id: %d \r\n", srcModule);
@@ -402,7 +402,7 @@ int csmNotifyTransferComplete(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyTransferComplete():Task handle is null for module with id: %d \r\n", srcModule);

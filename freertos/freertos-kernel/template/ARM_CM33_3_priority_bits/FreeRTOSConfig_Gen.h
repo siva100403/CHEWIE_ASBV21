@@ -78,7 +78,7 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         0
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
-#define configTOTAL_HEAP_SIZE                   ((size_t)(31744))  ////Changed by Jawahar from 10240 to 30720
+#define configTOTAL_HEAP_SIZE                   ((size_t)(40960))  ////Changed by Jawahar from 10240 to 30720
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */

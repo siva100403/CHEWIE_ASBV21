@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.1w" );
+	strcpy(swVer,"0.5.3w" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -275,3 +275,16 @@ void getHwVersion(char * version)
  * 2.shredder.c:executeSHDSeqControl(): Flap is closed irrespective of the status when SEQ_ENGINE_STOP is received.
  *
  *******************************************************************/
+
+/************************Ver 0.5.2w 02-04-2026********************
+* 1.Alarm branch merged
+*
+*
+*******************************************************************/
+
+/************************Ver 0.5.3w 02-04-2026********************
+* 1. alarmManager.c: Integrated with sysStart and sensing 2A driver overload error
+* 2. hatcs.c: sensing 2A overload status and reseting the driver
+* 3. shredder.c: Flap closed whenever the shredder sequence stopped in between
+*
+********************************************************************/

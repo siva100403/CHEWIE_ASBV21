@@ -12,13 +12,36 @@
 
 /**************** Alarm Manager Constants ****************/
 #define ALARMMGR_MAX_ACTIVE_ALARMS      16U
-#define ALARMMGR_MAX_HISTORY_ENTRIES    64U
-#define ALARMMGR_MAX_COMMENT_LEN        48U
-#define ALARMMGR_MAX_DESC_LEN           96U
+#define ALARMMGR_MAX_HISTORY_ENTRIES    16U
+#define ALARMMGR_MAX_COMMENT_LEN        32U
+#define ALARMMGR_MAX_DESC_LEN           64U
 
 /* Alarm Manager module states */
 #define ALARMMGR_STATE_IDLE             0U
 #define ALARMMGR_STATE_READY            1U
+
+
+//Alarm Number
+#define HW_ALARM_TEMP_HUM_SESNOR	1
+#define HW_ALARM_RTC				2
+#define HW_ALARM_EEPROM				3
+#define HW_ALARM_CAMERA				4
+#define HW_ALARM_CLI_UART			5
+#define HW_ALARM_HMI_UART			6
+#define HW_ALARM_DRV89XX_1			7
+#define HW_ALARM_DRV89XX_2			8
+#define HW_ALARM_TDC1000_1			9
+#define HW_ALARM_TDC1000_2			10
+#define HWS_ALARM_LID				11
+
+#define OPS_ALARM_TRAY_FULL			20
+#define OPS_ALARM_ADDITIVE_LOW		21
+#define OPS_ALARM_ODOURSHIELD		22
+#define OPS_ALARM_HUMIDITY_CTRL		23
+#define OPS_ALARM_TEMP_CTRL			24
+#define OPS_ALARM_FOREIGN_MAT		25
+#define OPS_ALARM_SHD_OVERLOAD		26
+#define LAST_ALARM					27
 
 /* Alarm Groups */
 typedef enum
@@ -106,5 +129,6 @@ typedef struct
 } dgAlarmGetHistoryReq_t;
 
 int initAlarmManager(void);
+void generateAlert(uint16_t alert);
 
 #endif /* ALARMMANAGER_H_ */

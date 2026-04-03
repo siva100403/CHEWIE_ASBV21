@@ -18,8 +18,14 @@
 #include "modulecom.h"
 #include "alarmManager.h"
 #include "rtc.h"
+#include "shredder.h"
+#include "motorControl.h"
+#include "cliProc.h"
+#include "dgTimer.h"
+#include "pin_mux.h"
+#include "GPIOSignals.h"
 
-#define ALARMMGR_TASK_STACK_SIZE      2048U
+#define ALARMMGR_TASK_STACK_SIZE      1024U
 
 static TaskHandle_t alarmMgrTaskHandle;
 static TimerHandle_t alarmMgrTimerHandle;
@@ -57,6 +63,12 @@ static void alarmMgrNotifyStakeholders(uint16_t alarmId, uint8_t status);
 static void alarmMgrFlushHistoryToNvm(void);
 static void alarmMgrSendResponse(dgMsg_t *msg, uint8_t result);
 
+
+void generateAlert(uint16_t alert)
+{
+
+}
+
 int initAlarmManager(void)
 {
     int ret;
@@ -81,13 +93,22 @@ int initAlarmManager(void)
         return DG_FAIL;
     }
 
+    //Alarm Manager requires timer and hence create FreeRTOS SW timer
+    alarmMgrTimerHandle = xTimerCreate("alarmMgrTimer",2000, pdTRUE, (void*)ALARMMGR_MOD, dgTimerCallback);
+    if(alarmMgrTimerHandle == NULL)
+    {
+        printf("Timer creation failed!.\r\n");
+    	vTaskDelete(alarmMgrTaskHandle);
+        return DG_FAIL;
+    }
+
     ret = registerModule(ALARMMGR_MOD, alarmMgrTaskHandle, alarmMgrTimerHandle);
     if(ret != DG_SUCCESS)
     {
         printf("alarmManager.c:initAlarmManager():registerModule failed\r\n");
         return ret;
     }
-
+    printf("alarmManager.c:initAlarmManager():passed\r\n");
     return DG_SUCCESS;
 }
 
@@ -116,74 +137,111 @@ static void alarmManager_task(void *pvParameters)
         {
             continue;
         }
-
+        printf("alarmManager.c:alarmManager_task():Cmd rcvd= %d\r\n", rcvMsg.command);
         ret = DG_SUCCESS;
 
-        switch(rcvMsg.command)
+        switch(alarmMgrState)
         {
-        case DG_MODULE_START:
-            alarmMgrState = ALARMMGR_STATE_READY;
-            ret = DG_SUCCESS;
-            break;
-
-        case DG_MODULE_STOP:
-            alarmMgrState = ALARMMGR_STATE_IDLE;
-            ret = DG_SUCCESS;
-            break;
-
-        case DG_TIMER_EXPIRY:
-            if(alarmMgrState == ALARMMGR_STATE_READY)
+        case ALARMMGR_STATE_IDLE:
+            switch(rcvMsg.command)
             {
-                alarmMgrFlushHistoryToNvm();
+            case DG_MODULE_START:
+                alarmMgrState = ALARMMGR_STATE_READY;
+                //start timer for alarm scanning
+				//Start 2 minute timer
+				dgtimerStart(ALARMMGR_MOD, CONV_SEC_TO_TICKS(120));
+
+                break;
+
+            case DG_MODULE_STOP:
+                alarmMgrState = ALARMMGR_STATE_IDLE;
+				dgtimerStop(ALARMMGR_MOD);
+                break;
+
+            case DG_TIMER_EXPIRY:
+            	//Timer should not be active. Hence stop
+				dgtimerStop(ALARMMGR_MOD);
+                break;
+
+            case ALARMMGR_RAISE_ALARM:
+            case ALARMMGR_CLEAR_ALARM:
+            case ALARMMGR_GET_ACTIVE_LIST:
+            case ALARMMGR_GET_DEFINITION:
+            case ALARMMGR_GET_HISTORY:
+                ret = DG_INVALID_STATE;
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            default:
+                printf("alarmManager.c:alarmManager_task():Invalid command %d\r\n", rcvMsg.command);
+                ret = DG_INVALID_CMD;
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+            }
+        	break;
+        case ALARMMGR_STATE_READY:
+            switch(rcvMsg.command)
+            {
+            case DG_MODULE_START:
+                alarmMgrState = ALARMMGR_STATE_READY;
                 ret = DG_SUCCESS;
-            }
-            else
-            {
-                ret = DG_INVALID_STATE;
-            }
-            break;
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
 
-        case ALARMMGR_RAISE_ALARM:
-            if(alarmMgrState != ALARMMGR_STATE_READY)
-            {
-                ret = DG_INVALID_STATE;
-            }
-            else
-            {
+            case DG_MODULE_STOP:
+                alarmMgrState = ALARMMGR_STATE_IDLE;
+				dgtimerStop(ALARMMGR_MOD);
+                ret = DG_SUCCESS;
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            case DG_TIMER_EXPIRY:
+            	//Scan alarms. Currently 2A motor error state
+                printf("alarmManager.c:Scanning for Alarms\r\n");
+                if((READ_TC78H660_ERR_STATUS() & 0x01) == 0)
+                {
+                    printf("alarmManager.c:alarmManager_task():TC78H660 Error Flag active\r\n");
+					sendCliResponse("2A Motor driver Error Flag Active\r\n", 35);
+					//Correct the error
+					HEATER_OFF();
+                }
+                break;
+
+            case ALARMMGR_RAISE_ALARM:
                 ret = alarmMgrHandleRaiseAlarm((dgAlarmRaiseReq_t *)rcvMsg.cmdParam);
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            case ALARMMGR_CLEAR_ALARM:
+
+				ret = alarmMgrHandleClearAlarm((dgAlarmClearReq_t *)rcvMsg.cmdParam);
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            case ALARMMGR_GET_ACTIVE_LIST:
+                ret = alarmMgrHandleGetActiveList((dgAlarmGetActiveListReq_t *)rcvMsg.cmdParam);
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            case ALARMMGR_GET_DEFINITION:
+                ret = alarmMgrHandleGetDefinition((dgAlarmGetDefinitionReq_t *)rcvMsg.cmdParam);
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            case ALARMMGR_GET_HISTORY:
+                ret = alarmMgrHandleGetHistory((dgAlarmGetHistoryReq_t *)rcvMsg.cmdParam);
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
+
+            default:
+                printf("alarmManager.c:alarmManager_task():Invalid command %d\r\n", rcvMsg.command);
+                ret = DG_INVALID_CMD;
+                alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
+                break;
             }
-            break;
-
-        case ALARMMGR_CLEAR_ALARM:
-            if(alarmMgrState != ALARMMGR_STATE_READY)
-            {
-                ret = DG_INVALID_STATE;
-            }
-            else
-            {
-                ret = alarmMgrHandleClearAlarm((dgAlarmClearReq_t *)rcvMsg.cmdParam);
-            }
-            break;
-
-        case ALARMMGR_GET_ACTIVE_LIST:
-            ret = alarmMgrHandleGetActiveList((dgAlarmGetActiveListReq_t *)rcvMsg.cmdParam);
-            break;
-
-        case ALARMMGR_GET_DEFINITION:
-            ret = alarmMgrHandleGetDefinition((dgAlarmGetDefinitionReq_t *)rcvMsg.cmdParam);
-            break;
-
-        case ALARMMGR_GET_HISTORY:
-            ret = alarmMgrHandleGetHistory((dgAlarmGetHistoryReq_t *)rcvMsg.cmdParam);
-            break;
-
-        default:
-            printf("alarmManager.c:alarmManager_task():Invalid command %d\r\n", rcvMsg.command);
-            ret = DG_INVALID_CMD;
-            break;
+        	break;
         }
 
-        alarmMgrSendResponse(&rcvMsg, (uint8_t)ret);
     }
 }
 

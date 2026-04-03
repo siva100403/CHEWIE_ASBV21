@@ -104,5 +104,6 @@ struct cmd_buffer
 
 int initCli(void);
 int sendCliCmd(uint8_t srcModule, char* cmdstring);
+void sendCliResponse(char* response, uint8_t size);
 
 #endif /* CLIPROC_H_ */
