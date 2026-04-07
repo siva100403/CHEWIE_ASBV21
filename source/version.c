@@ -286,5 +286,6 @@ void getHwVersion(char * version)
 * 1. alarmManager.c: Integrated with sysStart and sensing 2A driver overload error
 * 2. hatcs.c: sensing 2A overload status and reseting the driver
 * 3. shredder.c: Flap closed whenever the shredder sequence stopped in between
+* 4. Alarm raised for Lid error and 2A motor overload
 *
 ********************************************************************/

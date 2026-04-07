@@ -32,7 +32,8 @@
 #define HW_ALARM_DRV89XX_2			8
 #define HW_ALARM_TDC1000_1			9
 #define HW_ALARM_TDC1000_2			10
-#define HWS_ALARM_LID				11
+#define HW_ALARM_TC78H660			11
+#define HWS_ALARM_LID				12
 
 #define OPS_ALARM_TRAY_FULL			20
 #define OPS_ALARM_ADDITIVE_LOW		21
@@ -129,6 +130,6 @@ typedef struct
 } dgAlarmGetHistoryReq_t;
 
 int initAlarmManager(void);
-void generateAlert(uint16_t alert);
+
 
 #endif /* ALARMMANAGER_H_ */

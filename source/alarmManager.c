@@ -64,10 +64,6 @@ static void alarmMgrFlushHistoryToNvm(void);
 static void alarmMgrSendResponse(dgMsg_t *msg, uint8_t result);
 
 
-void generateAlert(uint16_t alert)
-{
-
-}
 
 int initAlarmManager(void)
 {
@@ -196,14 +192,20 @@ static void alarmManager_task(void *pvParameters)
                 break;
 
             case DG_TIMER_EXPIRY:
+
             	//Scan alarms. Currently 2A motor error state
                 printf("alarmManager.c:Scanning for Alarms\r\n");
                 if((READ_TC78H660_ERR_STATUS() & 0x01) == 0)
                 {
+                	dgAlarmRaiseReq_t request;
+                	request.alarmId = HW_ALARM_TC78H660;
+                	request.comment = "TC78H660 Error Flag set\r\n";
                     printf("alarmManager.c:alarmManager_task():TC78H660 Error Flag active\r\n");
 					sendCliResponse("2A Motor driver Error Flag Active\r\n", 35);
 					//Correct the error
 					HEATER_OFF();
+					//Update the Alarm database with Alarm
+					alarmMgrHandleRaiseAlarm(&request);
                 }
                 break;
 
