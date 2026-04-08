@@ -79,7 +79,7 @@ dgConfigMem_t allConfig;
 const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 19}, 	//M-Phase, Cat0
 											{60.0, 53.0, 0, 240, 90},	//T-Phase, Cat0
 											{40.0, 48.0, 0, 30, 50},		//P-Phase, Cat0
-											{0,0,0,0,0},					//Dummy
+											{40,50,0,0,0},					//Dummy
 											},
 										   {{35.0, 60.0, 0, 210, 18},	//M-Phase, Cat1
 											{58.0, 55.0, 0, 840, 11},	//T-Phase, Cat1
