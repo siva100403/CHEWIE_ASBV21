@@ -102,7 +102,7 @@ typedef struct ctPhaseProcessParam
 	dgCtProcessParam_t mPhase;
 	dgCtProcessParam_t tPhase;
 	dgCtProcessParam_t pPhase;
-	dgCtProcessParam_t dummy;				//For 64 byte alignment
+	dgCtProcessParam_t dPhase;				//For 64 byte alignment
 
 }dgCtPhaseProcessParam_t;
 
