@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.0" );
+	strcpy(swVer,"0.6.0" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -259,6 +259,12 @@ void getHwVersion(char * version)
 
 /************************Ver 0.5.0 30-03-2026********************
  * Merged Branch - of cCloudIntegration and LabTestChanges branches
+ *
+ *
+ *******************************************************************/
+
+************************Ver 0.6.0 09-04-2026********************
+ * CSM V2
  *
  *
  *******************************************************************/
