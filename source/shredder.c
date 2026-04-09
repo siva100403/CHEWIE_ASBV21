@@ -61,6 +61,8 @@
 #include "shredderAPI.h"
 #include "adcs.h"
 #include "actuatorStatusTracker.h"
+#include "alarmManager.h"
+#include "alarmManagerAPI.h"
 
 
 #define INCLUDE_FLAP_CONTROL
@@ -74,6 +76,7 @@ TimerHandle_t flapTimerHandle;
 extern dgConfigMem_t allConfig;
 dgShredderCtrlSeq_t *shdCtrlSeq;
 dgShredderTimingVar_t *shdTiming;
+static bool stopFlapFlag;
 
 /***********************Macro definitions************************/
 
@@ -107,7 +110,11 @@ int flapTimerStart(TickType_t timeoutValue)
 void flapTimerCallback( TimerHandle_t xTimer)
 {
 	//Turn of flap motor
-	flapMotorStop();
+	//flapMotorStop();
+	if(stopFlapFlag == true)
+	{
+		flapMotorStop();
+	}
 }
 
 
@@ -129,6 +136,7 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 #ifdef INCLUDE_FLAP_CONTROL
 		//Close Flap
 		flapMotorCWR();
+		stopFlapFlag = true;
 		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
 #endif /*INCLUDE_FLAP_CONTROL */
 
@@ -174,21 +182,27 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 #ifdef INCLUDE_FLAP_CONTROL
 	if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_OFF)
 	{
-		flapMotorStop();
+		stopFlapFlag = true;
+		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
+		//flapMotorStop();
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_OPEN)
 	{
 		flapMotorCCWR();
-		flapTimerStart(((shdTiming->flapOpenDur)*1000)/ portTICK_PERIOD_MS);
+		stopFlapFlag = false;
+		//flapTimerStart(((shdTiming->flapOpenDur)*1000)/ portTICK_PERIOD_MS);
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_CLOSE)
 	{
 		flapMotorCWR();
-		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
+		stopFlapFlag = false;
+		//flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
 	}
 	else
 	{
-		flapMotorStop();
+		stopFlapFlag = true;
+		flapTimerStart(((shdTiming->flapOpenDur)*1000)/ portTICK_PERIOD_MS);
+		//flapMotorStop();
 	}
 #endif /*INCLUDE_FLAP_CONTROL */
 
@@ -249,6 +263,8 @@ static void shredder_task(void *pvParameters)
 
 	//Initialize the state of shredder to IDLE
 	shredderState = SHD_STATE_IDLE;
+
+	stopFlapFlag = true;		//Stop flap motor when limit switch is pressed
 
 	//Initialize shredder Control system configuration parameters
 	//Initialize Timeout variables
@@ -311,7 +327,10 @@ static void shredder_task(void *pvParameters)
 				break;
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
-				flapMotorStop();
+				if(stopFlapFlag == true)
+				{
+					flapMotorStop();
+				}
 				printf("shredder.c:shredderTask():SHD_STATE_IDLE: Flap close event received\r\n");
 				break;
 			default:
@@ -329,6 +348,7 @@ static void shredder_task(void *pvParameters)
 				printf("shredder.c:shredderTask():FlapSync state: Issue in Flap limit switch\r\n");
 				//Log error in the health register
 				setDeviceHealth(FLAP_CLOSE_SENSE_DEV, DEVICE_NOTWORKING, CNI_DEVICE_PRESENCE);
+				alarmMgrRaiseAlarm(HWS_ALARM_FLAP, "FLAP Limit Switch error");
 				shredderState = SHD_STATE_IDLE;
 				break;
 			case DG_LID_OPEN:
@@ -362,8 +382,11 @@ static void shredder_task(void *pvParameters)
 				break;
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
-				flapMotorStop();
-				printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				if(stopFlapFlag == true)
+				{
+					flapMotorStop();
+				}
+				//printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
 				break;
 			default:
 				//Ignored. Unexpected event
@@ -388,8 +411,11 @@ static void shredder_task(void *pvParameters)
 				break;
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
-				flapMotorStop();
-				printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
+				if(stopFlapFlag == true)
+				{
+					flapMotorStop();
+				}
+				//printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
 				break;
 			default:
 				break;
@@ -416,8 +442,11 @@ static void shredder_task(void *pvParameters)
 			case DG_LS_FLAPCLOSE:
 				//Received FLAPCLOSE event. Stop flap motor
 				updateFlapStatus(CLOSE);
-				flapMotorStop();
-				printf("shredder.c:shredderTask():SHD_STATE_ACTIVE: Flap close event received\r\n");
+				if(stopFlapFlag == true)
+				{
+					flapMotorStop();
+				}
+				//printf("shredder.c:shredderTask():SHD_STATE_ACTIVE: Flap close event received\r\n");
 				break;
 			default:
 				//Ignore the event

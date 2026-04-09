@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.3w" );
+	strcpy(swVer,"0.5.4" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -287,5 +287,13 @@ void getHwVersion(char * version)
 * 2. hatcs.c: sensing 2A overload status and reseting the driver
 * 3. shredder.c: Flap closed whenever the shredder sequence stopped in between
 * 4. Alarm raised for Lid error and 2A motor overload
+*
+********************************************************************/
+
+/************************Ver 0.5.4 08-04-2026********************
+* 1. shredder.c: Flapmotor control CCWR and CWR definition changed. Now these commands rotate the
+*                Flap motor in specified direction till Stop command is encountered by the execution
+*                engine. This feature will enable to configure the flap to rotate continuously during
+*                shredding and flushing.
 *
 ********************************************************************/

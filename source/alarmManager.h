@@ -34,6 +34,7 @@
 #define HW_ALARM_TDC1000_2			10
 #define HW_ALARM_TC78H660			11
 #define HWS_ALARM_LID				12
+#define HWS_ALARM_FLAP				13
 
 #define OPS_ALARM_TRAY_FULL			20
 #define OPS_ALARM_ADDITIVE_LOW		21
