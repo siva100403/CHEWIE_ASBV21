@@ -295,5 +295,6 @@ void getHwVersion(char * version)
 *                Flap motor in specified direction till Stop command is encountered by the execution
 *                engine. This feature will enable to configure the flap to rotate continuously during
 *                shredding and flushing.
+* 2. Added few printf() for debugging and change the order of enabling flag stopFlapFlag
 *
 ********************************************************************/

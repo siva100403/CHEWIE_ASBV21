@@ -197,16 +197,19 @@ int stMotorStop()
 
 int flapMotorCWR()
 {
+	printf("FlapMotor CWR\r\n");
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_FWD);
 }
 
 int flapMotorCCWR()
 {
+	printf("FlapMotor CCWR\r\n");
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_REV);
 }
 
 int flapMotorStop()
 {
+	printf("FlapMotor OFF\r\n");
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_COAST);
 }
 

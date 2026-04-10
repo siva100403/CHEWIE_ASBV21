@@ -123,6 +123,8 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 	static uint8_t controlSeqIndex=0;
 
 	printf("shredder.c:sexecuteSHDSeqControl():ControlSeqIndex= %d, seqEngineControl= %d\r\n",controlSeqIndex,seqEngineControl);
+	printf("shredder.c:sexecuteSHDSeqControl():stopFlapFlag = %d\r\n",stopFlapFlag);
+
 	switch(seqEngineControl)
 	{
 	case SEQ_ENGINE_START:
@@ -188,14 +190,14 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_OPEN)
 	{
-		flapMotorCCWR();
 		stopFlapFlag = false;
+		flapMotorCCWR();
 		//flapTimerStart(((shdTiming->flapOpenDur)*1000)/ portTICK_PERIOD_MS);
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_CLOSE)
 	{
-		flapMotorCWR();
 		stopFlapFlag = false;
+		flapMotorCWR();
 		//flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
 	}
 	else
