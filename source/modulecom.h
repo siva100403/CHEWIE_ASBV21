@@ -39,18 +39,19 @@
 
 //CSM related commands
 #define CSM_WASTE_ADD_START			0x01
-#define CSM_WASTE_ADD_END			0x02
+#define CSM_WASTE_ADDED				0x02
 #define CSM_NOTIFY_TRANSFER_END		0x03
 #define CSM_GET_STATE				0x04
 #define CSM_START					0x05
 #define CSM_STOP					0x06
+#define CSM_PAUSE					0x07
+#define CSM_RESUME					0x08
 
-//Timer related events
-#define DG_TIMER_EXPIRY				0x08
-
+//Common Commands
 #define CLI_CMD						0x09
 #define DG_MODULE_START				0x0A
 #define DG_MODULE_STOP				0x0B
+#define DG_TIMER_EXPIRY				0x0C
 
 
 //CT (Compost Turner) module commands

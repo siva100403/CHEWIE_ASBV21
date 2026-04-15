@@ -23,11 +23,12 @@
 #define MESOPHILIC_PHASE	0
 #define THERMOPHILIC_PHASE	1
 #define PATHOGEN_ELM_PHASE	2
-#define TRANSFER_PHASE		3
-#define PHASE_IDLE			4
-//#define PHASE_MAX			5
+#define DRYING_PHASE		3
+#define TRANSFER_PHASE		4
+#define PHASE_IDLE			5
+//#define PHASE_MAX			6
 
-#define PHASE_COUNT_MAX		3
+#define PHASE_COUNT_MAX		4
 //Input wet-waste composition categories
 //It is envisaged that the composting process parameters have to be modified based on the
 // composition of the wet-waste.
@@ -235,16 +236,18 @@ typedef union augerCfg
 
 typedef union transferCfg
 {
-	uint8_t 			transferSpcae[128];
+	uint8_t 			transferSpace[128];
 	dgTcsConfigParam_t	transferParams;
 }dgTransferConfig_t;
 
 
 typedef union shredderCfg
 {
-	uint8_t 			transferSpcae[128];
+	uint8_t 			shredderSpace[128];
 	dgShdConfigParams_t	shdParams;
 }dgShredderConfig_t;
+
+
 typedef struct configMemAllocation
 {
 	dgHatcsConfig_t hatcsConfig;		//Page 0 to 5

@@ -25,6 +25,9 @@
 #define CSM_STATE_ADDWASTE_M	7		//Adding waste at MPHASE (Mesophilic phase)
 #define CSM_STATE_ADDWASTE_T	8		//Adding waste at TPHASE
 #define CSM_STATE_ERROR			9		//Error condition where it cannot proceed with composting process
+#define CSM_STATE_I_DRY			10
+#define CSM_STATE_M_DRY			11
+#define CSM_STATE_T_DRY			12
 
 
 

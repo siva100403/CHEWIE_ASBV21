@@ -75,6 +75,7 @@ dgConfigMem_t allConfig;
 #else   //Default Configuration for Chewie Control System
 
 
+const char sysConfigVer[] = "V1.1";
 
 const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 19}, 	//M-Phase, Cat0
 											{60.0, 53.0, 0, 240, 90},	//T-Phase, Cat0
@@ -401,6 +402,21 @@ int storeWorkingConfigEEPROM()
 	return DG_SUCCESS;
 }
 
+int getSysconfigVersion(char *versionStr)
+{
+	if(versionStr == NULL) return DG_FAIL;
+
+	strncpy(versionStr, (char*)&allConfig.checksumArea[0], sizeof(sysConfigVer));
+	return DG_SUCCESS;
+}
+
+int storeSysconfigVersion(char *versionStr)
+{
+	if(versionStr == NULL) return DG_FAIL;
+
+	strncpy((char*)&allConfig.checksumArea[0], versionStr, sizeof(sysConfigVer));
+	return DG_SUCCESS;
+}
 
 // Shredder
 int getShredderCtrlSeq(uint8_t index, dgShredderCtrlSeq_t *out) {
@@ -556,6 +572,7 @@ int getCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *out) {
         case MESOPHILIC_PHASE: *out = param->mPhase; break;
         case THERMOPHILIC_PHASE: *out = param->tPhase; break;
         case PATHOGEN_ELM_PHASE: *out = param->pPhase; break;
+        case DRYING_PHASE: *out = param->dPhase; break;
     }
 
     return DG_SUCCESS;
@@ -586,6 +603,7 @@ int setCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *value)
         case MESOPHILIC_PHASE: param->mPhase = *value; break;
         case THERMOPHILIC_PHASE: param->tPhase = *value; break;
         case PATHOGEN_ELM_PHASE: param->pPhase = *value; break;
+        case DRYING_PHASE: param->dPhase = *value; break;
     }
 
     return DG_SUCCESS;
@@ -594,6 +612,10 @@ int setCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *value)
 int loadDefaultConfig()
 {
 	//allConfig
+
+	//Copy Version string
+	uint8_t *versionPtr = &(allConfig.checksumArea[0]);
+	memcpy((void*)(versionPtr), (void*)(sysConfigVer), sizeof(sysConfigVer));
 
 	//Copy hatcsConfig default
 	dgHatcsConfig_t *hatcsConfigPtr;

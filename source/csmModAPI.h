@@ -26,6 +26,8 @@ typedef struct csmParam
 
 int csmStart(uint8_t srcModule, uint8_t state, uint8_t phase, uint16_t remainingDuration, uint8_t wasteCat);
 int csmStop(uint8_t srcModule);
+int csmPause(void);
+int csmResume(void);
 //int csmSetWasteCat(uint8_t srcModule, uint8_t wasteCat);
 int csmGetState(uint8_t srcModule, dgCsmParam_t *state);
 int csmNotifyWasteAddStart(uint8_t srcModule);

@@ -7,6 +7,7 @@
 
 
 /* FreeRTOS kernel includes. */
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -76,8 +77,8 @@
 #include "hatcsModAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
-#include "csmMod.h"
 #include "csmModAPI.h"
+#include <csmMod.h>
 
 
 
@@ -285,7 +286,7 @@ int csmGetState(uint8_t srcModule, dgCsmParam_t *state)
 	sendMsgBuf.cmdParam = (void*)state;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmGetState():Task handle is null for module with id: %d \r\n", srcModule);
@@ -322,7 +323,7 @@ int csmNotifyWasteAddStart(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyWasteAddStart():Task handle is null for module with id: %d \r\n", srcModule);
@@ -346,7 +347,7 @@ int csmNotifyWasteAddStart(uint8_t srcModule)
 	}
 	return DG_FAIL;
 }
-int csmNotifyWasteAddEnd(uint8_t srcModule, uint8_t wasteCat)
+int csmNotifyWasteAdded(uint8_t srcModule, uint8_t wasteCat)
 {
 	dgMsg_t sendMsgBuf;
 	dgCsmParam_t param;
@@ -360,11 +361,11 @@ int csmNotifyWasteAddEnd(uint8_t srcModule, uint8_t wasteCat)
 
 	//Populate the message to send to the modbus task
 	sendMsgBuf.src_module = srcModule;
-	sendMsgBuf.command = CSM_WASTE_ADD_END;
+	sendMsgBuf.command = CSM_WASTE_ADDED;
 	sendMsgBuf.cmdParam = (void*)&param;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyWasteAddEnd():Task handle is null for module with id: %d \r\n", srcModule);
@@ -402,7 +403,7 @@ int csmNotifyTransferComplete(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmNotifyTransferComplete():Task handle is null for module with id: %d \r\n", srcModule);
@@ -412,6 +413,82 @@ int csmNotifyTransferComplete(uint8_t srcModule)
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
 		PRINTF("csmAPI.c:csmNotifyTransferComplete():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+}
+
+int csmPause(void)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = CSM_PAUSE;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = CSM_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("csmAPI.c:csmPause():Task handle is null\r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("csmAPI.c:csmPause():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+}
+
+int csmResume(void)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = CSM_RESUME;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = CSM_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("csmAPI.c:csmResume():Task handle is null\r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("csmAPI.c:csmResume():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 

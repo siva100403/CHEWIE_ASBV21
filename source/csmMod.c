@@ -7,6 +7,7 @@
 
 
 /* FreeRTOS kernel includes. */
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -76,8 +77,8 @@
 #include "hatcsModAPI.h"
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
-#include "csmMod.h"
 #include "csmModAPI.h"
+#include "csmMod.h"
 #include "measure.h"
 #include "alarm.h"
 
@@ -99,6 +100,41 @@ uint8_t chooseWasteCat(uint8_t currentWasteCat, uint8_t newWasteCat)
 }
 
 
+ static uint8_t effectPhaseChange(dgCtStateVar_t *ctVar)
+{
+	dgCtProcessParam_t currentProcessParam;
+	uint8_t retValue;
+
+	retValue = DG_SUCCESS;
+
+	//Load process parameters corresponding to the Phase and waste category
+	getCsmPhaseParam(ctVar->curWasteCat, ctVar->curPhase, &currentProcessParam);
+	//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
+	ctVar->schDur = currentProcessParam.phaseDur;
+	ctVar->remDur = currentProcessParam.phaseDur;
+	ctVar->expDur = 0;
+
+	//Store the current state to RTC RAM
+	updateChewieStateStore(ctVar);
+	//Inform the Temperature/Humidity/Aeration module about state change and update parameters
+	sensorStop(CSM_MOD);
+	if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
+	{
+		printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
+		retValue = DG_FAIL;
+	}
+	sensorStart(CSM_MOD);
+	return retValue;
+}
+
+static void remDurCorrection(dgCtStateVar_t *ctVar, uint8_t percentage)
+{
+	//Validate parameter
+	percentage = (percentage > 100)? 100: percentage;
+	percentage = (percentage < 10)? 10: percentage;
+
+	ctVar->remDur = (uint16_t)((float)ctVar->schDur * ((float)percentage/100.0));
+}
 
 void csm_Task(void* arg)
 {
@@ -205,7 +241,7 @@ void csm_Task(void* arg)
 				}
 				else
 				{
-					printf("compostingModule.c:csmTask():csmStart command-Invalid Param error\r\n");
+					printf("csmMod.c:csmTask():csmStart command-Invalid Param error\r\n");
 					*rcvMsg.result = DG_INVALID_PARAM;
 				}
 			}
@@ -288,72 +324,7 @@ void csm_Task(void* arg)
 			}
 			break;
 
-		case CSM_WASTE_ADD_START:
-			//First send notification to the caller
-			*rcvMsg.result = DG_SUCCESS;
-
-			if(rcvMsg.taskHandleSM != NULL)
-			{
-				xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
-			}
-			switch(ctVar.state)
-			{
-			case CSM_STATE_IDLE:
-				//Move to CSM_STATE_ADDWASTE_I state.
-				//Do we need to turn the compost in the chamber for the new waste to come in??
-				/*TODO*/
-				ctVar.state = CSM_STATE_ADDWASTE_I;
-				//Chewie cannot be in this state for long. Hence add a timer
-				timeout = ADDWASTE_DURATION_TIMEOUT;
-				updateChewieStateStore(&ctVar);
-				dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
-				break;
-			case CSM_STATE_MPHASE:
-				//Change state to CSM_STATE_ADDWASTE_M
-				ctVar.state = CSM_STATE_ADDWASTE_M;
-				//Chewie cannot be in this state for long. Hence add a timer
-				timeout = ADDWASTE_DURATION_TIMEOUT;
-				//Do we need to temporarily halt ct operation during waste addition?
-				/*TODO*/
-				updateChewieStateStore(&ctVar);
-				break;
-			case CSM_STATE_TPHASE:
-				//Change state to CSM_STATE_ADDWASTE_T
-				ctVar.state = CSM_STATE_ADDWASTE_T;
-				//Chewie cannot be in this state for long. Hence add a timer
-				timeout = ADDWASTE_DURATION_TIMEOUT;
-				//Do we need to temporarily halt ct operation during waste addition?
-				/*TODO*/
-				updateChewieStateStore(&ctVar);
-				break;
-			case CSM_STATE_PPHASE:
-				//Ignore the event
-				//Shredding operation can wait till this phase and Transfer phase is over
-				//This should be taken care by shredding module
-				/*TODO*/
-				break;
-			case CSM_STATE_TRANSFER:
-				//Ignore the event
-				//Shredding operation should not start when Chewie is transferring compost to storage
-				//This should be taken care by shredding module
-				/*TODO*/
-				break;
-			case CSM_STATE_ADDWASTE_I:
-				//Ignore the event.
-				break;
-			case CSM_STATE_ADDWASTE_M:
-				//Ignore the event.
-				break;
-			case CSM_STATE_ADDWASTE_T:
-				//Ignore the event.
-				break;
-			case CSM_STATE_ERROR:
-				//Ignore the event.
-				break;
-			}
-			break;
-
-		case CSM_WASTE_ADD_END:
+		case CSM_WASTE_ADDED:
 			//First send notification to the caller
 			*rcvMsg.result = DG_SUCCESS;
 
@@ -366,32 +337,12 @@ void csm_Task(void* arg)
 			switch(ctVar.state)
 			{
 			case CSM_STATE_IDLE:
-				//Incorrect state for the event
-				//Log event
-				break;
-			case CSM_STATE_MPHASE:
-				//Incorrect state for the event
-				//Log event
-				break;
-			case CSM_STATE_TPHASE:
-				//Incorrect state for the event
-				//Log event
-				break;
-			case CSM_STATE_PPHASE:
-				//Incorrect state for the event
-				//Log event
-				break;
-
-			case CSM_STATE_TRANSFER:
-				//Incorrect state for the event
-				//Log event
-				break;
-			case CSM_STATE_ADDWASTE_I:
+				//Move to drying phase
 				//Get waste category
 				ctVar.curWasteCat = chooseWasteCat(ctVar.curWasteCat, configparams->wasteCat);
-				//Waste adding ended. Move to MPHASE
-				ctVar.state = CSM_STATE_MPHASE;
-				ctVar.curPhase = MESOPHILIC_PHASE;
+				//Waste adding ended. Move to DRY-ing phase
+				ctVar.state = CSM_STATE_I_DRY;
+				ctVar.curPhase = DRYING_PHASE;
 				ctVar.prevPhase = PHASE_IDLE;
 
 				//Load process parameters corresponding to the Phase and waste category
@@ -403,65 +354,92 @@ void csm_Task(void* arg)
 
 				//Store the current state to RTC RAM
 				updateChewieStateStore(&ctVar);
-//				dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
+				dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
 				//Inform the Temperature/Humidity/Aeration module about state change and update parameters
 				sensorStop(CSM_MOD);
 				if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
 				{
-					printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
+					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
 				}
 				sensorStart(CSM_MOD);
 				break;
-			case CSM_STATE_ADDWASTE_M:
+			case CSM_STATE_MPHASE:
+				//Move to drying phase-M
 				//Get waste category
 				ctVar.curWasteCat = chooseWasteCat(ctVar.curWasteCat, configparams->wasteCat);
+				//Waste adding ended. Move to DRY-ing phase
+				ctVar.state = CSM_STATE_M_DRY;
+				ctVar.curPhase = DRYING_PHASE;
+				ctVar.prevPhase = PHASE_IDLE;
 
-				//Waste adding ended. Move back to MPHASE.
-				ctVar.state = CSM_STATE_MPHASE;
-				ctVar.curPhase = MESOPHILIC_PHASE;
-				//Update process parameter based on new waste cat
+				//Load process parameters corresponding to the Phase and waste category
 				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
-				//Reset the remaining time
 				ctVar.schDur = currentProcessParam.phaseDur;
-				ctVar.remDur = ctVar.schDur;
+				ctVar.remDur = currentProcessParam.phaseDur;
+				ctVar.expDur = 0;
 
-				//Inform the Temperature/Humidity/Aeration module about state change and update parameters
-				sensorStop(CSM_MOD);
-				if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
-				{
-					printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
-				}
-				sensorStart(CSM_MOD);
 				//Store the current state to RTC RAM
 				updateChewieStateStore(&ctVar);
-				break;
-			case CSM_STATE_ADDWASTE_T:
-				//Get waste category
-				ctVar.curWasteCat = chooseWasteCat(ctVar.curWasteCat, configparams->wasteCat);
-				//Waste adding ended. Move back to TPHASE.
-				ctVar.state = CSM_STATE_TPHASE;
-				ctVar.curPhase = THERMOPHILIC_PHASE;
-				//Update process parameter based on new waste cat
-				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
-				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
-				//Reset the remaining time
-				ctVar.schDur = currentProcessParam.phaseDur;
-				ctVar.remDur = ctVar.schDur;
+				//dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
 				//Inform the Temperature/Humidity/Aeration module about state change and update parameters
 				sensorStop(CSM_MOD);
 				if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
 				{
-					printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
+					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
 				}
 				sensorStart(CSM_MOD);
 				break;
+			case CSM_STATE_TPHASE:
+				//Move to drying phase-T
+				//Get waste category
+				ctVar.curWasteCat = chooseWasteCat(ctVar.curWasteCat, configparams->wasteCat);
+				//Waste adding ended. Move to DRY-ing phase
+				ctVar.state = CSM_STATE_T_DRY;
+				ctVar.curPhase = DRYING_PHASE;
+				ctVar.prevPhase = PHASE_IDLE;
+
+				//Load process parameters corresponding to the Phase and waste category
+				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
+				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
+				ctVar.schDur = currentProcessParam.phaseDur;
+				ctVar.remDur = currentProcessParam.phaseDur;
+				ctVar.expDur = 0;
+
+				//Store the current state to RTC RAM
+				updateChewieStateStore(&ctVar);
+				//dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
+				//Inform the Temperature/Humidity/Aeration module about state change and update parameters
+				sensorStop(CSM_MOD);
+				if(sensorSetParam(CSM_MOD, currentProcessParam.temperature, currentProcessParam.humidity,TEMP_CORRECTION_ERROR, HUMIDITY_CORRECTION_ERROR)!= DG_SUCCESS)
+				{
+					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
+				}
+				sensorStart(CSM_MOD);
+				break;
+			case CSM_STATE_PPHASE:
+				//Incorrect state for the event
+				//Log event
+				break;
+
+			case CSM_STATE_I_DRY:
+			case CSM_STATE_M_DRY:
+			case CSM_STATE_T_DRY:
+				//Waste has been added in drying phase. No need to do anything. Ignored
+				break;
+
+			case CSM_STATE_TRANSFER:
+				//Incorrect state for the event
+				//Log event
+				break;
+
 			case CSM_STATE_ERROR:
 				//Ignore event
 				break;
 
 			}
 			break;
+
 
 		case DG_TIMER_EXPIRY:    //1 min event
 			switch(ctVar.state)
@@ -575,6 +553,66 @@ void csm_Task(void* arg)
 					updateChewieStateStoreExpDur(ctVar.expDur, ctVar.remDur);
 				}
 				break;
+
+			case CSM_STATE_I_DRY:
+				ctVar.remDur--;
+				ctVar.expDur++;
+				if(ctVar.remDur == 0)
+				{
+					//duration is over.Move to MPhase
+					ctVar.state = CSM_STATE_MPHASE;
+					ctVar.curPhase = MESOPHILIC_PHASE;
+					ctVar.prevPhase = DRYING_PHASE;
+
+					effectPhaseChange(&ctVar);
+				}
+				else
+				{
+					//Phase is not over
+					updateChewieStateStoreExpDur(ctVar.expDur, ctVar.remDur);
+				}
+				break;
+
+			case CSM_STATE_M_DRY:
+				ctVar.remDur--;
+				ctVar.expDur++;
+				if(ctVar.remDur == 0)
+				{
+					//duration is over.Move to MPhase
+					ctVar.state = CSM_STATE_MPHASE;
+					ctVar.curPhase = MESOPHILIC_PHASE;
+					ctVar.prevPhase = DRYING_PHASE;
+
+					effectPhaseChange(&ctVar);
+				}
+				else
+				{
+					//Phase is not over
+					updateChewieStateStoreExpDur(ctVar.expDur, ctVar.remDur);
+				}
+				break;
+
+			case CSM_STATE_T_DRY:
+				ctVar.remDur--;
+				ctVar.expDur++;
+				if(ctVar.remDur == 0)
+				{
+					//duration is over.Move to MPhase
+					ctVar.state = CSM_STATE_MPHASE;
+					ctVar.curPhase = MESOPHILIC_PHASE;
+					ctVar.prevPhase = DRYING_PHASE;
+
+					effectPhaseChange(&ctVar);
+					remDurCorrection(&ctVar, 50);
+
+				}
+				else
+				{
+					//Phase is not over
+					updateChewieStateStoreExpDur(ctVar.expDur, ctVar.remDur);
+				}
+				break;
+
 
 			case CSM_STATE_TRANSFER:
 				//Reduce timeout count
