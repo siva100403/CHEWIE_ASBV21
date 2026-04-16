@@ -296,5 +296,6 @@ void getHwVersion(char * version)
 *                engine. This feature will enable to configure the flap to rotate continuously during
 *                shredding and flushing.
 * 2. Added few printf() for debugging and change the order of enabling flag stopFlapFlag
+* 3. CliProc.c: DCSprayer command now supports ON/OFF/ONCE. ONCE requires duration parameter
 *
 ********************************************************************/

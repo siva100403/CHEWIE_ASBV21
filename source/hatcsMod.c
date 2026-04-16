@@ -137,6 +137,15 @@ int sprayOnceDC(uint8_t duration)
 	return DG_SUCCESS;
 }
 
+int sprayOnceDCmSec(uint16_t duration)
+{
+	//Turn ON sprayer for Digestion Chamber
+	DCsprayerOn();
+	//Set timer for turn-off
+	sprayerTimerStart(CONV_MSEC_TO_TICKS(duration));
+	return DG_SUCCESS;
+}
+
 int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 {
 	static dgActuatorCtrlCode_t  controlCode[MAX_CTRL_CODE_PER_SEQ];

@@ -68,5 +68,7 @@ typedef struct hatsProcessVar
 
 
 int initHatcs(void);
+int sprayOnceDC(uint8_t duration);
+int sprayOnceDCmSec(uint16_t duration);
 
 #endif /* HATCSMOD_H_ */

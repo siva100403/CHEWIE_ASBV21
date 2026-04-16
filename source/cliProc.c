@@ -61,6 +61,7 @@
 #include "shredder.h"
 #include "shredderAPI.h"
 #include "adcs.h"
+#include "hatcsMod.h"
 #include "limitSwitchMod.h"
 #include "transferCS.h"
 #include "transferCSAPI.h"
@@ -496,7 +497,7 @@ void cli_Task(void* arg)
 
 				case DC_SPRAYER:
 				{
-					//DCSPRAYER ON/OFF
+					//DCSPRAYER ON/OFF/ONCE
 
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
@@ -513,6 +514,27 @@ void cli_Task(void* arg)
 					else if (strcmp(&token[0], "OFF\0")==0)
 					{
 						DCsprayerOff();
+					}
+					else if (strcmp(&token[0], "ONCE\0")==0)
+					{
+						uint16_t duration;
+						// Extract duration
+						if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+						{
+							strcpy(response, "CERROR:Less Parameters\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						duration = atoi(token);
+						if(duration == 0)
+						{
+							strcpy(response, "CERROR:Invalid Parameter\r\n>");
+							sendCliResponse(response, strlen(response));
+							setRxStatus(RS232_RCV_IDLE);
+							break;
+						}
+						sprayOnceDCmSec(duration);
 					}
 					else
 					{
