@@ -67,11 +67,11 @@ const dgSolenoidHbAlloc_t airValve3 = {DRV89XX_2, HALFBRIDGE_2};
 
 /************ HBridge Port assignment for bi-directional DC motor ************/
 const dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_3, HALFBRIDGE_4};
-
+const dgBiDirMotorHbAlloc_t mkValve = {DRV89XX_2, HALFBRIDGE_12, HALFBRIDGE_11};
 
 const dgBiDirMotorHbAlloc_t flapMotor = {DRV89XX_1, HALFBRIDGE_5, HALFBRIDGE_7};
 const dgBiDirMotorHbAlloc_t fanMotor = {DRV89XX_2, HALFBRIDGE_5, HALFBRIDGE_7};
-//dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_12, HALFBRIDGE_11};
+//dgBiDirMotorHbAlloc_t stMotor = {DRV89XX_2, HALFBRIDGE_11, HALFBRIDGE_12};
 
 
 
@@ -215,3 +215,21 @@ int flapMotorStop()
 
 
 
+//MK Valve Control
+int mkValveCWR()
+{
+	printf("mkValve CWR\r\n");
+	return fullBridgeCtrl(mkValve.spiDeviceId, mkValve.mpHbridgeId, mkValve.mnHbridgeId, MOTOR_FWD);
+}
+
+int mkValveCCWR()
+{
+	printf("mkValve CCWR\r\n");
+	return fullBridgeCtrl(mkValve.spiDeviceId, mkValve.mpHbridgeId, mkValve.mnHbridgeId, MOTOR_REV);
+}
+
+int mkValveStop()
+{
+	printf("mkValve OFF\r\n");
+	return fullBridgeCtrl(mkValve.spiDeviceId, mkValve.mpHbridgeId, mkValve.mnHbridgeId, MOTOR_COAST);
+}

@@ -47,6 +47,10 @@ typedef struct hatsProcessVar
  * Variables and constants											*
  ********************************************************************/
 
+
+#define AIR_RECIRC		0
+#define AIR_OUT			1
+
 //HATCS states
 
 #define HATCS_STATE_IDLE		0
@@ -70,5 +74,6 @@ typedef struct hatsProcessVar
 int initHatcs(void);
 int sprayOnceDC(uint8_t duration);
 int sprayOnceDCmSec(uint16_t duration);
+int setMkValveStatus(uint8_t status);
 
 #endif /* HATCSMOD_H_ */

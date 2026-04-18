@@ -87,7 +87,11 @@
 TimerHandle_t sprayerTimerHandle;
 
 
+
 #define DEFAULT_SPRAYER_DURATION 	1   //in seconds
+
+
+
 
 /********************************************************************
  * Implementation													*
@@ -143,6 +147,93 @@ int sprayOnceDCmSec(uint16_t duration)
 	DCsprayerOn();
 	//Set timer for turn-off
 	sprayerTimerStart(CONV_MSEC_TO_TICKS(duration));
+	return DG_SUCCESS;
+}
+
+
+/*---------------------- mKValve Operation -------------------------*/
+/* MK Valve assumed to be at AIR_RECIRC position when Chewie is started.
+ * Currently there is no limit switch to sense the position.
+ * MK Valve motor is 2 RPM.
+ * AIR_RECIRC position and AIR_OUT position are 90 deg away
+ * MK Valve motor will be rotated 45 deg to move between AIR_CIRC position
+ *  and AIR_OUT position.
+ * To move from AIR_RECIRC position to AIR_OUT position motor has to be rotated
+ *  in CCWR
+ */
+
+
+#define AIR_RECIRC		0
+#define AIR_OUT			1
+
+#define MKVALVE_CWR_DURATION		3750 	//Specified in mSec
+#define MKVALVE_CCWR_DURATION		3750  	//Specified in mSec
+
+uint8_t mkValveStatus;
+TimerHandle_t mkValveTimerHandle;
+
+
+int mkValveTimerStart(TickType_t timeoutValue)
+{
+
+	if(xTimerChangePeriod(mkValveTimerHandle,timeoutValue, DGTIMER_BLOCKTIME )== pdFALSE)
+	{
+		printf("hatcsMod.c:mkValveTimerStart():Change period failed\r\n");
+		return DG_FAIL;
+	}
+	if(xTimerStart(mkValveTimerHandle,DGTIMER_BLOCKTIME) == pdFALSE)
+	{
+		printf("hacsMod.c:mkValveTimerStart():Start failed\r\n");
+		return DG_FAIL;
+	}
+	return DG_SUCCESS;
+}
+
+void mkValveTimerCallback( TimerHandle_t xTimer)
+{
+	//Turn of mkValve
+	mkValveStop();
+}
+
+int mkValveTimerInit()
+{
+	//mkValve requires a timer to stop
+	mkValveTimerHandle = xTimerCreate("makValveTimer",100, pdFALSE, NULL, mkValveTimerCallback);
+	if(mkValveTimerHandle == NULL)
+	{
+		printf("mkValve Timer creation failed!.\r\n");
+		return DG_FAIL;
+	}
+	return DG_SUCCESS;
+}
+
+int setMkValveStatus(uint8_t status)
+{
+	switch(status)
+	{
+	case AIR_RECIRC:
+		if(mkValveStatus != AIR_RECIRC){
+			//start mkValve motor in CWR
+			mkValveCCWR();
+			//start mkValve timer to stop
+			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CWR_DURATION));
+			mkValveStatus = AIR_RECIRC;
+		}
+		break;
+	case AIR_OUT:
+		if(mkValveStatus != AIR_OUT){
+			//start mkValve motor in CCWR
+			mkValveCWR();
+			//start mkValve timer to stop
+			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CCWR_DURATION));
+			mkValveStatus = AIR_OUT;
+		}
+		break;
+	default:
+		printf("Incorrect mkValve status\r\n");
+		return DG_FAIL;
+		break;
+	}
 	return DG_SUCCESS;
 }
 
@@ -251,18 +342,21 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 			airValve1On();
 			airValve3Off();
 			fanMotorStop();
+			setMkValveStatus(AIR_RECIRC);
 			printf("hatcsMod.c:executeActuatorControl():AIR_IN\r\n");
 			break;
 		case SEQ_CTRL_AIR_OUT:
 			airValve1On();
 			airValve3On();
 			fanMotorCCWR();
+			setMkValveStatus(AIR_OUT);
 			printf("hatcsMod.c:executeActuatorControl():AIR_OUT\r\n");
 			break;
 		case SEQ_CTRL_AIR_RECIRC:
 			airValve1Off();
 			airValve3On();
 			fanMotorStop();
+			setMkValveStatus(AIR_RECIRC);
 			printf("hatcsMod.c:executeActuatorControl():AIR_RECIRC\r\n");
 			break;
 		default:
@@ -327,6 +421,8 @@ static void hatcs_task(void *pvParameters)
 	hatSensorState = HAT_SENSOR_TEMP_WR_HUM_WR;
 
 	sprayerTimerInit();
+	mkValveStatus = AIR_RECIRC;
+	mkValveTimerInit();
 
 
 	while(1)
@@ -460,6 +556,8 @@ int initHatcs(void)
 	//Create Temperature and humidity  Control task
 	TaskHandle_t hatcsTaskHandle;
 	TimerHandle_t hatcsTimerHandle;
+
+
 
     if (xTaskCreate(hatcs_task, "hatcs_task", configMINIMAL_STACK_SIZE + 100, NULL, task_PRIORITY, &hatcsTaskHandle) !=
         pdPASS)

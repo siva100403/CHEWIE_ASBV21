@@ -92,7 +92,7 @@ struct cmd_buffer
 #define MOTOR2			46
 #define SPARE2_RELAY	47
 #define GETLS_STATUS	48
-
+#define MKVALVE			49
 
 
 

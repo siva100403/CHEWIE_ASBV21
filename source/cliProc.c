@@ -72,6 +72,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
+#include "hatcsMod.h"
 
 
 /*******************************************************************************
@@ -336,7 +337,10 @@ int getCmdCode(char* token)
 	{
 		cmdCode = GETLS_STATUS;
 	}
-
+	else if(strcmp(&token[0], "MKVALVE\0")==0)
+	{
+		cmdCode = MKVALVE;
+	}
 	else
 	{
 		cmdCode = -1;
@@ -1254,6 +1258,51 @@ void cli_Task(void* arg)
 					break;
 				}
 
+				case MKVALVE:
+				{
+					//AUGER RL/RR/OFF/RECIRC/AIROUT
+
+					// Extract from command string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
+					{
+						strcpy(response, "CERROR:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					if (strcmp(&token[0], "RL\0")==0)
+					{
+						mkValveCCWR();
+					}
+					else if (strcmp(&token[0], "RR\0")==0)
+					{
+						mkValveCWR();
+					}
+					else if (strcmp(&token[0], "OFF\0")==0)
+					{
+						mkValveStop();
+					}
+					else if (strcmp(&token[0], "AIROUT\0")==0)
+					{
+						setMkValveStatus(AIR_OUT);
+					}
+					else if (strcmp(&token[0], "RECIRC\0")==0)
+					{
+						setMkValveStatus(AIR_RECIRC);
+					}
+					else
+					{
+						strcpy(response, "CERROR:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					strcpy(response, "CC:\r\n>");
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+
+				}
 				case AUGER_MOTOR:
 				{
 					//AUGER RL/RR/OFF

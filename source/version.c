@@ -297,5 +297,5 @@ void getHwVersion(char * version)
 *                shredding and flushing.
 * 2. Added few printf() for debugging and change the order of enabling flag stopFlapFlag
 * 3. CliProc.c: DCSprayer command now supports ON/OFF/ONCE. ONCE requires duration parameter
-*
+* 4. MKValve (AIROUT) valve support added
 ********************************************************************/

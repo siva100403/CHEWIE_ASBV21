@@ -43,6 +43,10 @@ int stMotorCWR(void);
 int stMotorCCWR(void);
 int stMotorStop(void);
 
+int mkValveCWR();
+int mkValveCCWR();
+int mkValveStop();
+
 
 
 #endif /* ACTUATORCTRL_H_ */
