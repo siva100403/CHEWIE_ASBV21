@@ -104,7 +104,7 @@ int DCsprayerOn()
 
 int DCsprayerOff()
 {
-	updateDcSprayerStatus(OFF);
+	//updateDcSprayerStatus(OFF);
 	return halfBridgeCtrl(DCsprayer.spiDeviceId , DCsprayer.solHbridgeId, SOLENOID_OFF);
 }
 
@@ -161,34 +161,37 @@ int airValve3Off()
 
 int fanMotorCWR()
 {
-	updateHtrFanStatus(CWR);
+	//updateHtrFanStatus(CWR);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_FWD);
 }
 
 int fanMotorCCWR()
 {
-	updateHtrFanStatus(CCWR);
+	//updateHtrFanStatus(CCWR);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_REV);
 }
 
 int fanMotorStop()
 {
-	updateHtrFanStatus(OFF);
+	//updateHtrFanStatus(OFF);
 	return fullBridgeCtrl(fanMotor.spiDeviceId, fanMotor.mpHbridgeId, fanMotor.mnHbridgeId, MOTOR_COAST);
 }
 
 int stMotorCWR()
 {
+	updateStValveStatus(CWR);
 	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_FWD);
 }
 
 int stMotorCCWR()
 {
+	updateStValveStatus(CCWR);
 	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_REV);
 }
 
 int stMotorStop()
 {
+	updateStValveStatus(OFF);
 	return fullBridgeCtrl(stMotor.spiDeviceId, stMotor.mpHbridgeId, stMotor.mnHbridgeId, MOTOR_COAST);
 }
 
@@ -198,18 +201,21 @@ int stMotorStop()
 int flapMotorCWR()
 {
 	printf("FlapMotor CWR\r\n");
+	updateFlapStatus(CWR);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_FWD);
 }
 
 int flapMotorCCWR()
 {
 	printf("FlapMotor CCWR\r\n");
+	updateFlapStatus(CCWR);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_REV);
 }
 
 int flapMotorStop()
 {
 	printf("FlapMotor OFF\r\n");
+	updateFlapStatus(OFF);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_COAST);
 }
 

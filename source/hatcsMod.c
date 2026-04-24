@@ -71,6 +71,7 @@
 #include "lidModuleAPI.h"
 #include "hatcsMod.h"
 #include "hatcsModAPI.h"
+#include "actuatorStatusTracker.h"
 
 
 /********************************************************************
@@ -288,11 +289,13 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 	{
 		printf("hatcsMod.c:executeActuatorControl():HEATER_ON\r\n");
 		HEATER_ON();
+		updateHeaterStatus(ON);
 	}
 	else
 	{
 		printf("hatcsMod.c:executeActuatorControl():HEATER_OFF\r\n");
 		HEATER_OFF();
+		updateHeaterStatus(OFF);
 	}
 
 	//Fan Control
@@ -390,6 +393,7 @@ int executeActuatorSafeState(void)
 	ctStop(HATCS_MOD);
 	//Stop Heater
 	HEATER_OFF();
+	updateHeaterStatus(OFF);
 	//Stop suction Fan
 	fanMotorStop();
 	//Stop Heater fan
@@ -521,6 +525,7 @@ static void hatcs_task(void *pvParameters)
 	                if((READ_TC78H660_ERR_STATUS() & 0x01) == 0)
 	                {
 	                	HEATER_OFF();
+	            		updateHeaterStatus(OFF);
 	                    printf("hatcs.c:hatcs_task():TC78H660 Error Flag active\r\n");
 						sendCliResponse("2A Motor driver Error Flag Active\r\n", 35);
 						//Correct the error

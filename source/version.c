@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.5.4" );
+	strcpy(swVer,"0.5.5" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -299,3 +299,7 @@ void getHwVersion(char * version)
 * 3. CliProc.c: DCSprayer command now supports ON/OFF/ONCE. ONCE requires duration parameter
 * 4. MKValve (AIROUT) valve support added
 ********************************************************************/
+
+/************************Ver 0.5.5 21-04-2026********************
+* 1. ActuatorStatusTracker has been updated with all the ports except Lid.
+* *****************************************************************/

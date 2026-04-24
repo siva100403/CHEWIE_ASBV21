@@ -248,6 +248,7 @@ void hFanCWR(uint8_t duty)
 		duty = 100;
 	}
 	pwmStart(duty);
+	updateHtrFanStatus(CWR);
 }
 
 void hFanCCWR(uint8_t duty)
@@ -263,7 +264,7 @@ void hFanCCWR(uint8_t duty)
 		duty = 100;
 	}
 	pwmStart(duty);
-	//MOTOR1_START();
+	updateHtrFanStatus(CCWR);
 }
 
 void hFanStop(void)
@@ -271,6 +272,7 @@ void hFanStop(void)
 	//MOTOR1_STOP();
 	pwmStart(0);
 	//pwmStop();
+	updateHtrFanStatus(OFF);
 }
 
 void augerMotorCWR(void)
