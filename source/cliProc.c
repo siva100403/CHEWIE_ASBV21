@@ -1687,7 +1687,7 @@ void cli_Task(void* arg)
 				                        phaseParam.temperature,
 				                        phaseParam.humidity,
 				                        phaseParam.phaseDur,
-				                        phaseParam.aeration);
+				                        phaseParam.aerationDur);
 
 				                sendCliResponse(response, strlen(response));
 				                printf("cliProc.c: response: %s\r\n", response);
@@ -1737,7 +1737,7 @@ void cli_Task(void* arg)
 				                    &phaseParam.temperature,
 				                    &phaseParam.humidity,
 				                    &phaseParam.phaseDur,
-				                    &phaseParam.aeration);
+				                    &phaseParam.aerationDur);
 
 				    if (parsed == 6)
 				    {

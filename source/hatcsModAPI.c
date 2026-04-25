@@ -251,3 +251,80 @@ int hatcsNotifySensorState(uint8_t srcModule, uint8_t sensorState)
 
 }
 
+
+int hatcsInstructAirInlet()
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = HATCS_INSTRUCT_AIRINLET;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = HATCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("hatcsModAPI.c:hatcsInstructAirInlet():Task handle is null for module \r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("hatcsModAPI.c:hatcsInstructAirInlet():Message send failed \r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+
+}
+
+int hatcsInstructMixing()
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = HATCS_INSTRUCT_MIXING;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = HATCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("hatcsModAPI.c:hatcsInstructMixing():Task handle is null for module \r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("hatcsModAPI.c:hatcsInstructMixing():Message send failed \r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+
+}
+

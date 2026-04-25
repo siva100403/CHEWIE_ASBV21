@@ -66,6 +66,8 @@
 #define HATCS_START							0x19
 #define HATCS_STOP							0x1A
 #define HATCS_NOTIFY_SENSOR_STATE_CHANGE	0x1B
+#define HATCS_INSTRUCT_AIRINLET				0x1C
+#define HATCS_INSTRUCT_MIXING				0x1D
 
 //Water sprayer control commands
 #define SPCS_SPRAY_ONCE				0x20

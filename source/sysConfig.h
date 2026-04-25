@@ -93,17 +93,20 @@ typedef struct ctProcessParam
 {
 	float		temperature;		//Composting Chamber desired Temperature in Deg C
 	float		humidity;			//Composting Chamber desired humidity; Value 0 to 100
-	uint32_t	dummy;				//Dummy to get EEPROM Page alignment
+	uint16_t	dummy;				//Dummy to get EEPROM Page alignment
 	uint16_t	phaseDur; 			//Indicates in min how long to remain in a phase
-	uint16_t	aeration;			//Indicates in min the aeration interval
+	uint8_t		aerationFreq;		//AIR_IN frequency per hour
+	uint8_t		aerationDur;		//AIR_IN duration in 10s of seconds
+	uint8_t		mixFreq;			//Auger mixing frequency per hour
+	uint8_t		mixDuration;		//Auger on duration in 10s of seconds
 }dgCtProcessParam_t;
 
 typedef struct ctPhaseProcessParam
 {
-	dgCtProcessParam_t mPhase;
-	dgCtProcessParam_t tPhase;
-	dgCtProcessParam_t pPhase;
-	dgCtProcessParam_t dPhase;				//For 64 byte alignment
+	dgCtProcessParam_t mPhase;				//Mesophilic phase
+	dgCtProcessParam_t tPhase;				//Thermophilic phase
+	dgCtProcessParam_t pPhase;				//Cooling Phase
+	dgCtProcessParam_t dPhase;				//Drying Phase
 
 }dgCtPhaseProcessParam_t;
 

@@ -266,6 +266,7 @@ void getHwVersion(char * version)
 /************************Ver 0.6.0 09-04-2026********************
  * CSM V2
  *  - sysConfig.c/h: Config version added
+ *  - sysconfig.h/c: dgCtProcessParam_t definition modified. Default values modified
  *
  *
  *******************************************************************/
