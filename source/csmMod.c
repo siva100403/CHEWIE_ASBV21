@@ -80,7 +80,7 @@
 #include "csmModAPI.h"
 #include "csmMod.h"
 #include "measure.h"
-#include "alarm.h"
+#include "alarmManager.h"
 
 
 /*******************************************************************************

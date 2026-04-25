@@ -16,7 +16,7 @@
 /*******************Macros*********************************/
 
 #define CONV_SEC_TO_TICKS(x)	x*1000 / portTICK_PERIOD_MS
-
+#define CONV_MSEC_TO_TICKS(x)	x / portTICK_PERIOD_MS
 
 /************************Function Prototypes*******************/
 

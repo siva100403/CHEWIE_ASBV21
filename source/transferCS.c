@@ -400,7 +400,7 @@ void tcs_Task(void* arg)
 				//Change state to transfer and start Augur motor
 				tcsState = TCS_STATE_TRANSFERRING;
 				dgtimerStart(TCS_MOD, (transferDuration*1000)/portTICK_PERIOD_MS);
-				augerMotorCCWR();
+				augerMotorCWR();
 				break;
 
 			case TCS_STATE_TRANSFERRING:
@@ -466,7 +466,7 @@ int initTCS(void)
 	//Create csm task task
 	TaskHandle_t tcsTaskHandle;
 	TimerHandle_t tcsTimerHandle;
-	TimerHandle_t stflapTimerHandle;
+	//TimerHandle_t stflapTimerHandle;
 
     if (xTaskCreate(tcs_Task, "tcs_Task", configMINIMAL_STACK_SIZE + 300, NULL, task_PRIORITY, &tcsTaskHandle) !=
         pdPASS)

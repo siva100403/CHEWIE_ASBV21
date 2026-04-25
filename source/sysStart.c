@@ -79,7 +79,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
-#include "alarm.h"
+#include "alarmManager.h"
 
 //Health register allocation
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
@@ -147,6 +147,7 @@ static void sysStart_task(void *pvParameters)
 	printf("\r\n******************* ASB HW Version:%s ***************\r\n\r\n",version);
 	getFwVersion(version);
 	printf("\r\n******************* ASB FW Version:%s ***************\r\n\r\n",version);
+
 
 
 
@@ -221,8 +222,10 @@ static void sysStart_task(void *pvParameters)
 		printf("sysStart_task(): initSysConfig() failed\r\n");
 	}
 
+/*[[[[[[[[[[[[[[[[[[[[[[[[[[ Don't create any Tasks before this point. ???? ]]]]]]]]]]]]]]]]]]]]]]]]]]*/
 
-
+	//Initialize Alarm Manager
+	initAlarmManager();
 
 	//Initialize CLI Module
 	if(initCli()==DG_SUCCESS)
@@ -492,7 +495,7 @@ static void sysStart_task(void *pvParameters)
 	{
 		//Data in RTC RAM is improper. No need to start CSM
 		printf("sysStart_task():csmState variables read from RTC RAM is improper. CSM not started\r\n");
-		csmStart(SYSSTART_MOD, CSM_STATE_MPHASE, MESOPHILIC_PHASE, 240, WASTE_CAT0);
+		//csmStart(SYSSTART_MOD, CSM_STATE_MPHASE, MESOPHILIC_PHASE, 240, WASTE_CAT0);
 	}
 	else
 	{
@@ -509,13 +512,24 @@ static void sysStart_task(void *pvParameters)
 		}
 	}
 	//vTaskDelay(8);  //40 mSec delay for the Limit switch module to get the Lid status after de-bouncing
-
+	printf("sysStart_task():Before calling module start for LID\r\n");
 
 	//Start Lid Module
 	if(moduleHealthReg[LID_MOD].operationStatus == MODULE_IDLE)
 	{
 		moduleStart(LID_MOD);
 		moduleHealthReg[LID_MOD].operationStatus = MODULE_WORKING;
+	}
+
+	printf("sysStart_task():Before calling module start for ALARM Manager\r\n");
+
+	if(moduleStart(ALARMMGR_MOD) != DG_SUCCESS)
+	{
+		printf("sysStart_task():Alarm Manager start command failed\r\n");
+	}
+	else
+	{
+		printf("sysStart_task():Alarm Manager start command passed\r\n");
 	}
 
 
@@ -542,7 +556,7 @@ int initSysStart(void)
 	BaseType_t result;
 
 	//Create sysStart task
-	result = xTaskCreate(sysStart_task, "sysStart_task", configMINIMAL_STACK_SIZE + 300, NULL, task_PRIORITY, &sysStartTaskHandle);
+	result = xTaskCreate(sysStart_task, "sysStart_task", configMINIMAL_STACK_SIZE + 400, NULL, task_PRIORITY, &sysStartTaskHandle);
     if ( result !=    pdPASS)
     {
         printf("sysStart_task creation failed!.\r\n");

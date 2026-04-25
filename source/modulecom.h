@@ -26,7 +26,8 @@
 #define SYSSTART_MOD	18
 #define DRV89XX_FH_MOD	19
 #define ADCS_MOD		20
-#define LAST_MODULE		21
+#define ALARMMGR_MOD	21
+#define LAST_MODULE		22
 
 
 
@@ -106,8 +107,12 @@
 #define DG_LS_FLAPCLOSE				0x3E
 #define SHD_FLAP_SYNC				0x3F
 
-
-
+//Alarm Manager Commands
+#define ALARMMGR_RAISE_ALARM        0x40
+#define ALARMMGR_CLEAR_ALARM        0x41
+#define ALARMMGR_GET_ACTIVE_LIST    0x42
+#define ALARMMGR_GET_DEFINITION     0x43
+#define ALARMMGR_GET_HISTORY        0x44
 
 /****************** Queue Message Definition ************************/
 

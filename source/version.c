@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.0" );
+	strcpy(swVer,"0.6.1" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -263,10 +263,59 @@ void getHwVersion(char * version)
  *
  *******************************************************************/
 
+
+
+/************************Ver 0.5.0w 01-04-2026********************
+ * 1. hatcs.c: Modified to run hFAN and exhaust FAN simultaneously when airCircCtrl is OUT
+ *  Now airCircCtrl decides the exhaust FAN operation and not fanCtrl config
+ * 2. transferCS.c: augerMotor rotation direction changed from CCWR to CWR
+ *
+ *******************************************************************/
+
+ /************************Ver 0.5.1w 02-04-2026********************
+ * 1.motorControl.h: Added method to read error status of TC78H660
+ * 2.shredder.c:executeSHDSeqControl(): Flap is closed irrespective of the status when SEQ_ENGINE_STOP is received.
+ *
+ *******************************************************************/
+
+/************************Ver 0.5.2w 02-04-2026********************
+* 1.Alarm branch merged
+*
+*
+*******************************************************************/
+
+/************************Ver 0.5.3w 02-04-2026********************
+* 1. alarmManager.c: Integrated with sysStart and sensing 2A driver overload error
+* 2. hatcs.c: sensing 2A overload status and reseting the driver
+* 3. shredder.c: Flap closed whenever the shredder sequence stopped in between
+* 4. Alarm raised for Lid error and 2A motor overload
+*
+********************************************************************/
+
+/************************Ver 0.5.4 08-04-2026********************
+* 1. shredder.c: Flapmotor control CCWR and CWR definition changed. Now these commands rotate the
+*                Flap motor in specified direction till Stop command is encountered by the execution
+*                engine. This feature will enable to configure the flap to rotate continuously during
+*                shredding and flushing.
+* 2. Added few printf() for debugging and change the order of enabling flag stopFlapFlag
+* 3. CliProc.c: DCSprayer command now supports ON/OFF/ONCE. ONCE requires duration parameter
+* 4. MKValve (AIROUT) valve support added
+********************************************************************/
+
+/************************Ver 0.5.5 21-04-2026********************
+* 1. ActuatorStatusTracker has been updated with all the ports except Lid.
+* *****************************************************************/
+
+
 /************************Ver 0.6.0 09-04-2026********************
  * CSM V2
  *  - sysConfig.c/h: Config version added
  *  - sysconfig.h/c: dgCtProcessParam_t definition modified. Default values modified
  *
+ *******************************************************************/
+
+/************************Ver 0.6.1 25-04-2026********************
+ * CSM V2
+ *  - Merged with branch RelayDrivenFlap
  *
  *******************************************************************/

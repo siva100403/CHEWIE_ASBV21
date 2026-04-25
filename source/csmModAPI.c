@@ -120,7 +120,7 @@ int csmStart(uint8_t srcModule, uint8_t state, uint8_t phase, uint16_t remaining
 	sendMsgBuf.cmdParam = (void*)&param;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmStart():Task handle is null for module with id: %d \r\n", srcModule);
@@ -174,7 +174,7 @@ int csmStop(uint8_t srcModule)
 	sendMsgBuf.cmdParam = NULL;
 	sendMsgBuf.dest_module = CSM_MOD;
 	sendMsgBuf.result = &result;
-	sendMsgBuf.taskHandleSM = getTaskHandle(srcModule);
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
 		PRINTF("csmAPI.c:csmStop():Task handle is null for module with id: %d \r\n", srcModule);

@@ -68,6 +68,8 @@
 #include "HMICmdProc.h"
 #include "HMICmdProcAPI.h"
 #include "actuatorStatusTracker.h"
+#include "AlarmManagerAPI.h"
+#include "AlarmManager.h"
 
 
 
@@ -183,6 +185,7 @@ static void lidModule_task(void *pvParameters)
 				{
 					//TODO: Handle
 					updateLidStatus(ERROR);
+					alarmMgrRaiseAlarm(HWS_ALARM_LID, "Both Limit switches closed");
 					printf("lidModule.c:lidModule_task():LID is in error condition\r\n");
 				}
 				else
@@ -214,6 +217,7 @@ static void lidModule_task(void *pvParameters)
 				LID_POWER_OFF();
 				dgtimerStop(LID_MOD);
 				lidModuleState = LIDMOD_STATE_ERROR;
+				alarmMgrRaiseAlarm(HWS_ALARM_LID, "Timeout before limitswitch");
 				updateLidStatus(ERROR);
 				break;
 			default:
@@ -349,6 +353,7 @@ static void lidModule_task(void *pvParameters)
 				//Lid open timer expired. Limit switch has not detected Open. It is an error condition
 				LID_POWER_OFF();
 				lidModuleState = LIDMOD_STATE_ERROR;
+				alarmMgrRaiseAlarm(HWS_ALARM_LID, "Timeout before ls while opening");
 				updateLidStatus(ERROR);
 				printf("lidModule.c:lidModule_task():Timer Expiry in state LIDMOD_STATE_OPENING - Error condition\r\n");
 				break;
@@ -485,6 +490,7 @@ static void lidModule_task(void *pvParameters)
 				printf("lidModule.c:lidModule_task():Timer Expiry Event in state LIDMOD_STATE_CLOSING\r\n",rcvMsg.command);
 				LID_POWER_OFF();
 				lidModuleState = LIDMOD_STATE_ERROR;
+				alarmMgrRaiseAlarm(HWS_ALARM_LID, "Timeout before ls while closing");
 				updateLidStatus(ERROR);
 				break;
 			default:

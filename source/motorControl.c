@@ -118,6 +118,7 @@ void modePinInit(uint8_t io)
 }
 
 
+
 /*This method puts the TC78H660 IC to STBY mode*/
 void TC78H660_Stby(void)
 {
@@ -233,20 +234,37 @@ void pwmStop()
 {
     CTIMER_StopTimer(CTIMER);
 }
-void hFanCWR(void)
+void hFanCWR(uint8_t duty)
 {
 	//It assumes motor1 is in OFF condition
 	MOTOR1_FORWARD();
 	//MOTOR1_START();
-	pwmStart(70);
+	if(duty < 70)
+	{
+		duty = 70;
+	}
+	else if(duty >100)
+	{
+		duty = 100;
+	}
+	pwmStart(duty);
+	updateHtrFanStatus(CWR);
 }
 
-void hFanCCWR(void)
+void hFanCCWR(uint8_t duty)
 {
 	//It assumes motor is in OFF condition
 	MOTOR1_REVERSE();
-	pwmStart(70);
-	//MOTOR1_START();
+	if(duty < 70)
+	{
+		duty = 70;
+	}
+	else if(duty >100)
+	{
+		duty = 100;
+	}
+	pwmStart(duty);
+	updateHtrFanStatus(CCWR);
 }
 
 void hFanStop(void)
@@ -254,6 +272,7 @@ void hFanStop(void)
 	//MOTOR1_STOP();
 	pwmStart(0);
 	//pwmStop();
+	updateHtrFanStatus(OFF);
 }
 
 void augerMotorCWR(void)
