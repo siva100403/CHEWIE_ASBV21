@@ -114,6 +114,9 @@ uint8_t chooseWasteCat(uint8_t currentWasteCat, uint8_t newWasteCat)
 	ctVar->remDur = currentProcessParam.phaseDur;
 	ctVar->expDur = 0;
 
+	ctVar->aerationInterval = currentProcessParam.aerationFreq;
+	ctVar->minutesToAerate = ctVar->aerationInterval;
+
 	//Store the current state to RTC RAM
 	updateChewieStateStore(ctVar);
 	//Inform the Temperature/Humidity/Aeration module about state change and update parameters
@@ -125,6 +128,21 @@ uint8_t chooseWasteCat(uint8_t currentWasteCat, uint8_t newWasteCat)
 	}
 	sensorStart(CSM_MOD);
 	return retValue;
+}
+
+static int aerationControl(dgCtStateVar_t *ctVar)
+{
+
+	ctVar->minutesToAerate--;
+	if(ctVar->minutesToAerate == 0)
+	{
+		if(hatcsInstructAirInlet() != DG_SUCCESS)
+		{
+			printf("csmMod.c:csmTask():hatcsInstructAirInlet() failed\r\n");
+		}
+		printf("csmMod.c:csmTask():aeration initiated\r\n");
+		ctVar->minutesToAerate = ctVar->aerationInterval;
+	}
 }
 
 static void remDurCorrection(dgCtStateVar_t *ctVar, uint8_t percentage)
@@ -145,11 +163,15 @@ void csm_Task(void* arg)
 	dgCtStateVar_t ctVar;
 	uint16_t timeout;
 	dgCsmParam_t *configparams;
+	uint8_t aerationInterval;
+	uint8_t minutesToAerate;
 
 
 	//Get the Qhandle for this task and store locally
 	csmQHandle = getQHandle(CSM_MOD);
 	ctVar.state = CSM_STATE_IDLE;
+	aerationInterval = 0;
+	minutesToAerate = 0;
 
 
 	while (1)
@@ -198,6 +220,8 @@ void csm_Task(void* arg)
 					//Update the csmState variable
 					ctVar.state = configparams->state;
 
+					ctVar.aerationInterval = currentProcessParam.aerationFreq;
+					ctVar.minutesToAerate = ctVar.aerationInterval;
 					//Update RTC RAM
 					updateChewieStateStore(&ctVar);
 					//Start 1 minute timer
@@ -229,6 +253,8 @@ void csm_Task(void* arg)
 						//inform Humidity-Aeration-Temperature CS to go IDLE
 						sensorStop(CSM_MOD);
 						hatcsStop(CSM_MOD);
+						//Start 1 minute timer
+						dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
 						//Initiate transfer
 						transferStart(CSM_MOD, TRANSFER_DUR_DEFAULT);
 						//Does CT has to be turned ON to easy transfer?
@@ -345,12 +371,18 @@ void csm_Task(void* arg)
 				ctVar.curPhase = DRYING_PHASE;
 				ctVar.prevPhase = PHASE_IDLE;
 
+				effectPhaseChange(&ctVar);
+				dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
+/*
 				//Load process parameters corresponding to the Phase and waste category
 				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
 				ctVar.schDur = currentProcessParam.phaseDur;
 				ctVar.remDur = currentProcessParam.phaseDur;
 				ctVar.expDur = 0;
+
+				ctVar.aerationInterval = currentProcessParam.aerationFreq;
+				ctVar.minutesToAerate = 0;
 
 				//Store the current state to RTC RAM
 				updateChewieStateStore(&ctVar);
@@ -362,6 +394,7 @@ void csm_Task(void* arg)
 					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
 				}
 				sensorStart(CSM_MOD);
+*/
 				break;
 			case CSM_STATE_MPHASE:
 				//Move to drying phase-M
@@ -372,12 +405,17 @@ void csm_Task(void* arg)
 				ctVar.curPhase = DRYING_PHASE;
 				ctVar.prevPhase = PHASE_IDLE;
 
-				//Load process parameters corresponding to the Phase and waste category
+				effectPhaseChange(&ctVar);
+
+/*				//Load process parameters corresponding to the Phase and waste category
 				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
 				ctVar.schDur = currentProcessParam.phaseDur;
 				ctVar.remDur = currentProcessParam.phaseDur;
 				ctVar.expDur = 0;
+
+				ctVar.aerationInterval = currentProcessParam.aerationFreq;
+				ctVar.minutesToAerate = 0;
 
 				//Store the current state to RTC RAM
 				updateChewieStateStore(&ctVar);
@@ -389,6 +427,7 @@ void csm_Task(void* arg)
 					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
 				}
 				sensorStart(CSM_MOD);
+*/
 				break;
 			case CSM_STATE_TPHASE:
 				//Move to drying phase-T
@@ -399,12 +438,17 @@ void csm_Task(void* arg)
 				ctVar.curPhase = DRYING_PHASE;
 				ctVar.prevPhase = PHASE_IDLE;
 
+				effectPhaseChange(&ctVar);
+/*
 				//Load process parameters corresponding to the Phase and waste category
 				getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 				//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
 				ctVar.schDur = currentProcessParam.phaseDur;
 				ctVar.remDur = currentProcessParam.phaseDur;
 				ctVar.expDur = 0;
+
+				ctVar.aerationInterval = currentProcessParam.aerationFreq;
+				ctVar.minutesToAerate = 0;
 
 				//Store the current state to RTC RAM
 				updateChewieStateStore(&ctVar);
@@ -416,6 +460,7 @@ void csm_Task(void* arg)
 					printf("csmMod.c:csmTask(): sensorSetParam API failure\r\n");
 				}
 				sensorStart(CSM_MOD);
+*/
 				break;
 			case CSM_STATE_PPHASE:
 				//Incorrect state for the event
@@ -451,6 +496,7 @@ void csm_Task(void* arg)
 				break;
 
 			case CSM_STATE_MPHASE:
+				aerationControl(&ctVar);
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -460,12 +506,17 @@ void csm_Task(void* arg)
 					ctVar.curPhase = THERMOPHILIC_PHASE;
 					ctVar.prevPhase = MESOPHILIC_PHASE;
 
+					effectPhaseChange(&ctVar);
+/*
 					//Load process parameters corresponding to the Phase and waste category
 					getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 					//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
 					ctVar.schDur = currentProcessParam.phaseDur;
 					ctVar.remDur = currentProcessParam.phaseDur;
 					ctVar.expDur = 0;
+
+					ctVar.aerationInterval = currentProcessParam.aerationFreq;
+					ctVar.minutesToAerate = 0;
 
 					//Store the current state to RTC RAM
 					updateChewieStateStore(&ctVar);
@@ -476,6 +527,7 @@ void csm_Task(void* arg)
 						printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
 					}
 					sensorStart(CSM_MOD);
+*/
 				}
 				else
 				{
@@ -484,6 +536,9 @@ void csm_Task(void* arg)
 				}
 				break;
 			case CSM_STATE_TPHASE:
+				//Control aeration
+				aerationControl(&ctVar);
+
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -493,12 +548,17 @@ void csm_Task(void* arg)
 					ctVar.curPhase = PATHOGEN_ELM_PHASE;
 					ctVar.prevPhase = THERMOPHILIC_PHASE;
 
-					//Load process parameters corresponding to the Phase and waste category
+					effectPhaseChange(&ctVar);
+
+/*					//Load process parameters corresponding to the Phase and waste category
 					getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 					//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
 					ctVar.schDur = currentProcessParam.phaseDur;
 					ctVar.remDur = currentProcessParam.phaseDur;
 					ctVar.expDur = 0;
+
+					ctVar.aerationInterval = currentProcessParam.aerationFreq;
+					ctVar.minutesToAerate = 0;
 
 					//Store the current state to RTC RAM
 					updateChewieStateStore(&ctVar);
@@ -509,6 +569,7 @@ void csm_Task(void* arg)
 						printf("compostingModule.c:csmTask(): sensorSetParam API failure\r\n");
 					}
 					sensorStart(CSM_MOD);
+*/
 				}
 				else
 				{
@@ -517,6 +578,9 @@ void csm_Task(void* arg)
 				}
 				break;
 			case CSM_STATE_PPHASE:
+				//Control aeration
+				aerationControl(&ctVar);
+
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -555,6 +619,9 @@ void csm_Task(void* arg)
 				break;
 
 			case CSM_STATE_I_DRY:
+				//Control aeration
+				aerationControl(&ctVar);
+
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -574,6 +641,9 @@ void csm_Task(void* arg)
 				break;
 
 			case CSM_STATE_M_DRY:
+				//Control aeration
+				aerationControl(&ctVar);
+
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -593,6 +663,9 @@ void csm_Task(void* arg)
 				break;
 
 			case CSM_STATE_T_DRY:
+				//Control aeration
+				aerationControl(&ctVar);
+
 				ctVar.remDur--;
 				ctVar.expDur++;
 				if(ctVar.remDur == 0)
@@ -635,7 +708,14 @@ void csm_Task(void* arg)
 					hatcsStop(CSM_MOD);
 
 					//Restart Chewie
-					ctVar.curPhase = MESOPHILIC_PHASE;
+					ctVar.curPhase = DRYING_PHASE;
+
+					effectPhaseChange(&ctVar);
+					//Start 1 minute timer
+					dgtimerStart(CSM_MOD, CONV_SEC_TO_TICKS(ONE_MIN_TIMEOUT));
+					//Start the hatcs module which control the actuators to maintain the temp/humidity/aeration
+					hatcsStart(CSM_MOD);
+/*
 					//Update the compost process parameters based on the updated waste category and phase
 					getCsmPhaseParam(ctVar.curWasteCat, ctVar.curPhase, &currentProcessParam);
 					//loadProcessParam(&currentProcessParam, ctVar.curWasteCat, ctVar.curPhase);
@@ -646,6 +726,9 @@ void csm_Task(void* arg)
 					ctVar.remDur = ctVar.schDur;
 					//Update the csmState variable
 					ctVar.state = CSM_STATE_MPHASE;
+
+					ctVar.aerationInterval = currentProcessParam.aerationFreq;
+					ctVar.minutesToAerate = 0;
 
 					//Update RTC RAM
 					updateChewieStateStore(&ctVar);
@@ -659,6 +742,7 @@ void csm_Task(void* arg)
 					sensorStart(CSM_MOD);
 					//Start the hatcs module which control the actuators to maintain the temp/humidity/aeration
 					hatcsStart(CSM_MOD);
+*/
 				}
 				break;
 			case CSM_STATE_ADDWASTE_I:

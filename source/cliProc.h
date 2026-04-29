@@ -93,6 +93,9 @@ struct cmd_buffer
 #define SPARE2_RELAY	47
 #define GETLS_STATUS	48
 #define MKVALVE			49
+#define GETSYSCFGVER_C	50
+#define GETADCSCFG_C	51
+#define SETADCSCFG_C	52
 
 
 

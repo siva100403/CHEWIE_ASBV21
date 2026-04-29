@@ -77,45 +77,45 @@ dgConfigMem_t allConfig;
 
 const char sysConfigVer[] = "V1.1";
 
-const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 4, 6, 4, 6}, 	//M-Phase, Cat0
-											{60.0, 53.0, 0, 240, 8, 12, 4, 6},	//T-Phase, Cat0
-											{40.0, 48.0, 0, 30, 4, 6, 4, 6},		//P-Phase, Cat0
-											{40,50,0,0,255,255,255,255},					//D-Phase
+const dgCtWastecatProcessParam_t processTable = {{{35.0, 57.0, 0, 240, 4, 6}, 	//M-Phase, Cat0
+											{60.0, 53.0, 0, 240, 8, 12},		//T-Phase, Cat0
+											{40.0, 48.0, 0, 30, 4, 6},			//P-Phase, Cat0
+											{40,50,0,0,255,255},				//D-Phase
 											},
-										   {{35.0, 60.0, 0, 210, 4, 6, 4, 6},	//M-Phase, Cat1
-											{58.0, 55.0, 0, 840, 8, 12, 4, 6},	//T-Phase, Cat1
-											{40.0, 50.0, 0, 30, 4, 6, 4, 6},		//P-Phase, Cat1
-											{40,50,0,0,255,255,255,255},					//D-Phase
+										   {{35.0, 60.0, 0, 210, 4, 6},		//M-Phase, Cat1
+											{58.0, 55.0, 0, 840, 8, 12},	//T-Phase, Cat1
+											{40.0, 50.0, 0, 30, 4, 6},		//P-Phase, Cat1
+											{40,50,0,0,255,255},			//D-Phase
 										   },
-										   {{35.0, 60.0, 0, 240, 4, 6, 4, 6},	//M-Phase, Cat2
-											{55.0, 55.0, 0, 600, 8, 12, 4, 6},	//T-Phase, Cat2
-											{38.0, 50.0, 0, 240, 4, 6, 4, 6},		//P-Phase, Cat2
-											{40,50,0,0,255,255,255,255},					//D-Phase
+										   {{35.0, 60.0, 0, 240, 4, 6},		//M-Phase, Cat2
+											{55.0, 55.0, 0, 600, 8, 12},	//T-Phase, Cat2
+											{38.0, 50.0, 0, 240, 4, 6},		//P-Phase, Cat2
+											{40,50,0,0,255,255},			//D-Phase
 										   },
-										   {{35.0, 58.0, 0, 180, 4, 6, 4, 6},	//M-Phase, Cat3
-											{58.0, 53.0, 0, 840, 8, 12, 4, 6},	//T-Phase, Cat3
-											{40.0, 48.0, 0, 300, 4, 6, 4, 6},		//P-Phase, Cat3
-											{40,50,0,0,255,255,255,255},					//D-Phase
+										   {{35.0, 58.0, 0, 180, 4, 6},		//M-Phase, Cat3
+											{58.0, 53.0, 0, 840, 8, 12},	//T-Phase, Cat3
+											{40.0, 48.0, 0, 300, 4, 6},		//P-Phase, Cat3
+											{40,50,0,0,255,255},			//D-Phase
 										   },
-										   {{35.0, 55.0, 0, 240, 4, 6, 4, 6},	//M-Phase, Cat4
-											{63.0, 50.0, 0, 1140, 8, 12, 4, 6},	//T-Phase, Cat4
-											{45.0, 45.0, 0, 420, 4, 6, 4, 6},		//P-Phase, Cat4
-											{40,50,0,0,255,255,255,255},					//D-Phase
+										   {{35.0, 55.0, 0, 240, 4, 6},		//M-Phase, Cat4
+											{63.0, 50.0, 0, 1140, 8, 12},	//T-Phase, Cat4
+											{45.0, 45.0, 0, 420, 4, 6},		//P-Phase, Cat4
+											{40,50,0,0,255,255},			//D-Phase
 										   },
-										   {{35.0, 55.0, 0, 180, 4, 6, 4, 6},	//M-Phase, Cat5
-										   {60.0, 50.0, 0, 1020, 8, 12, 4, 6},	//T-Phase, Cat5
-										   {40.0, 48.0, 0, 360, 4, 6, 4, 6},		//P-Phase, Cat5
-										   {40,50,0,0,255,255,255,255},					//D-Phase
+										   {{35.0, 55.0, 0, 180, 4, 6},		//M-Phase, Cat5
+										   {60.0, 50.0, 0, 1020, 8, 12},	//T-Phase, Cat5
+										   {40.0, 48.0, 0, 360, 4, 6},		//P-Phase, Cat5
+										   {40,50,0,0,255,255},				//D-Phase
 										   	},
-											{{35.0, 60.0, 0, 180, 4, 6, 4, 6},	//M-Phase, Cat6
-											{57.0, 55.0, 0, 720, 8, 12, 4, 6},	//T-Phase, Cat6
-											{40.0, 50.0, 0, 30, 4, 6, 4, 6},		//P-Phase, Cat6
-											 {40,50,0,0,255,255,255,255},					//D-Phase
+											{{35.0, 60.0, 0, 180, 4, 6},	//M-Phase, Cat6
+											{57.0, 55.0, 0, 720, 8, 12},	//T-Phase, Cat6
+											{40.0, 50.0, 0, 30, 4, 6},		//P-Phase, Cat6
+											 {40,50,0,0,255,255},			//D-Phase
 											},
-											{{30.0, 50.0, 0, 18, 4, 6, 4, 6},	//M-Phase, Cat7
-											{55.0, 50.0, 0, 140, 8, 12, 4, 6},	//T-Phase, Cat7
-											{35.0, 45.0, 0, 180, 4, 6, 4, 6},		//P-Phase, Cat7
-											{40,50,0,0,255,255,255,255},					//D-Phase
+											{{30.0, 50.0, 0, 18, 4, 6},		//M-Phase, Cat7
+											{55.0, 50.0, 0, 140, 8, 12},	//T-Phase, Cat7
+											{35.0, 45.0, 0, 180, 4, 6},		//P-Phase, Cat7
+											{40,50,0,0,255,255},			//D-Phase
 											},
                                             };
 
@@ -166,6 +166,10 @@ const dgActuatorCtrlSeq_t controlSeq = {
 		{3, SEQ_CTRL_CTCS_ON,  SEQ_CTRL_HTR_ON, SEQ_CTRL_SPRAYER_OFF,  SEQ_CTRL_FAN_CWR, SEQ_CTRL_MID, SEQ_CTRL_AIR_RECIRC, 0},
 		{3, SEQ_CTRL_CTCS_OFF, SEQ_CTRL_HTR_OFF,SEQ_CTRL_SPRAYER_OFF,  SEQ_CTRL_FAN_CWR, SEQ_CTRL_END,  SEQ_CTRL_AIR_RECIRC, 0},
 	},
+	{  //air_in
+		{3, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_ON, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_START,  SEQ_CTRL_AIR_IN, 0},
+		{1, SEQ_CTRL_CTCS_ON, SEQ_CTRL_HTR_OFF, SEQ_CTRL_SPRAYER_OFF, SEQ_CTRL_FAN_CWR, SEQ_CTRL_END,  SEQ_CTRL_AIR_RECIRC, 0}
+	},
 };
 
 /******************* Parameters for Auger Control System *********************************/
@@ -184,6 +188,8 @@ const dgCtConfigParam_t ctParam = {30, 30, 3, 5, 60};    //Parameters are in sec
 };*/
 
 const dgTcsConfigParam_t trCtrlParamDefault = {600, 600, 40}; //mSec, mSec, Sec
+
+const dgAdcsConfigParams_t adcsParamDefault = {50, 6, 1}; //min, g, g/min
 
 //Duration specified in 10s of mSec
 const dgShredderCtrlSeq_t shdCtrlSeqDefault[] = {
@@ -317,6 +323,11 @@ int	loadActuatorSeq(dgActuatorCtrlCode_t *controlCode, uint8_t sensorState)
     	for(index=0; index<MAX_CTRL_CODE_PER_SEQ; index++)
     	{
             controlCode[index] = allConfig.hatcsConfig.hatcsActuatorCtrlSeq.temp_br_hum_br[index];
+    	}
+    case AIR_IN_CTRL_SEQ:
+    	for(index=0; index<MAX_CTRL_CODE_PER_SEQ; index++)
+    	{
+            controlCode[index] = allConfig.hatcsConfig.hatcsActuatorCtrlSeq.air_in[index];
     	}
     	break;
     default:
@@ -454,6 +465,21 @@ int setTransferCtrlParams(const dgTcsConfigParam_t *value) {
     return DG_SUCCESS;
 }
 
+// ADCS
+int setAdcsParams(const dgAdcsConfigParams_t *value)
+{
+    if (value == NULL) return DG_INVALID_PARAM;
+    allConfig.adcsConfig.adcsParams = *value;
+    return DG_SUCCESS;
+}
+
+int getAdcsParams(dgAdcsConfigParams_t *out)
+{
+    if (out == NULL) return DG_INVALID_PARAM;
+    *out = allConfig.adcsConfig.adcsParams;
+    return DG_SUCCESS;
+}
+
 // Auger
 int getAugerConfig(dgCtConfigParam_t *out) {
     if (out == NULL) return DG_INVALID_PARAM;
@@ -470,7 +496,7 @@ int setAugerConfig(const dgCtConfigParam_t *value) {
 // HATCS
 int getHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, dgActuatorCtrlCode_t *out)
 {
-    if ((out == NULL)||(sensorState>8)||(index >= MAX_CTRL_CODE_PER_SEQ)) return DG_INVALID_PARAM;
+    if ((out == NULL)||(sensorState>9)||(index >= MAX_CTRL_CODE_PER_SEQ)) return DG_INVALID_PARAM;
     switch(sensorState)
     {
     case HAT_SENSOR_TEMP_WR_HUM_WR:
@@ -500,6 +526,9 @@ int getHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, dgActuatorCtrlCo
     case HAT_SENSOR_TEMP_BR_HUM_BR:
         *out = allConfig.hatcsConfig.hatcsActuatorCtrlSeq.temp_br_hum_br[index];
     	break;
+    case AIR_IN_CTRL_SEQ:
+        *out = allConfig.hatcsConfig.hatcsActuatorCtrlSeq.air_in[index];
+        break;
     default:
     	return DG_FAIL;
     	break;
@@ -511,7 +540,7 @@ int getHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, dgActuatorCtrlCo
 int setHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, const dgActuatorCtrlCode_t *value)
 {
 
-    if ((value == NULL)||(sensorState>8)||(index >= MAX_CTRL_CODE_PER_SEQ)) return DG_INVALID_PARAM;
+    if ((value == NULL)||(sensorState>9)||(index >= MAX_CTRL_CODE_PER_SEQ)) return DG_INVALID_PARAM;
 
     switch(sensorState)
     {
@@ -542,6 +571,9 @@ int setHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, const dgActuator
     case HAT_SENSOR_TEMP_BR_HUM_BR:
         allConfig.hatcsConfig.hatcsActuatorCtrlSeq.temp_br_hum_br[index]=*value;
     	break;
+    case AIR_IN_CTRL_SEQ:
+        allConfig.hatcsConfig.hatcsActuatorCtrlSeq.air_in[index]=*value;
+        break;
     default:
     	return DG_FAIL;
     }
@@ -637,6 +669,9 @@ int loadDefaultConfig()
 	memcpy((void*)(transferConfigPtr),(void*)&trCtrlParamDefault, sizeof(trCtrlParamDefault));
 
 	//Copy additiveConfig default
+	dgAdcsConfig_t *adcsConfigPtr;
+	adcsConfigPtr = &(allConfig.adcsConfig);
+	memcpy((void*)(adcsConfigPtr),(void*)&adcsParamDefault, sizeof(adcsParamDefault));
 
 	//Copy shredderConfig default
 	allConfig.shredderConfig.shdParams.shdTimingVars.flapCloseDur = FLAP_CLOSE_DURATION_DEFAULT;
@@ -698,3 +733,4 @@ int initSysConfig()
 
 	return DG_SUCCESS;
 }
+

@@ -93,12 +93,10 @@ typedef struct ctProcessParam
 {
 	float		temperature;		//Composting Chamber desired Temperature in Deg C
 	float		humidity;			//Composting Chamber desired humidity; Value 0 to 100
-	uint16_t	dummy;				//Dummy to get EEPROM Page alignment
+	uint32_t	dummy;				//Dummy to get EEPROM Page alignment
 	uint16_t	phaseDur; 			//Indicates in min how long to remain in a phase
 	uint8_t		aerationFreq;		//AIR_IN frequency per hour
 	uint8_t		aerationDur;		//AIR_IN duration in 10s of seconds
-	uint8_t		mixFreq;			//Auger mixing frequency per hour
-	uint8_t		mixDuration;		//Auger on duration in 10s of seconds
 }dgCtProcessParam_t;
 
 typedef struct ctPhaseProcessParam
@@ -164,6 +162,7 @@ typedef struct actuatorCtrlSeq
 	dgActuatorCtrlCode_t  temp_br_hum_wr[MAX_CTRL_CODE_PER_SEQ];		//Ctrl sequence when the temp below range and humidity within range
 	dgActuatorCtrlCode_t  temp_br_hum_ar[MAX_CTRL_CODE_PER_SEQ];		//Ctrl sequence when the temp below range and humidity above range
 	dgActuatorCtrlCode_t  temp_br_hum_br[MAX_CTRL_CODE_PER_SEQ];		//Ctrl sequence when the temp below range and humidity below range
+	dgActuatorCtrlCode_t  air_in[MAX_CTRL_CODE_PER_SEQ];				//Ctrl sequence when the temp below range and humidity below range
 }dgActuatorCtrlSeq_t;
 
 
@@ -215,6 +214,16 @@ typedef struct shdConfigParams
 }dgShdConfigParams_t;
 
 
+/***********************Additive CS Configuration Parameters ******************************/
+
+typedef struct adcsConfigParams
+{
+	uint8_t adcsQuietPeriod;		//in Minutes;Quiet period between additive delivery
+	uint8_t additivePerDelivery;	//in Grams; additive dispensed per delivery
+	uint8_t additivePerMinute;		//in Grams/min; Motor characteristics
+}dgAdcsConfigParams_t;
+
+
 /*-----------------------------------------------------------------------------------------*/
 
 //16 pages (128 byte each) ate allocated in EEPROM for storing Configuration parameters
@@ -250,6 +259,12 @@ typedef union shredderCfg
 	dgShdConfigParams_t	shdParams;
 }dgShredderConfig_t;
 
+typedef union adcsCfg
+{
+	uint8_t 				adcsSpace[128];
+	dgAdcsConfigParams_t	adcsParams;
+}dgAdcsConfig_t;
+
 
 typedef struct configMemAllocation
 {
@@ -258,7 +273,7 @@ typedef struct configMemAllocation
 	dgAugerConfig_t augerConfig;		//Page 10
 	dgTransferConfig_t transferConfig;	//Page 11
 	dgShredderConfig_t shredderConfig;	//Page 12
-	uint8_t additiveCfg[128];			//Page 13
+	dgAdcsConfig_t adcsConfig;			//Page 13
 	uint8_t dummy[128];					//Page 14
 	uint8_t checksumArea[128];  		//Page 15
 }dgConfigMem_t;
@@ -294,8 +309,14 @@ int setHatcsActuatorCtrlSeq(uint8_t sensorState, uint8_t index, const dgActuator
 int getCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *out);
 int setCsmPhaseParam(uint8_t wasteCat, uint8_t phase, dgCtProcessParam_t *value);
 
+// ADCS
+int setAdcsParams(const dgAdcsConfigParams_t *value);
+int getAdcsParams(dgAdcsConfigParams_t *out);
+
 int storeAllconfigEEPROM();
 int loadDefaultConfig();
+
+int getSysconfigVersion(char *versionStr);
 
 
 #endif /* SYSCONFIG_H_ */

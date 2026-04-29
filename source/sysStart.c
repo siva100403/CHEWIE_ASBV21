@@ -85,6 +85,8 @@
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
 dgHealthStatus_t 	moduleHealthReg[LAST_MODULE];
 
+bool sysConfigVerMatchFlag;
+
 uint8_t setDeviceHealth(uint8_t deviceId, uint8_t opStatus, uint8_t presenceStatus)
 {
 	//Input Validation
@@ -220,6 +222,23 @@ static void sysStart_task(void *pvParameters)
 	else
 	{
 		printf("sysStart_task(): initSysConfig() failed\r\n");
+	}
+	//Check the sysConfig version
+	//Version supported by this FW is V1.1
+	char cfgVersion[10];
+	extern char sysConfigVer[];
+	getSysconfigVersion(cfgVersion);
+	if(strcmp(sysConfigVer, cfgVersion ) != 0)
+	{
+		printf("Sys Config version mismatch. Expected ver: %s, Cur ver:%s\r\n", sysConfigVer, cfgVersion);
+	    BLUE_LED_OFF();
+	    RED_LED_ON();
+	    GREEN_LED_OFF();
+	    sysConfigVerMatchFlag = false;
+	}
+	else
+	{
+	    sysConfigVerMatchFlag = true;
 	}
 
 /*[[[[[[[[[[[[[[[[[[[[[[[[[[ Don't create any Tasks before this point. ???? ]]]]]]]]]]]]]]]]]]]]]]]]]]*/
@@ -490,26 +509,34 @@ static void sysStart_task(void *pvParameters)
 
 	getChewieStateStore(&updateTime,&csmStateVar);
 	printf("sysStart_task():csm state:%d, phase:%d, remDur:%d, schDur:%d\r\n",csmStateVar.state,csmStateVar.curPhase, csmStateVar.remDur, csmStateVar.schDur);
-	//Validate csm state variables read from RTC RAM
-	if((csmStateVar.state > CSM_STATE_ERROR)||(csmStateVar.curPhase > TRANSFER_PHASE) || (csmStateVar.remDur > csmStateVar.schDur ))
+	if(sysConfigVerMatchFlag == true)
 	{
-		//Data in RTC RAM is improper. No need to start CSM
-		printf("sysStart_task():csmState variables read from RTC RAM is improper. CSM not started\r\n");
-		//csmStart(SYSSTART_MOD, CSM_STATE_MPHASE, MESOPHILIC_PHASE, 240, WASTE_CAT0);
+
+		//Validate csm state variables read from RTC RAM
+		if((csmStateVar.state > CSM_STATE_ERROR)||(csmStateVar.curPhase > TRANSFER_PHASE) || (csmStateVar.remDur > csmStateVar.schDur ))
+		{
+			//Data in RTC RAM is improper. No need to start CSM
+			printf("sysStart_task():csmState variables read from RTC RAM is improper. CSM not started\r\n");
+			//csmStart(SYSSTART_MOD, CSM_STATE_MPHASE, MESOPHILIC_PHASE, 240, WASTE_CAT0);
+		}
+		else
+		{
+			//Start csm module
+			//vTaskDelay(1000);
+			if(moduleHealthReg[CSM_MOD].operationStatus == MODULE_IDLE)
+			{
+				if(csmStateVar.state == CSM_STATE_IDLE)
+				{
+					csmStateVar.state = CSM_STATE_MPHASE;
+				}
+				csmStart(SYSSTART_MOD, csmStateVar.state, csmStateVar.curPhase, csmStateVar.remDur, csmStateVar.curWasteCat);
+				moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
+			}
+		}
 	}
 	else
 	{
-		//Start csm module
-		//vTaskDelay(1000);
-		if(moduleHealthReg[CSM_MOD].operationStatus == MODULE_IDLE)
-		{
-			if(csmStateVar.state == CSM_STATE_IDLE)
-			{
-				csmStateVar.state = CSM_STATE_MPHASE;
-			}
-			csmStart(SYSSTART_MOD, csmStateVar.state, csmStateVar.curPhase, csmStateVar.remDur, csmStateVar.curWasteCat);
-			moduleHealthReg[CSM_MOD].operationStatus = MODULE_WORKING;
-		}
+		printf("sysconfig version mismatch. CSM not started. Load default config\r\n");
 	}
 	//vTaskDelay(8);  //40 mSec delay for the Limit switch module to get the Lid status after de-bouncing
 	printf("sysStart_task():Before calling module start for LID\r\n");

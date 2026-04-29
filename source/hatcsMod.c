@@ -89,6 +89,7 @@ TimerHandle_t sprayerTimerHandle;
 
 
 
+
 #define DEFAULT_SPRAYER_DURATION 	1   //in seconds
 
 
@@ -238,7 +239,122 @@ int setMkValveStatus(uint8_t status)
 	return DG_SUCCESS;
 }
 
-int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
+
+
+int executeActuatorControl(dgActuatorCtrlCode_t  *controlCode, uint8_t index)
+{
+
+
+
+	//Execute control sequences
+	//validate index
+	if(index >= MAX_CTRL_CODE_PER_SEQ)
+	{
+		index=0;  //In order to avoid memory boundary issue
+	}
+	//Control CT
+	if(controlCode[index].ctCtrl == SEQ_CTRL_CTCS_ON)
+	{
+		printf("hatcsMod.c:executeActuatorControl():CTCS_START\r\n");
+		ctStart(HATCS_MOD);
+	}
+	else
+	{
+		printf("hatcsMod.c:executeActuatorControl():CTCS_STOP\r\n");
+		ctStop(HATCS_MOD);
+	}
+	//Control Heater
+	if(controlCode[index].heaterCtrl == SEQ_CTRL_HTR_ON)
+	{
+		printf("hatcsMod.c:executeActuatorControl():HEATER_ON\r\n");
+		HEATER_ON();
+		updateHeaterStatus(ON);
+	}
+	else
+	{
+		printf("hatcsMod.c:executeActuatorControl():HEATER_OFF\r\n");
+		HEATER_OFF();
+		updateHeaterStatus(OFF);
+	}
+
+	//Fan Control
+	switch(controlCode[index].fanCtrl)
+	{
+		case SEQ_CTRL_FAN_OFF:
+			fanMotorStop();
+			hFanStop();
+			printf("hatcsMod.c:executeActuatorControl():FAN_OFF\r\n");
+			break;
+		case SEQ_CTRL_FAN_CWR:
+			fanMotorStop();
+			if(controlCode[index].airCircCtrl == SEQ_CTRL_AIR_OUT)
+			{
+				hFanCWR(100);
+			}
+			else
+			{
+				hFanCWR(70);
+			}
+
+			//fanMotorCWR();
+			printf("hatcsMod.c:executeActuatorControl():FAN_CWR\r\n");
+			break;
+		case SEQ_CTRL_FAN_CCWR:
+			fanMotorCCWR();
+			hFanStop();
+			printf("hatcsMod.c:executeActuatorControl():FAN_CCWR\r\n");
+			break;
+		default:
+			break;
+	}
+	//Air Circulation Control
+	//Solenoid mapping
+	//AIR_VALVE_1  -> S1
+	//AIR_VALVE_2  -> S2
+	//AIR_VALVE_3  -> S3
+	switch(controlCode[index].airCircCtrl)
+	{
+		case SEQ_CTRL_AIR_OFF:
+			airValve1Off();
+			airValve3Off();
+			fanMotorStop();
+			printf("hatcsMod.c:executeActuatorControl():Air Control OFF\r\n");
+			break;
+		case SEQ_CTRL_AIR_IN:
+			airValve1On();
+			airValve3Off();
+			fanMotorStop();
+			setMkValveStatus(AIR_RECIRC);
+			printf("hatcsMod.c:executeActuatorControl():AIR_IN\r\n");
+			break;
+		case SEQ_CTRL_AIR_OUT:
+			airValve1On();
+			airValve3On();
+			fanMotorCCWR();
+			setMkValveStatus(AIR_OUT);
+			printf("hatcsMod.c:executeActuatorControl():AIR_OUT\r\n");
+			break;
+		case SEQ_CTRL_AIR_RECIRC:
+			airValve1Off();
+			airValve3On();
+			fanMotorStop();
+			setMkValveStatus(AIR_RECIRC);
+			printf("hatcsMod.c:executeActuatorControl():AIR_RECIRC\r\n");
+			break;
+		default:
+			break;
+	}
+
+	//Control Sprayer
+	if(controlCode[index].sprayerCtrl == SEQ_CTRL_SPRAYER_ONCE)
+	{
+		printf("hatcsMod.c:executeActuatorControl():SPRAY_ONCE\r\n");
+		sprayOnceDC(DEFAULT_SPRAYER_DURATION);
+	}
+	return DG_SUCCESS;
+}
+
+/*int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 {
 	static dgActuatorCtrlCode_t  controlCode[MAX_CTRL_CODE_PER_SEQ];
 
@@ -385,7 +501,7 @@ int executeActuatorControl(uint8_t hatSensorState, uint8_t stateChange)
 		controlSeqIndex++;
 	}
 	return DG_SUCCESS;
-}
+}*/
 
 int executeActuatorSafeState(void)
 {
@@ -413,9 +529,13 @@ static void hatcs_task(void *pvParameters)
 	dgMsg_t rcvMsg;							//Holds the currently received message
 	static int hatcsState;					// This stores the state of HAT control system
 	static int hatSensorState;				//This variable stores the Temp/humidity sensor state
+	dgActuatorCtrlCode_t  controlCode[MAX_CTRL_CODE_PER_SEQ];
+	uint8_t newSensorState;
+	bool	sensorStateChangeFlag;
+	bool	aerationFlag;
+	uint8_t ctrlSeqIndex;
 
-
-	//printf("THCs.c:thcs_task():started\r\n");
+	printf("hatcs.c:hatcs_task():started\r\n");
 
 	//Get the Qhandle for this task and store locally
 	hatcsQHandle = getQHandle(HATCS_MOD);
@@ -427,6 +547,10 @@ static void hatcs_task(void *pvParameters)
 	sprayerTimerInit();
 	mkValveStatus = AIR_RECIRC;
 	mkValveTimerInit();
+
+	aerationFlag = false;
+	sensorStateChangeFlag = false;
+	ctrlSeqIndex = 0;
 
 
 	while(1)
@@ -441,24 +565,39 @@ static void hatcs_task(void *pvParameters)
 		switch(rcvMsg.command)
 		{
 			case HATCS_NOTIFY_SENSOR_STATE_CHANGE:
-				uint8_t newSensorState;
-
 				//Change in sensor state notification received
 				//Get the new sensor status from the command
 				newSensorState = *((uint8_t*)rcvMsg.cmdParam);
-				if(newSensorState <= HAT_SENSOR_TEMP_BR_HUM_BR)
+				*rcvMsg.result = DG_SUCCESS;
+				if(newSensorState > HAT_SENSOR_TEMP_BR_HUM_BR)
 				{
-					hatSensorState = newSensorState;
+					newSensorState = HAT_SENSOR_TEMP_WR_HUM_WR;   //Safe condition
 				}
+				hatSensorState = newSensorState;
+				//sensorStateChangeFlag = true;
 
-				//Execute Actuator Control for the new sensor state
-				executeActuatorControl(hatSensorState, DG_BOOL_TRUE);
-
+				//Load control sequence from EEPROM
+				if(loadActuatorSeq(&controlCode[0], hatSensorState) != DG_SUCCESS)
+				{
+					printf("hatcsMod.c:hatcs_task():Config read from EEPROM failed\r\n");
+					*rcvMsg.result = DG_FAIL;
+				}
+				printf("hatcsMod.c:hatcs_task():Sensor status changed to %d\r\n",hatSensorState);
+				ctrlSeqIndex = 0;
 				if(rcvMsg.taskHandleSM != NULL)
 				{
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
 				}
+				executeActuatorControl(&controlCode[0],ctrlSeqIndex );
+				break;
 
+			case HATCS_INSTRUCT_AIRINLET:
+				aerationFlag = true ;
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
 				break;
 
 			case HATCS_START:
@@ -467,9 +606,19 @@ static void hatcs_task(void *pvParameters)
 				{
 					//Change state to
 					hatcsState = HATCS_STATE_ACTIVE;
-					//hatSensorState = HAT_SENSOR_TEMP_WR_HUM_WR;
+
+					//Load control sequence from EEPROM
+					if(loadActuatorSeq(&controlCode[0], hatSensorState) != DG_SUCCESS)
+					{
+						printf("hatcsMod.c:executeActuatorControl():Config read from EEPROM failed\r\n");
+						/*TODO*/ /* This error to be handled */
+					}
+					ctrlSeqIndex = 0;
 					//Execute Actuator Control for TWR_HWR state
-					executeActuatorControl(hatSensorState, DG_BOOL_TRUE);
+					executeActuatorControl(&controlCode[0],ctrlSeqIndex );
+					dgtimerStart(HATCS_MOD, CONV_SEC_TO_TICKS(controlCode[ctrlSeqIndex].duration*60));
+					printf("hatcsMod.c:executeActuatorControl():Duration %d\r\n",controlCode[ctrlSeqIndex].duration);
+					ctrlSeqIndex++;
 					*rcvMsg.result = DG_SUCCESS;
 				}
 				else
@@ -535,7 +684,42 @@ static void hatcs_task(void *pvParameters)
 						vTaskDelay(1);   //About 5mSec delay
 						TC78H660_Active();
 	                }
-					executeActuatorControl(hatSensorState, DG_BOOL_FALSE);
+
+					//Execute Actuator Control
+
+					executeActuatorControl(&controlCode[0],ctrlSeqIndex );
+					dgtimerStart(HATCS_MOD, CONV_SEC_TO_TICKS(controlCode[ctrlSeqIndex].duration*60));
+					printf("hatcsMod.c:executeActuatorControl():Duration %d, Index: %d, sensorState:%d\r\n",controlCode[ctrlSeqIndex].duration,ctrlSeqIndex, hatSensorState);
+	            	if(controlCode[ctrlSeqIndex].ctrlSeqEnd == SEQ_CTRL_END)
+	            	{
+	            		ctrlSeqIndex = 0;   //Reset the Index to start of control sequence
+	            		if(aerationFlag == true)
+	            		{
+	    					//Load control sequence from EEPROM
+	    					if(loadActuatorSeq(&controlCode[0], AIR_IN_CTRL_SEQ) != DG_SUCCESS)
+	    					{
+	    						printf("hatcsMod.c:executeActuatorControl():Config read from EEPROM failed\r\n");
+	    						/*TODO*/ /* This error to be handled */
+	    					}
+	    					aerationFlag == false;
+	            		}
+/*	            		else if(sensorStateChangeFlag == true)
+	            		{
+	    					//Load control sequence from EEPROM
+	    					if(loadActuatorSeq(&controlCode[0], newSensorState) != DG_SUCCESS)
+	    					{
+	    						printf("hatcsMod.c:executeActuatorControl():Config read from EEPROM failed\r\n");
+	    						TODO  This error to be handled
+	    					}
+	    					hatSensorState = newSensorState;
+	    					sensorStateChangeFlag == false;
+	            		}*/
+	            	}
+	            	else
+	            	{
+						ctrlSeqIndex++;
+	            	}
+
 					break;
 
 				case HATCS_STATE_ERROR:

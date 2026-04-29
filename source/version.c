@@ -317,5 +317,8 @@ void getHwVersion(char * version)
 /************************Ver 0.6.1 25-04-2026********************
  * CSM V2
  *  - Merged with branch RelayDrivenFlap
+ *  - hatcs.c: Modified to support aeration control
+ *  - csmMod.c: Code optimization reducing repetition
+ *  - Support for CS and Actuator control from Chewie Tool V2.0
  *
  *******************************************************************/

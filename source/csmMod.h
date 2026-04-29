@@ -52,6 +52,8 @@ typedef struct cheiweStateVar
 	uint8_t 	prevPhase;
 	uint8_t		curWasteCat;
 	uint8_t		state;
+	uint8_t 	minutesToAerate;
+	uint8_t 	aerationInterval;	//CSM config parameter
 
 
 }dgCtStateVar_t;

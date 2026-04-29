@@ -33,6 +33,7 @@
 #define HAT_SENSOR_TEMP_BR_HUM_WR	6
 #define HAT_SENSOR_TEMP_BR_HUM_AR	7
 #define HAT_SENSOR_TEMP_BR_HUM_BR	8
+#define AIR_IN_CTRL_SEQ				9
 
 
 

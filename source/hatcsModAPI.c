@@ -290,6 +290,7 @@ int hatcsInstructAirInlet()
 
 }
 
+/*
 int hatcsInstructMixing()
 {
 	dgMsg_t sendMsgBuf;
@@ -328,3 +329,4 @@ int hatcsInstructMixing()
 
 }
 
+*/

@@ -161,6 +161,10 @@ int getCmdCode(char* token)
 	{
 		cmdCode = GETSENSORSTATUS_CHTL;
 	}
+	else if (strcmp(&token[0], "GETSYSCFGVER_C\0")==0)
+	{
+		cmdCode = GETSYSCFGVER_C;
+	}
 	else if (strcmp(&token[0], "GETAUGERCFG_C\0")==0)
 	{
 		cmdCode = GETAUGERCFG_C;
@@ -212,6 +216,14 @@ int getCmdCode(char* token)
 	else if (strcmp(&token[0], "SAVECONFIGEE_C\0")==0)
 	{
 		cmdCode = SAVECONFIGEE_C;
+	}
+	else if (strcmp(&token[0], "GETADCSCFG_C\0")==0)
+	{
+		cmdCode = GETADCSCFG_C;
+	}
+	else if (strcmp(&token[0], "SETADCSCFG_C\0")==0)
+	{
+		cmdCode = SETADCSCFG_C;
 	}
 	else if (strcmp(&token[0], "FD_CONFIG\0")==0)
 	{
@@ -1190,11 +1202,11 @@ void cli_Task(void* arg)
 						phase = PATHOGEN_ELM_PHASE;
 						csmState = CSM_STATE_PPHASE;
 					}
-//					else if (strcmp(&token[0], "TRFRPHASE\0")==0)
-//					{
-//						phase = TRANSFER_PHASE;
-//						csmState = CSM_STATE_TRANSFER;
-//					}
+					else if (strcmp(&token[0], "DPHASE\0")==0)
+					{
+						phase = DRYING_PHASE;
+						csmState = CSM_STATE_I_DRY;
+					}
 					else
 					{
 						strcpy(response, "CERROR:Invalid Phase\r\n>");
@@ -1479,6 +1491,23 @@ void cli_Task(void* arg)
 					}
 					break;
 				}
+				case GETSYSCFGVER_C:
+				    // Usage: GETSYSCFGVER_C
+				    // Response Example:CC:V1.1\r\n
+					char version[10];
+					if(getSysconfigVersion(version)==DG_SUCCESS)
+					{
+				        sprintf(response, "CC:%s\r\n", version);
+					}
+					else
+					{
+				        // Error reading version
+				        strcpy(response, "CE:\r\n");
+					}
+				    sendCliResponse(response, strlen(response));
+				    setRxStatus(RS232_RCV_IDLE);
+					break;
+
 				case GETAUGERCFG_C:
 				{
 				    dgCtConfigParam_t agrCfg;
@@ -1588,9 +1617,9 @@ void cli_Task(void* arg)
 				    if (parsed == 2)
 				    {
 				        // Validate ranges before casting
-				        // There are 9 HAT sensor states (0..8),
+				        // There are 10 HAT sensor states (0..9),
 				        // and index is 0..MAX_CTRL_CODE_PER_SEQ-1
-				        if (sStatusTmp <= HAT_SENSOR_TEMP_BR_HUM_BR &&    // 0..8
+				        if (sStatusTmp <= AIR_IN_CTRL_SEQ &&    // 0..9
 				            indexTmp   <  MAX_CTRL_CODE_PER_SEQ)
 				        {
 				            sStatus = (uint8_t)sStatusTmp;
@@ -1669,7 +1698,7 @@ void cli_Task(void* arg)
 				    if (parsed == 9)
 				    {
 				        // Validate ranges for all uint8_t fields
-				        if (sStatusTmp <= HAT_SENSOR_TEMP_BR_HUM_BR &&
+				        if (sStatusTmp <= AIR_IN_CTRL_SEQ &&
 				            indexTmp   <  MAX_CTRL_CODE_PER_SEQ  &&
 				            durTmp     <= 0xFF &&
 				            ctTmp      <= 0xFF &&
@@ -1754,11 +1783,12 @@ void cli_Task(void* arg)
 				            if (getCsmPhaseParam(wasteCat, phase, &phaseParam) == DG_SUCCESS)
 				            {
 				                // CC:temperature,humidity,phaseDur,aeration
-				                sprintf(response, "CC:%.1f,%.1f,%d,%d\r\n",
+				                sprintf(response, "CC:%.1f,%.1f,%d,%u,%u\r\n",
 				                        phaseParam.temperature,
 				                        phaseParam.humidity,
 				                        phaseParam.phaseDur,
-				                        phaseParam.aerationDur);
+				                        phaseParam.aerationFreq,
+										phaseParam.aerationDur);
 
 				                sendCliResponse(response, strlen(response));
 				                printf("cliProc.c: response: %s\r\n", response);
@@ -1790,7 +1820,7 @@ void cli_Task(void* arg)
 
 				case SETCSMCFG_C:
 				{
-				    // Usage: SETCSMCFG_C wasteCat,phase,temperature,humidity,phaseDur,aeration
+				    // Usage: SETCSMCFG_C wasteCat,phase,temperature,humidity,phaseDur,aerationFreq
 				    dgCtProcessParam_t phaseParam;
 
 				    uint8_t  wasteCat, phase;
@@ -1802,15 +1832,16 @@ void cli_Task(void* arg)
 				    // temperature, humidity: float  -> %f
 				    // phaseDur, aeration:   uint16_t -> %hu (this 'h' is supported on your compiler)
 				    parsed = sscanf(cmdString,
-				                    "SETCSMCFG_C %u,%u,%f,%f,%hu,%hu",
+				                    "SETCSMCFG_C %u,%u,%f,%f,%hu,%u,%u",
 				                    &wasteCatTmp,
 				                    &phaseTmp,
 				                    &phaseParam.temperature,
 				                    &phaseParam.humidity,
 				                    &phaseParam.phaseDur,
+									&phaseParam.aerationFreq,
 				                    &phaseParam.aerationDur);
 
-				    if (parsed == 6)
+				    if (parsed == 7)
 				    {
 				        // Validate ranges before casting to uint8_t
 				        if (wasteCatTmp < WASTE_CAT_MAX && phaseTmp < PHASE_COUNT_MAX)
@@ -1927,6 +1958,91 @@ void cli_Task(void* arg)
 				    setRxStatus(RS232_RCV_IDLE);
 				    break;
 				}
+
+				case GETADCSCFG_C:
+				{
+					//Usage:
+					//Command: GETADCSCFG_C
+					//Example positive response: "CC:50,6,1\r\n"
+					dgAdcsConfigParams_t adcsCfg;
+
+				    if (getAdcsParams(&adcsCfg) == DG_SUCCESS)
+				    {
+				        sprintf(response, "CC:%u,%u,%u\r\n",
+				        		adcsCfg.adcsQuietPeriod,
+								adcsCfg.additivePerDelivery,
+								adcsCfg.additivePerMinute);
+				        sendCliResponse(response, strlen(response));
+				        printf("cliProc.c:response %s\r\n",response);
+				    }
+				    else
+				    {
+				        strcpy(response, "CE:\r\n");
+				        sendCliResponse(response, strlen(response));
+				    }
+
+				    setRxStatus(RS232_RCV_IDLE);
+				    break;
+				}
+				case SETADCSCFG_C:
+				{
+					dgAdcsConfigParams_t adcsCfg;
+
+				    // Temporaries for sscanf (wider than uint8_t)
+				    unsigned int adcsQuietPeriod, additivePerDelivery, additivePerMinute;
+				    int parsed;
+
+				    printf("cliProc.c: cmd received: %s\r\n", cmdString);
+
+				    // Usage:
+				    // dgAdcsConfigParams_t adcsCfg; adcsQuietPeriod,additivePerDelivery,additivePerMinute
+				    // Example:
+				    // SETTRFRCFG_C 50,10,1  - min, grams, grams/min
+				    parsed = sscanf(cmdString,
+				                    "SETADCSCFG_C %u,%u,%u",
+				                    &adcsQuietPeriod,
+				                    &additivePerDelivery,
+				                    &additivePerMinute);
+
+				    if (parsed == 3)
+				    {
+				        // Validate as uint8_t
+				        if (adcsQuietPeriod <= 0xFF &&
+				        		additivePerDelivery  <= 0xFF &&
+							additivePerMinute <= 0xFF )
+
+				        {
+				        	adcsCfg.adcsQuietPeriod 	= (uint8_t)adcsQuietPeriod;
+				        	adcsCfg.additivePerDelivery   = (uint8_t)additivePerDelivery;
+				        	adcsCfg.additivePerMinute   = (uint8_t)additivePerMinute;
+
+
+				            if (setAdcsParams(&adcsCfg) == DG_SUCCESS)
+				            {
+				                strcpy(response, "CC:\r\n");  // Success acknowledgment
+				            }
+				            else
+				            {
+				                strcpy(response, "CE:\r\n");  // Validation / internal error
+				            }
+				        }
+				        else
+				        {
+				            // Out-of-range values
+				            strcpy(response, "CE:\r\n");
+				        }
+				    }
+				    else
+				    {
+				        // Parsing error
+				        strcpy(response, "CE:\r\n");
+				    }
+
+				    sendCliResponse(response, strlen(response));
+				    setRxStatus(RS232_RCV_IDLE);
+				    break;
+				}
+
 
 				case GETSHDSEQ_C:
 				{
