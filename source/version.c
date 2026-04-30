@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.1" );
+	strcpy(swVer,"0.6.2" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -320,5 +320,12 @@ void getHwVersion(char * version)
  *  - hatcs.c: Modified to support aeration control
  *  - csmMod.c: Code optimization reducing repetition
  *  - Support for CS and Actuator control from Chewie Tool V2.0
+ *
+ *******************************************************************/
+
+/************************Ver 0.6.2 30-04-2026********************
+ * CSM V2
+ *  - MKValve timing adjusted
+
  *
  *******************************************************************/

@@ -168,8 +168,8 @@ int sprayOnceDCmSec(uint16_t duration)
 #define AIR_RECIRC		0
 #define AIR_OUT			1
 
-#define MKVALVE_CWR_DURATION		3750 	//Specified in mSec
-#define MKVALVE_CCWR_DURATION		3750  	//Specified in mSec
+#define MKVALVE_CWR_DURATION		4700 	//Specified in mSec
+#define MKVALVE_CCWR_DURATION		4700  	//Specified in mSec
 
 uint8_t mkValveStatus;
 TimerHandle_t mkValveTimerHandle;
