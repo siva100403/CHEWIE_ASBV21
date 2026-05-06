@@ -267,7 +267,7 @@ int	loadActuatorSeq(dgActuatorCtrlCode_t *controlCode, uint8_t sensorState)
 {
 	uint8_t index;
 	//Validate input parameters
-    if ((controlCode == NULL)||(sensorState>8)) return DG_INVALID_PARAM;
+    if ((controlCode == NULL)||(sensorState>9)) return DG_INVALID_PARAM;
 
     switch(sensorState)
     {
@@ -324,6 +324,7 @@ int	loadActuatorSeq(dgActuatorCtrlCode_t *controlCode, uint8_t sensorState)
     	{
             controlCode[index] = allConfig.hatcsConfig.hatcsActuatorCtrlSeq.temp_br_hum_br[index];
     	}
+    	break;
     case AIR_IN_CTRL_SEQ:
     	for(index=0; index<MAX_CTRL_CODE_PER_SEQ; index++)
     	{

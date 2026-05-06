@@ -324,8 +324,8 @@ int executeActuatorControl(dgActuatorCtrlCode_t  *controlCode, uint8_t index)
 			airValve1On();
 			airValve3Off();
 			fanMotorStop();
-			setMkValveStatus(AIR_RECIRC);
-			printf("hatcsMod.c:executeActuatorControl():AIR_IN\r\n");
+			setMkValveStatus(AIR_OUT);
+			printf("hatcsMod.c:executeActuatorControl():AIR_OUT\r\n");
 			break;
 		case SEQ_CTRL_AIR_OUT:
 			airValve1On();
@@ -701,19 +701,17 @@ static void hatcs_task(void *pvParameters)
 	    						printf("hatcsMod.c:executeActuatorControl():Config read from EEPROM failed\r\n");
 	    						/*TODO*/ /* This error to be handled */
 	    					}
-	    					aerationFlag == false;
+	    					aerationFlag = false;
 	            		}
-/*	            		else if(sensorStateChangeFlag == true)
+	            		else
 	            		{
 	    					//Load control sequence from EEPROM
-	    					if(loadActuatorSeq(&controlCode[0], newSensorState) != DG_SUCCESS)
+	    					if(loadActuatorSeq(&controlCode[0], hatSensorState) != DG_SUCCESS)
 	    					{
 	    						printf("hatcsMod.c:executeActuatorControl():Config read from EEPROM failed\r\n");
-	    						TODO  This error to be handled
+	    						/*TODO  This error to be handled */
 	    					}
-	    					hatSensorState = newSensorState;
-	    					sensorStateChangeFlag == false;
-	            		}*/
+	            		}
 	            	}
 	            	else
 	            	{
