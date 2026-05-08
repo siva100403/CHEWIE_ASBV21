@@ -86,6 +86,7 @@
 
 
 TimerHandle_t sprayerTimerHandle;
+bool mkValveMovingFlag;
 
 
 
@@ -195,6 +196,7 @@ void mkValveTimerCallback( TimerHandle_t xTimer)
 {
 	//Turn of mkValve
 	mkValveStop();
+	mkValveMovingFlag = false;
 }
 
 int mkValveTimerInit()
@@ -211,12 +213,26 @@ int mkValveTimerInit()
 
 int setMkValveStatus(uint8_t status)
 {
+	uint8_t waitCount;
+	//Wait for any mkValve operation to complete
+	waitCount = 0;
+	while(mkValveMovingFlag == true)
+	{
+		vTaskDelay(200);
+		waitCount++;
+		if(waitCount > 5)
+		{
+			printf("hatcsMod.c:setMKValveStatus(): Valve movingflag error\r\n");
+			return DG_FAIL;
+		}
+	}
 	switch(status)
 	{
 	case AIR_RECIRC:
 		if(mkValveStatus != AIR_RECIRC){
 			//start mkValve motor in CWR
 			mkValveCCWR();
+			mkValveMovingFlag = true;
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CWR_DURATION));
 			mkValveStatus = AIR_RECIRC;
@@ -226,6 +242,7 @@ int setMkValveStatus(uint8_t status)
 		if(mkValveStatus != AIR_OUT){
 			//start mkValve motor in CCWR
 			mkValveCWR();
+			mkValveMovingFlag = true;
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CCWR_DURATION));
 			mkValveStatus = AIR_OUT;
@@ -547,6 +564,7 @@ static void hatcs_task(void *pvParameters)
 	sprayerTimerInit();
 	mkValveStatus = AIR_RECIRC;
 	mkValveTimerInit();
+	mkValveMovingFlag = false;
 
 	aerationFlag = false;
 	sensorStateChangeFlag = false;
@@ -574,7 +592,14 @@ static void hatcs_task(void *pvParameters)
 					newSensorState = HAT_SENSOR_TEMP_WR_HUM_WR;   //Safe condition
 				}
 				hatSensorState = newSensorState;
-				//sensorStateChangeFlag = true;
+/*
+				sensorStateChangeFlag = true;
+
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+*/
 
 				//Load control sequence from EEPROM
 				if(loadActuatorSeq(&controlCode[0], hatSensorState) != DG_SUCCESS)
@@ -684,9 +709,21 @@ static void hatcs_task(void *pvParameters)
 						vTaskDelay(1);   //About 5mSec delay
 						TC78H660_Active();
 	                }
-
+/*
+	                if(sensorStateChangeFlag == true)
+	                {
+	    				hatSensorState = newSensorState;
+	    				//Load control sequence from EEPROM
+	    				if(loadActuatorSeq(&controlCode[0], hatSensorState) != DG_SUCCESS)
+	    				{
+	    					printf("hatcsMod.c:hatcs_task():Config read from EEPROM failed\r\n");
+	    				}
+	    				printf("hatcsMod.c:hatcs_task():Sensor status changed to %d\r\n",hatSensorState);
+	    				ctrlSeqIndex = 0;
+	    				sensorStateChangeFlag = false;
+	                }
+*/
 					//Execute Actuator Control
-
 					executeActuatorControl(&controlCode[0],ctrlSeqIndex );
 					dgtimerStart(HATCS_MOD, CONV_SEC_TO_TICKS(controlCode[ctrlSeqIndex].duration*60));
 					printf("hatcsMod.c:executeActuatorControl():Duration %d, Index: %d, sensorState:%d\r\n",controlCode[ctrlSeqIndex].duration,ctrlSeqIndex, hatSensorState);

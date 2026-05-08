@@ -326,6 +326,14 @@ void getHwVersion(char * version)
 /************************Ver 0.6.2 30-04-2026********************
  * CSM V2
  *  - MKValve timing adjusted
+ *  - sysConfig.c: Bug fix: loadActuatorSeq()
+ *  - hatcsConfig.c:Bug fix:
+ *
+ *******************************************************************/
 
+/************************Ver 0.6.3 06-05-2026********************
+ * CSM V2
+ *  - hatcsmod.c: sensor change event processed only when hatcs timer event
+ *    and not immediately
  *
  *******************************************************************/

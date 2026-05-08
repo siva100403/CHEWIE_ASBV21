@@ -550,7 +550,7 @@ void cli_Task(void* arg)
 							setRxStatus(RS232_RCV_IDLE);
 							break;
 						}
-						sprayOnceDCmSec(duration);
+						 (duration);
 					}
 					else
 					{

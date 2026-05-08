@@ -136,11 +136,13 @@ static int aerationControl(dgCtStateVar_t *ctVar)
 	ctVar->minutesToAerate--;
 	if(ctVar->minutesToAerate == 0)
 	{
+
 		if(hatcsInstructAirInlet() != DG_SUCCESS)
 		{
 			printf("csmMod.c:csmTask():hatcsInstructAirInlet() failed\r\n");
 		}
 		printf("csmMod.c:csmTask():aeration initiated\r\n");
+
 		ctVar->minutesToAerate = ctVar->aerationInterval;
 	}
 }
