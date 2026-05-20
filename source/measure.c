@@ -159,3 +159,16 @@ int getAdcsState(uint8_t *state)
 }
 
 
+int updateMkValvePosition(uint8_t state)
+{
+	rtcRAMWrite(MKVALVE_POSITION_ADDR, state);
+	return DG_SUCCESS;
+}
+
+int getMkValvePosition(uint8_t *state)
+{
+	rtcRAMRead(MKVALVE_POSITION_ADDR, state);
+	return DG_SUCCESS;
+}
+
+

@@ -42,6 +42,7 @@
 #include "dgI2cDriver.h"
 #include "eeConfig.h"
 #include "rtc.h"
+
 #include "ASB_HMI_common.h"
 #include "sysStart.h"
 #include "dgUartDriverCommon.h"
@@ -72,6 +73,7 @@
 #include "hatcsMod.h"
 #include "hatcsModAPI.h"
 #include "actuatorStatusTracker.h"
+#include "measure.h"
 
 
 /********************************************************************
@@ -236,6 +238,7 @@ int setMkValveStatus(uint8_t status)
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CWR_DURATION));
 			mkValveStatus = AIR_RECIRC;
+			updateMkValvePosition(AIR_RECIRC);
 		}
 		break;
 	case AIR_OUT:
@@ -246,6 +249,7 @@ int setMkValveStatus(uint8_t status)
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CCWR_DURATION));
 			mkValveStatus = AIR_OUT;
+			updateMkValvePosition(AIR_OUT);
 		}
 		break;
 	default:
@@ -562,7 +566,23 @@ static void hatcs_task(void *pvParameters)
 	hatSensorState = HAT_SENSOR_TEMP_WR_HUM_WR;
 
 	sprayerTimerInit();
-	mkValveStatus = AIR_RECIRC;
+
+	//Restore MKValve status from RTC RAM
+	getMkValvePosition(&mkValveStatus);
+	if(mkValveStatus == AIR_RECIRC)
+	{
+
+	}
+	else if(mkValveStatus == AIR_OUT)
+	{
+
+	}
+	else
+	{
+		//Incorrect position value
+		printf("hatcs.c:hatcs_task():MKValve Position read from RTC is incorrect. \r\n");
+		mkValveStatus = AIR_RECIRC;
+	}
 	mkValveTimerInit();
 	mkValveMovingFlag = false;
 

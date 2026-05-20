@@ -83,6 +83,7 @@
 #include "csmMod.h"
 #include "csmModAPI.h"
 #include "measure.h"
+#include "fwUpgrade.h"
 
 
 
@@ -218,7 +219,11 @@ static void print_task(void *pvParameters)
 
     	//storeWorkingConfigEEPROM()
     	//getLidSwicthStatus();
-    	vTaskDelay(200);
+    	vTaskDelay(2000);
+
+		//safeStateForFwUpgrade();
+		//printf("cliProc.c:starting ISPMode");
+		//startIspMode();
     	//getLidSwicthStatus();
 
     	//printf("ChewieMain.c:lidSwitchStatus=%d, LSCLOSE=%d, LSOPEN=%d\r\n",getLidSwicthStatus(), READ_LS_SENSE_LIDCLOSE(), READ_LS_SENSE_LIDOPEN());

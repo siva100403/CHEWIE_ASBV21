@@ -52,7 +52,6 @@ typedef struct hatsProcessVar
 #define AIR_OUT			1
 
 //HATCS states
-
 #define HATCS_STATE_IDLE		0
 #define HATCS_STATE_ACTIVE		1
 #define HATCS_STATE_ERROR		2

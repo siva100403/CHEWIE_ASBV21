@@ -73,6 +73,7 @@
 #include "csmModAPI.h"
 #include "measure.h"
 #include "hatcsMod.h"
+#include "fwUpgrade.h"
 
 
 /*******************************************************************************
@@ -352,6 +353,10 @@ int getCmdCode(char* token)
 	else if(strcmp(&token[0], "MKVALVE\0")==0)
 	{
 		cmdCode = MKVALVE;
+	}
+	else if(strcmp(&token[0], "FWUPGRADE\0")==0)
+	{
+		cmdCode = FWUPGRADE;
 	}
 	else
 	{
@@ -964,7 +969,19 @@ void cli_Task(void* arg)
 					break;
 				}
 
+				case FWUPGRADE:
+				{
+					//Usage FWUPGRADE    - No parameters
 
+					safeStateForFwUpgrade();
+					strcpy(response, "CC:ISP Mode initiated \r\n>");
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					printf("cliProc.c:starting ISPMode");
+					startIspMode();
+
+					break;
+				}
 
 
 				case FAN_MOTOR:

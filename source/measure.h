@@ -9,6 +9,7 @@
 #define MEASURE_H_
 
 
+#include "csmMod.h"
 
 
 /*********************** Battery Backup RAM usage *****************/
@@ -33,6 +34,10 @@
 //Stores the state of ADCS. After power up this location is checked
 // to decide the state of ADCS
 #define ADCS_STATE_ADDR				0x39	//1 byte
+
+//Stores the state of MKValve
+#define MKVALVE_POSITION_ADDR		0x3A    //1 Byte
+
 
 
 #define USAGE_COUNTER_STORE_ADDR	0x40	//Address in RTC RAM
@@ -74,6 +79,8 @@ typedef struct usageCounter
 
 
 
+
+
 int updateChewieStateStoreExpDur(uint16_t expDur, uint16_t remDur);
 int updateCounterCtmotor(uint16_t ctmotor);
 int updateCounterShmotor(uint16_t shmotor);
@@ -83,6 +90,9 @@ int getChewieStateStore(dgDateTime_t *updateTime,dgCtStateVar_t *ctVar);
 
 int getAdcsState(uint8_t *state);
 int updateAdcsState(uint8_t state);
+
+int getMkValvePosition(uint8_t *state);
+int updateMkValvePosition(uint8_t state);
 
 
 #endif /* MEASURE_H_ */

@@ -96,6 +96,7 @@ struct cmd_buffer
 #define GETSYSCFGVER_C	50
 #define GETADCSCFG_C	51
 #define SETADCSCFG_C	52
+#define FWUPGRADE		53
 
 
 
