@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.3" );
+	strcpy(swVer,"0.6.4" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -336,5 +336,11 @@ void getHwVersion(char * version)
  *  - hatcsmod.c: Mkvalve position stored in RTC RAM and used to restore position
  *                on power-up
  *  - ISP Boot code included. Not tested
+ *
+ *******************************************************************/
+/************************Ver 0.6.4 22-05-2026********************
+ * CSM V2
+ *  - adcs.c:modified to take configuration values from config space instead of constants
+
  *
  *******************************************************************/

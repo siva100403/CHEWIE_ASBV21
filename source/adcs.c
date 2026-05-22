@@ -80,8 +80,8 @@
 #define QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY  30 			// in minutes
 #define AMOUNT_OF_ADDITIVE_PER_DELIVERY			6			// in grams
 #define AMOUNT_OF_ADDITIVE_DELIVERED_PER_MIN	1			// in grams/min - property of additive delivery part
-#define ADDITIVE_DELIVERY_MIN_DUR				1			// in minutes
-#define ADDITIVE_DELIVERY_MAX_DUR				15			// in minutes
+#define ADDITIVE_DELIVERY_MIN_DUR				1			// in seconds
+#define ADDITIVE_DELIVERY_MAX_DUR				15			// in seconds
 
 #define ADDITIVE_MOTOR_ON_DUR					2			// in minutes
 
@@ -99,23 +99,39 @@ static void adcs_task(void *pvParameters)
 	QueueHandle_t adcsQHandle;
 	dgMsg_t rcvMsg;				//Holds the currently received message
 	static uint8_t adcsState;		//
-	static uint8_t additiveMotorOnDur;
+	static uint8_t additiveMotorOnDur;  //in seconds
+	dgAdcsConfigParams_t adcsConfig;
 
 	//Compute Additive motor ON duration based on the amount of additives to be delivered
-	additiveMotorOnDur = AMOUNT_OF_ADDITIVE_PER_DELIVERY/AMOUNT_OF_ADDITIVE_DELIVERED_PER_MIN;
+	//additiveMotorOnDur = AMOUNT_OF_ADDITIVE_PER_DELIVERY/AMOUNT_OF_ADDITIVE_DELIVERED_PER_MIN;
 	//Validate the computed value and cap if beyond limit
+	//additiveMotorOnDur = (additiveMotorOnDur < ADDITIVE_DELIVERY_MIN_DUR) ? ADDITIVE_DELIVERY_MIN_DUR:additiveMotorOnDur;
+	//additiveMotorOnDur = (additiveMotorOnDur > ADDITIVE_DELIVERY_MAX_DUR) ? ADDITIVE_DELIVERY_MAX_DUR:additiveMotorOnDur;
+
+	//additiveMotorOnDur = ADDITIVE_MOTOR_ON_DUR;
+
+	//Wait till module registration is complete
+	adcsQHandle = NULL;
+	while(adcsQHandle== NULL)
+	{
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+		adcsQHandle = getQHandle(ADCS_MOD);
+	}
+
+	getAdcsParams(&adcsConfig);
+	printf("adcs.c:adcs_task():additive config: Quite period=%d, Additive delivery in gm= %d, additive per min=%d\r\n", adcsConfig.adcsQuietPeriod, adcsConfig.additivePerDelivery, adcsConfig.additivePerMinute);
+	additiveMotorOnDur = (adcsConfig.additivePerDelivery * 60)/adcsConfig.additivePerMinute;  //in seconds
 	additiveMotorOnDur = (additiveMotorOnDur < ADDITIVE_DELIVERY_MIN_DUR) ? ADDITIVE_DELIVERY_MIN_DUR:additiveMotorOnDur;
 	additiveMotorOnDur = (additiveMotorOnDur > ADDITIVE_DELIVERY_MAX_DUR) ? ADDITIVE_DELIVERY_MAX_DUR:additiveMotorOnDur;
 
-	additiveMotorOnDur = ADDITIVE_MOTOR_ON_DUR;
-	//Get the Qhandle for this task and store locally
-	adcsQHandle = getQHandle(ADCS_MOD);
+
+	printf("adcs.c:adcs_task():additive motor on dur in seconds: %d\r\n", additiveMotorOnDur);
 
 	getAdcsState(&adcsState);
 
 	if(adcsState == ADCS_STATE_QUIET_PERIOD)
 	{
-		dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(QUIET_PERIOD_BETWEEN_ADDITIVE_DELIVERY*60));
+		dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS((adcsConfig.adcsQuietPeriod)*60));
 	}
 	else
 	{
@@ -148,7 +164,7 @@ static void adcs_task(void *pvParameters)
 					//Update RTC RAM
 					updateAdcsState(adcsState);
 					//start a timer
-					dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(additiveMotorOnDur*60));
+					dgtimerStart(ADCS_MOD, CONV_SEC_TO_TICKS(additiveMotorOnDur));
 					break;
 				case ADCS_STATE_DELIVERING:
 					//Ignore any waste addition event

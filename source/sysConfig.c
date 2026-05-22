@@ -189,7 +189,7 @@ const dgCtConfigParam_t ctParam = {30, 30, 3, 5, 60};    //Parameters are in sec
 
 const dgTcsConfigParam_t trCtrlParamDefault = {600, 600, 40}; //mSec, mSec, Sec
 
-const dgAdcsConfigParams_t adcsParamDefault = {50, 6, 1}; //min, g, g/min
+const dgAdcsConfigParams_t adcsParamDefault = {50, 4, 60}; //min, g, g/min
 
 //Duration specified in 10s of mSec
 const dgShredderCtrlSeq_t shdCtrlSeqDefault[] = {
