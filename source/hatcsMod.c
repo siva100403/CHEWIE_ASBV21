@@ -171,8 +171,8 @@ int sprayOnceDCmSec(uint16_t duration)
 #define AIR_RECIRC		0
 #define AIR_OUT			1
 
-#define MKVALVE_CWR_DURATION		4700 	//Specified in mSec
-#define MKVALVE_CCWR_DURATION		4700  	//Specified in mSec
+#define MKVALVE_CWR_DURATION		5000 	//Specified in mSec
+#define MKVALVE_CCWR_DURATION		5000  	//Specified in mSec
 
 uint8_t mkValveStatus;
 TimerHandle_t mkValveTimerHandle;
@@ -233,7 +233,8 @@ int setMkValveStatus(uint8_t status)
 	case AIR_RECIRC:
 		if(mkValveStatus != AIR_RECIRC){
 			//start mkValve motor in CWR
-			mkValveCCWR();
+			//mkValveCCWR();
+			mkValveCWR();
 			mkValveMovingFlag = true;
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CWR_DURATION));
@@ -244,7 +245,8 @@ int setMkValveStatus(uint8_t status)
 	case AIR_OUT:
 		if(mkValveStatus != AIR_OUT){
 			//start mkValve motor in CCWR
-			mkValveCWR();
+			//mkValveCWR();
+			mkValveCCWR();
 			mkValveMovingFlag = true;
 			//start mkValve timer to stop
 			mkValveTimerStart(CONV_MSEC_TO_TICKS(MKVALVE_CCWR_DURATION));
@@ -567,6 +569,20 @@ static void hatcs_task(void *pvParameters)
 
 	sprayerTimerInit();
 
+	//get mkv status and update the status variable
+	if(getStorageTraySwicthStatus() == STTV_POSITION_CLOSED)
+	{
+		//MKV is in RECIRC position.
+		mkValveStatus = AIR_RECIRC;
+		printf("hatcs.c:MKValve initialized to AIR_RECIRC\r\n");
+	}
+	else
+	{
+		mkValveStatus = AIR_OUT;
+		printf("hatcs.c:MKValve initialized to AIR_OUT\r\n");
+	}
+
+/*
 	//Restore MKValve status from RTC RAM
 	getMkValvePosition(&mkValveStatus);
 	if(mkValveStatus == AIR_RECIRC)
@@ -583,6 +599,7 @@ static void hatcs_task(void *pvParameters)
 		printf("hatcs.c:hatcs_task():MKValve Position read from RTC is incorrect. \r\n");
 		mkValveStatus = AIR_RECIRC;
 	}
+*/
 	mkValveTimerInit();
 	mkValveMovingFlag = false;
 
@@ -707,6 +724,43 @@ static void hatcs_task(void *pvParameters)
 				}
 				break;
 
+			case HTACS_LS_MKVALVERECIRC:
+				// Hit the limit switch - Stop the motor
+				mkValveStop();
+				mkValveMovingFlag = false;
+				break;
+			case HATCS_MKV_SYNC:
+				// Bring MK Valve to Recirc position
+				//Check the current position of MkValve
+				switch(hatcsState)
+				{
+				case HATCS_STATE_IDLE:
+					*rcvMsg.result = DG_SUCCESS;
+					if(rcvMsg.taskHandleSM != NULL)
+					{
+						xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+					}
+					if(getStorageTraySwicthStatus() == STTV_POSITION_CLOSED)
+					{
+						//MKV is in RECIRC condition. No need to do anything
+						mkValveStatus = AIR_RECIRC;
+					}
+					else
+					{
+						printf("hatcsMod.c:hatcsTask():MKV is not in RECIRC position. Changing position");
+						setMkValveStatus(AIR_RECIRC);
+					}
+					break;
+				default:
+					//Sync is allowed only in IDLE state.Return failure
+					*rcvMsg.result = DG_FAIL;
+					if(rcvMsg.taskHandleSM != NULL)
+					{
+						xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+					}
+					break;
+				}
+				break;
 			case DG_TIMER_EXPIRY:
 				switch (hatcsState)
 				{

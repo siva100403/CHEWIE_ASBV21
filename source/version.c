@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.4" );
+	strcpy(swVer,"0.6.6" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -342,5 +342,17 @@ void getHwVersion(char * version)
  * CSM V2
  *  - adcs.c:modified to take configuration values from config space instead of constants
 
+ *
+ *******************************************************************/
+
+/************************Ver 0.6.5 03-06-2026********************
+ * CSM V2
+ *  - hatcsMod.c,hatcsModAPI.c:modified to support Limit Switch for MK Valve. Since
+ *    free limit switch is not available, STV limit switch is used
+ *
+ *******************************************************************/
+/************************Ver 0.6.6 03-06-2026********************
+ * CSM V2
+ *  Bug fix: LidModule.c: In LID_ERROR state, not returning proximity events fixed.
  *
  *******************************************************************/

@@ -290,6 +290,75 @@ int hatcsInstructAirInlet()
 
 }
 
+int event_ls_mkvalveRecirc()
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	//Validate parameters
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = HTACS_LS_MKVALVERECIRC;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = HATCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Task handle is null\r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+	return DG_SUCCESS;
+}
+
+int hatcsMkValveSync()
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = UNKNOWN;
+	sendMsgBuf.command = HATCS_MKV_SYNC;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = HATCS_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("hatcsModAPI.c:hatcsMkValveSync():Task handle is null \r\n");
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("hatcsModAPI.c:hatcsMkValveSync():Message send failed\r\n" );
+		return DG_FAIL;
+	}
+
+	//Message send success. Now we will wait for response
+
+	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	//Response received. Check the results
+	if(result == DG_SUCCESS)
+	{
+		return DG_SUCCESS;
+	}
+	return DG_FAIL;
+}
+
+
 /*
 int hatcsInstructMixing()
 {

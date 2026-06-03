@@ -285,7 +285,8 @@ static void callback2mSec(void)
     		// Change in Limit switch status and hence update the status variable.
     		sttvStatus = STTV_POSITION_CLOSED;
     		//send event to transferModule
-    		event_ls_stvalveClose(UNKNOWN);
+    		//event_ls_stvalveClose(UNKNOWN);
+    		event_ls_mkvalveRecirc();
     		printf("limitswitchMod.c:Task():Event st closed\r\n");
     	}
     }

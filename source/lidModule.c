@@ -364,7 +364,30 @@ static void lidModule_task(void *pvParameters)
 			break;
 
 		case  LIDMOD_STATE_ERROR:
-			printf("lidModule.c:lidModule_task():LIDMOD_STATE_ERROR\r\n");
+			printf("lidModule.c:lidModule_task():Rcvd Event:%d in state LIDMOD_STATE_ERROR)\r\n",rcvMsg.command);
+			switch(rcvMsg.command)
+			{
+			case DG_MODULE_START:
+			case DG_MODULE_STOP:
+				//Ignore.
+				break;
+			case PROXIMITY_EVENT:
+				//Send fail result to HMI CommandProc
+				*(rcvMsg.result) = DG_FAIL;
+				xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				break;
+			case LIDSWITCH_EVENT:
+				//We don't expect any Limit switch event in LID OPEN state
+				printf("lidModule.c:lidModule_task():Rcvd LS Event 0x%X in LID Error state\r\n",rcvMsg.command);
+
+				break;
+			case DG_TIMER_EXPIRY:
+				//Ignore
+				break;
+			default:
+				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_ERROR - Ignored)\r\n",rcvMsg.command);
+				break;
+			}
 			break;
 
 		case LIDMOD_STATE_OPEN:

@@ -23,6 +23,8 @@ int hatcsStop(uint8_t srcModule);
 int hatcsNotifySensorState(uint8_t srcModule, uint8_t sensorState);
 int hatcsInstructAirInlet(void);
 //int hatcsInstructMixing(void);
+int event_ls_mkvalveRecirc();
+int hatcsMkValveSync();
 
 
 

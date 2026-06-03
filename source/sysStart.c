@@ -500,7 +500,8 @@ static void sysStart_task(void *pvParameters)
 	vTaskDelay(8);   //40mSec delay
 	//Send Flapsync command to shredder module
 	shdFlapSync(UNKNOWN);
-	tcsSTValveSync(SYSSTART_MOD);
+	//tcsSTValveSync(SYSSTART_MOD);
+	hatcsMkValveSync();
 
 	vTaskDelay(1600);   //8 Sec delay for Flap Sync
 	//Read the CSM state stored in RTC RAM
