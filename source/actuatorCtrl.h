@@ -33,11 +33,11 @@ int airValve2Off();
 int airValve3On();
 int airValve3Off();
 
-
+/*
 int flapMotorCWR();
 int flapMotorCCWR();
 int flapMotorStop();
-
+*/
 
 int stMotorCWR(void);
 int stMotorCCWR(void);

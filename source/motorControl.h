@@ -60,4 +60,8 @@ void hFanCWR(uint8_t duty);
 void hFanCCWR(uint8_t duty);
 void hFanStop(void);
 
+void flapMotorCWR();
+void flapMotorCCWR();
+void flapMotorStop();
+
 #endif /* MOTORCONTROL_H_ */

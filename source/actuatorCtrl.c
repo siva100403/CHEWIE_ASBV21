@@ -197,28 +197,31 @@ int stMotorStop()
 
 
 
-
+/*
 int flapMotorCWR()
 {
 	printf("FlapMotor CWR\r\n");
 	updateFlapStatus(CWR);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_FWD);
 }
-
+*/
+/*
 int flapMotorCCWR()
 {
 	printf("FlapMotor CCWR\r\n");
 	updateFlapStatus(CCWR);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_REV);
 }
+*/
 
+/*
 int flapMotorStop()
 {
 	printf("FlapMotor OFF\r\n");
 	updateFlapStatus(OFF);
 	return fullBridgeCtrl(flapMotor.spiDeviceId, flapMotor.mpHbridgeId, flapMotor.mnHbridgeId, MOTOR_COAST);
 }
-
+*/
 
 
 //MK Valve Control

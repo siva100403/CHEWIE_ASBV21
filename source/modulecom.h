@@ -27,7 +27,8 @@
 #define DRV89XX_FH_MOD	19
 #define ADCS_MOD		20
 #define ALARMMGR_MOD	21
-#define LAST_MODULE		22
+#define MBSV_MOD		22
+#define LAST_MODULE		23
 
 
 
@@ -115,6 +116,12 @@
 #define ALARMMGR_GET_ACTIVE_LIST    0x42
 #define ALARMMGR_GET_DEFINITION     0x43
 #define ALARMMGR_GET_HISTORY        0x44
+
+//MBS Valve module commands
+#define MBSV_CONFIGURE				0x48
+#define MBSV_CYCLE1					0x49
+#define MBSV_CYCLE2					0x4A
+#define MBSV_CLOSE					0x4B
 
 /****************** Queue Message Definition ************************/
 

@@ -234,6 +234,45 @@ void pwmStop()
 {
     CTIMER_StopTimer(CTIMER);
 }
+
+void flapMotorCWR()
+{
+	//It assumes motor1 is in OFF condition
+	MOTOR1_FORWARD();
+	pwmStart(100);
+	updateFlapStatus(CWR);
+}
+
+void flapMotorCCWR()
+{
+	//It assumes motor1 is in OFF condition
+	MOTOR1_REVERSE();
+	pwmStart(100);
+	updateFlapStatus(CCWR);
+}
+
+void flapMotorStop()
+{
+	updateFlapStatus(OFF);
+	pwmStart(0);
+}
+
+void hFanCWR(uint8_t duty)
+{
+	SPARE2_RELAY_ON();
+}
+
+void hFanCCWR(uint8_t duty)
+{
+	SPARE2_RELAY_ON();
+}
+
+void hFanStop(void)
+{
+	SPARE2_RELAY_OFF();
+}
+
+/*
 void hFanCWR(uint8_t duty)
 {
 	//It assumes motor1 is in OFF condition
@@ -274,6 +313,7 @@ void hFanStop(void)
 	//pwmStop();
 	updateHtrFanStatus(OFF);
 }
+*/
 
 void augerMotorCWR(void)
 {

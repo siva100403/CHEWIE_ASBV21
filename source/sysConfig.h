@@ -223,6 +223,24 @@ typedef struct adcsConfigParams
 	uint8_t additivePerMinute;		//in Grams/min; Motor characteristics
 }dgAdcsConfigParams_t;
 
+/***********************MBS Valve CS Configuration Parameters ******************************/
+#define MAX_MBSV_CYCLES		16
+
+#define MBSV_CWR		0
+#define MBSV_CCWR		1
+#define MBSV_NOP		2
+
+typedef struct mbsVCycleParams
+{
+	uint8_t direction;				//
+	uint8_t dummy;
+	uint16_t moveDur;					//in mSeconds; Duration for which the motor has to be ON
+	uint16_t restDur;				//in mSseconds; Duration the valvae has to stay in this position
+}mbsVCycleParams_t;
+
+
+
+
 
 /*-----------------------------------------------------------------------------------------*/
 

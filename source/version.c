@@ -356,3 +356,9 @@ void getHwVersion(char * version)
  *  Bug fix: LidModule.c: In LID_ERROR state, not returning proximity events fixed.
  *
  *******************************************************************/
+
+/************************Ver Test 03-06-2026********************
+ * CSM V2
+ *  MBS Valve control has a separate task to control the flow
+ *
+ *******************************************************************/

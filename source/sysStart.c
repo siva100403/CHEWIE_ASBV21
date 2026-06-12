@@ -80,6 +80,7 @@
 #include "csmModAPI.h"
 #include "measure.h"
 #include "alarmManager.h"
+#include "mbsValveCS.h"
 
 //Health register allocation
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
@@ -404,6 +405,14 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[SHREDDER_MOD].presenceStatus = MODULE_NOTPRESENT;
 		moduleHealthReg[SHREDDER_MOD].operationStatus = MODULE_NOTWORKING;
 	}
+    if(initMbsValveCS()== DG_SUCCESS)
+    {
+		printf("sysStart_task(): initMbsValveCS() passed\r\n");
+    }
+    else
+    {
+		printf("sysStart_task(): initMbsValveCS() failed\r\n");
+    }
     //Initialize Limit switch module
     if(initLimitSwitchModule() == DG_SUCCESS)
 	{

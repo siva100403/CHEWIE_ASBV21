@@ -208,6 +208,47 @@ const dgShredderCtrlSeq_t shdCtrlSeqDefault[] = {
 
 
 
+
+
+const mbsVCycleParams_t mbsVCSCfgP1[MAX_MBSV_CYCLES] = { {MBSV_CCWR, 0,1500, 3000},
+		                                   {MBSV_CCWR, 0, 300, 3000},
+										   {MBSV_CCWR, 0, 150, 3000},
+										   {MBSV_CCWR, 0, 250, 300 },
+										   {MBSV_CWR, 0, 1080, 1000 },
+										   {MBSV_CCWR, 0, 1330, 3000 },
+										   {MBSV_CCWR, 0, 500, 3000 },
+										   {MBSV_CWR, 0, 3000, 5000 },
+										   {MBSV_CCWR, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 1000, 10000 },
+										   {MBSV_NOP, 0, 3000, 10000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+
+};
+
+const mbsVCycleParams_t mbsVCSCfgP2[MAX_MBSV_CYCLES] = { {MBSV_CCWR, 0,1500, 3000},
+		                                   {MBSV_CCWR, 0, 300, 3000},
+										   {MBSV_CCWR, 0, 150, 3000},
+										   {MBSV_CCWR, 0, 250, 300 },
+										   {MBSV_CWR, 0, 1080, 1000 },
+										   {MBSV_CCWR, 0, 1330, 3000 },
+										   {MBSV_CCWR, 0, 500, 3000 },
+										   {MBSV_CWR, 0, 3000, 5000 },
+										   {MBSV_CCWR, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 1000, 10000 },
+										   {MBSV_NOP, 0, 3000, 10000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+										   {MBSV_NOP, 0, 3000, 1000 },
+
+};
+
+
 #endif
 
 
