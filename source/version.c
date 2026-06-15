@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.6" );
+	strcpy(swVer,"0.6.7" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -354,5 +354,13 @@ void getHwVersion(char * version)
 /************************Ver 0.6.6 03-06-2026********************
  * CSM V2
  *  Bug fix: LidModule.c: In LID_ERROR state, not returning proximity events fixed.
+ *
+ *******************************************************************/
+
+/************************Ver 0.6.7 15-06-2026********************
+ * CSM V2
+ *  New Features
+ *  1. HMI Interrupt added for External AI Inference Request
+ *  2. HMICmdProc.c:Command handler for INT_REASON added
  *
  *******************************************************************/

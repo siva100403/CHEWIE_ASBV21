@@ -81,6 +81,7 @@
  * Variables
  ******************************************************************************/
 extern dgRs232TrBuf_t HMItrBuf;
+uint8_t intReason;
 
 
 /*******************************************************************************
@@ -275,9 +276,10 @@ void HMI_LPUART_IRQHandler(void)
     SDK_ISR_EXIT_BARRIER;
 }
 
-void interruptHMI(void)
+void interruptHMI(uint8_t reason)
 {
 	//Assumed it is inactive
+	intReason = reason;
     HMI_INT_ACTIVE();
     //Delay of >100 nsec
     for(int i=0; i<10; i++)
@@ -285,6 +287,11 @@ void interruptHMI(void)
         HMI_INT_ACTIVE();
     }
     HMI_INT_INACTIVE();
+}
+
+uint8_t getIntReason(void)
+{
+	return intReason;
 }
 
 int initHMIUart()
