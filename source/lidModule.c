@@ -509,6 +509,7 @@ static void lidModule_task(void *pvParameters)
 				interruptHMI(REASON_AI_INF);
 				updateLidStatus(OPEN);
 				dgtimerStart(LID_MOD, AIINF_DURATION/portTICK_PERIOD_MS);
+				printf("Interrupt started for AI_INF");
 				break;
 			default:
 				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_OPEN - Ignored)\r\n",rcvMsg.command);

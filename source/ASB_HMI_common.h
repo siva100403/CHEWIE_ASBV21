@@ -220,12 +220,15 @@ typedef struct intReason
 #define PRESENCE_DET_MODEL		0x01
 #define CLASS_EMPTY				0x01
 #define CLASS_NON_EMPTY			0x02
+//#define CLASS_IN_VALID          0x03
 
 typedef struct infOutcome
 {
 	uint8_t modelType;		//AI Model used for inference
+	uint8_t inferenceResult;// DG_SUCCESS or DG_FAIL
 	uint8_t infOutcome;		//Class detected
-};
+
+}infOutcome_t;
 
 /*****************************Function Prototypes*******************************/
 
