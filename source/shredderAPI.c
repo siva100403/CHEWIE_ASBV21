@@ -131,7 +131,33 @@ int event_lid_close(uint8_t srcModule)
 	}*/
 	return DG_SUCCESS;
 }
-
+int event_lid_aiinferencecomplete(uint8_t infresult)
+{
+    dgMsg_t sendMsgBuf;
+    uint8_t result = DG_FAIL;
+    //sendMsgBuf.src_module = srcModule;
+    sendMsgBuf.command = DG_LID_AIINFERENCECOMPLETE;
+    sendMsgBuf.cmdParam = &infresult;
+    sendMsgBuf.dest_module = SHREDDER_MOD;
+    sendMsgBuf.result = &result;
+    sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+    if(sendMsgBuf.taskHandleSM == NULL)
+    {
+        PRINTF("ShredderAPI.c:event_lid_aiinferencecomplete(): Task handle is NULL\r\n");
+        return DG_FAIL;
+    }
+    if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+    {
+        PRINTF("ShredderAPI.c:event_lid_aiinferencecomplete(): Message send failed\r\n");
+        return DG_FAIL;
+    }
+    xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
+    if(result == DG_SUCCESS)
+    {
+        return DG_SUCCESS;
+    }
+    return DG_FAIL;
+}
 int event_ls_flapclose(uint8_t srcModule)
 {
 	dgMsg_t sendMsgBuf;

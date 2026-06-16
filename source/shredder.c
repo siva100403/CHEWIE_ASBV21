@@ -310,6 +310,7 @@ static void shredder_task(void *pvParameters)
 			case DG_TIMER_EXPIRY:
 				//Ignored. Not expected in IDLE state
 				break;
+
 			case SHD_FLAP_SYNC:
 				//FLAP needs to be brought to CLOSE condition
 				//Check FLAP is in CLOSE condition
@@ -397,7 +398,16 @@ static void shredder_task(void *pvParameters)
 					flapMotorStop();
 					SPARE2_RELAY_OFF();
 				}
-				//printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				break;
+			case DG_LID_AIINFERENCECOMPLETE:
+				shredderState = SHD_STATE_IDLE;
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				//printf("shredder.c:DG_LID_AIINFERENCECOMPLETE():shedder in SHD_STATE_WAITFORCLOSE");
 				break;
 			default:
 				//Ignored. Unexpected event
@@ -427,7 +437,17 @@ static void shredder_task(void *pvParameters)
 					flapMotorStop();
 					SPARE2_RELAY_OFF();
 				}
-				//printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
+				printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
+				break;
+			case DG_LID_AIINFERENCECOMPLETE:
+				shredderState = SHD_STATE_IDLE;
+				dgtimerStop(SHREDDER_MOD);
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				//printf("shredder.c:Shredder in SHD_STATE_STARTDELAY state,cmd is DG_LID_AIINFERENCECOMPLETE ");
 				break;
 			default:
 				break;

@@ -17,7 +17,6 @@
 #define SHD_STATE_FLAPSYNC			4
 
 
-
 #define SHD_START_DELAY_DEFAULT 		5   	//Secs. Shredding start delay after Lid close
 #define FLAP_OPEN_DURATION_DEFAULT  	4   	//mSec. Flap open duration
 #define FLAP_CLOSE_DURATION_DEFAULT   	4   	//mSec. Flap open duration

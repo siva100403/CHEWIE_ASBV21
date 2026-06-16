@@ -440,14 +440,31 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 		return DG_SUCCESS;
 		break;
 	case EXTAI_INF_OUTCOME:
+	{
 	    infOutcome_t *infPayload;
-	    *payloadSize = 0;
-	     infPayload = (infOutcome_t *)&packetBuffer[PAYLOAD_START];
-	     printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:modelType: %d\r\n",infPayload->modelType);
-	     printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:inferenceResult: %d\r\n", infPayload->inferenceResult);
-	     printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:infOutcome: %d\r\n", infPayload->infOutcome);
-        return DG_SUCCESS;
 
+	    *payloadSize = 0;
+
+	    infPayload = (infOutcome_t *)&packetBuffer[PAYLOAD_START];
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:modelType: %d\r\n",
+	           infPayload->modelType);
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:inferenceResult: %d\r\n",
+	           infPayload->inferenceResult);
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:infOutcome: %d\r\n",
+	           infPayload->infOutcome);
+
+	    if ((infPayload->inferenceResult == INF_RESULT_SUCCESS) &&
+	        (infPayload->infOutcome == CLASS_EMPTY))
+	    {
+	        event_lid_aiinferencecomplete(infPayload->infOutcome);
+	    }
+
+	    return DG_SUCCESS;
+	}
+	break;
 	    break;
 	case GET_RTSS_DATA:
 		dgRtssPayload_t *rtssData;

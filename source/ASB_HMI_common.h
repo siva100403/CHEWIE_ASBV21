@@ -222,6 +222,10 @@ typedef struct intReason
 #define CLASS_NON_EMPTY			0x02
 //#define CLASS_IN_VALID          0x03
 
+//Result for Possible values
+#define INF_RESULT_SUCCESS           0x01   // result
+#define INF_RESULT_FALIURE           0x02   // result
+
 typedef struct infOutcome
 {
 	uint8_t modelType;		//AI Model used for inference

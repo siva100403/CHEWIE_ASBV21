@@ -12,6 +12,7 @@
 int initShd(void);
 int event_lid_close(uint8_t);
 int event_lid_open(uint8_t);
+int event_lid_aiinferencecomplete(uint8_t infresult);
 int event_ls_flapclose(uint8_t srcModule);
 int shdFlapSync(uint8_t srcModule);
 
