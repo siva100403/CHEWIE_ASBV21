@@ -126,6 +126,7 @@ static void exeMbsVCycle(uint8_t exeState, mbsVCycleParams_t *cfg)
 		}
 		break;
 	case MBSV_EXE_TIMER:
+		printf("mbsValveCS.c:exeMbsVCycle():Cyclecount=%d, dir = %d, dur = %d,%d\r\n",cycleCount, cfg[cycleCount].direction,cfg[cycleCount].moveDur,cfg[cycleCount].restDur);
 		if (cycleState == CYCLE_VALVE_MOVE)
 		{
 			flapMotorStop();
@@ -212,6 +213,7 @@ static void mbsV_task(void *pvParameters)
 			}
 			break;
 		case MBSV_STATE_CYCLE1:
+
 			switch(rcvMsg.command)
 			{
 			case MBSV_CYCLE1:
