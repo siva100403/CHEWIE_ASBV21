@@ -189,7 +189,7 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 		stopFlapFlag = true;
 		flapMotorCWR();
 		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);
-		//mbsVClose();
+		mbsVClose();
 
 	}
 	else if(shdCtrlSeq[controlSeqIndex].shdFlapMotor == SEQ_CTRL_SHD_FLAP_OPEN)
