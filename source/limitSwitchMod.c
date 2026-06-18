@@ -114,6 +114,7 @@ uint8_t lidOpenDbCount;
 uint8_t sttvDbCount;
 uint8_t flapDbCount;
 uint8_t lidSensingEnable;
+uint8_t lidPrevState;
 
 
 #define TWO_MS_TIMER_PERIOD		(2000-1)     // uSec-1
@@ -125,6 +126,7 @@ static void callback2mSec(void)
 {
 	static uint8_t starting = 1;
 	uint8_t lidStatusChangeFlag;
+
 
 
 	lidStatusChangeFlag = 0;  //Default - No change in lid status
@@ -224,7 +226,10 @@ static void callback2mSec(void)
 	    		//send Lid_open event to shredder module
 	    		if(starting == 0)
 	    		{
-		        	event_lid_open(LIMITSWITCH_MOD);
+	    			if(lidPrevState == LID_STATUS_CLOSED)
+	    			{
+			        	event_lid_open(LIMITSWITCH_MOD);
+	    			}
 	    		}
 	        	//event_lid_open(LIMITSWITCH_MOD);
 	    		break;
@@ -233,6 +238,7 @@ static void callback2mSec(void)
 	    	}
 	    	//send event to lidModule
 	        sendLidSwitchEvent(lidStatus);
+	        lidPrevState = lidStatus;
 /*	    	if(starting == 0)
 	    	{
 		        sendLidSwitchEvent(lidStatus);
@@ -360,6 +366,7 @@ int initLimitSwitchModule(void)
 	flapStatus = READ_LS_SENSE_FLAP();
 	lidStatus = LID_STATUS_UNKNOWN;
 	lidSensingEnable = LID_SENSING_DIS;
+	lidPrevState = LID_STATUS_UNKNOWN;
 
 	lidCloseDbCount = 0;
 	lidOpenDbCount = 0;
