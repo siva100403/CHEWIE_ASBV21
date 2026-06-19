@@ -226,12 +226,8 @@ static void callback2mSec(void)
 	    		//send Lid_open event to shredder module
 	    		if(starting == 0)
 	    		{
-	    			if(lidPrevState == LID_STATUS_CLOSED)
-	    			{
-			        	event_lid_open(LIMITSWITCH_MOD);
-	    			}
+    				event_lid_inbetween(LIMITSWITCH_MOD);
 	    		}
-	        	//event_lid_open(LIMITSWITCH_MOD);
 	    		break;
 	    	default:
 	    		break;

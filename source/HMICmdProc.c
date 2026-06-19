@@ -456,10 +456,10 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:infOutcome: %d\r\n",
 	           infPayload->infOutcome);
 
-	    if ((infPayload->inferenceResult == INF_RESULT_SUCCESS) &&
-	        (infPayload->infOutcome == CLASS_EMPTY))
+	    if ((infPayload->inferenceResult == INF_RESULT_SUCCESS) && (infPayload->infOutcome == CLASS_EMPTY))
 	    {
-	        event_lid_aiinferencecomplete(infPayload->infOutcome);
+	        if(event_lid_aiinferencecomplete(infPayload->infOutcome) != DG_SUCCESS)
+	        	return DG_FAIL;
 	    }
 
 	    return DG_SUCCESS;

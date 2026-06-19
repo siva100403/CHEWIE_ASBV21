@@ -104,6 +104,7 @@
 #define LIDSWITCH_EVENT				0x39
 
 //Shredder Module Commands
+#define DG_LID_INBETWEEN			0x3A
 #define DG_LID_AIINFERENCECOMPLETE  0x3B
 #define DG_LID_OPEN					0x3C
 #define DG_LID_CLOSE				0x3D

@@ -610,8 +610,7 @@ void cli_Task(void* arg)
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
 					{
-						strcpy(response, "CERROR:Less Parameters\r\n>");
-						sendCliResponse(response, strlen(response));
+
 						setRxStatus(RS232_RCV_IDLE);
 						break;
 					}

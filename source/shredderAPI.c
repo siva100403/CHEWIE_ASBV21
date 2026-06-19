@@ -57,6 +57,36 @@
 
 
 
+int event_lid_inbetween(uint8_t srcModule)
+{
+	dgMsg_t sendMsgBuf;
+	uint8_t result;
+
+	result = DG_FAIL;
+
+	//Populate the message to send to the modbus task
+	sendMsgBuf.src_module = srcModule;
+	sendMsgBuf.command = DG_LID_INBETWEEN;
+	sendMsgBuf.cmdParam = NULL;
+	sendMsgBuf.dest_module = SHREDDER_MOD;
+	sendMsgBuf.result = &result;
+	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
+	if(sendMsgBuf.taskHandleSM == NULL)
+	{
+		PRINTF("ShredderAPI.c:event_lid_inbetween():Task handle is null for module with id: %d \r\n", srcModule);
+		return DG_FAIL;
+	}
+
+	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
+	{
+		PRINTF("ShredderAPI.c:event_lid_inbetween()::Message send failed \r\n" );
+		return DG_FAIL;
+	}
+
+	return DG_SUCCESS;
+
+}
+
 int event_lid_open(uint8_t srcModule)
 {
 	dgMsg_t sendMsgBuf;
