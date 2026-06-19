@@ -196,6 +196,10 @@ void HMI_LPUART_IRQHandler(void)
             			{
             				escapeFlag = (escapeFlag == true)? false:true;
             			}
+            			else
+            			{
+            				escapeFlag = false;
+            			}
         			}
     			}
 /*    			HMItrBuf.rxBufPtr[HMItrBuf.rxCount] = LPUART_ReadByte(HMI_LPUART);
