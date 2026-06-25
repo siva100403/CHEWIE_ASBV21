@@ -24,7 +24,9 @@
 #define GET_ASB_VERSION				9
 #define GET_ASB_DATETIME			10
 #define GET_RTSS_DATA				11
-#define ACMD_LAST					12       //For validation purpose. Should be one more than the last command
+#define GET_INT_REASON				12
+#define EXTAI_INF_OUTCOME			13
+#define ACMD_LAST					14       //For validation purpose. Should be one more than the last command
 
 /******************************Packet structure*********************/
 
@@ -203,6 +205,34 @@ typedef struct asbVersion
 
 }dgAsbVersion_t;
 
+//Structure used to pass parameters from ASB to HMI for INT_REASON
+#define REASON_AI_INF				0x01		//Interrupt generated to request External AI inference
+#define REASON_ALARM_NOTIFICATION	0x02		//Notify Alarm
+
+typedef struct intReason
+{
+	uint8_t reasonCode;		// Reason code for interrupt
+	uint8_t param;			// Optional parameter
+}intReason_t;
+
+//Structure used to pass parameters from HMI to ASB for EXTAI_INF_OUTCOME
+
+#define PRESENCE_DET_MODEL		0x01
+#define CLASS_EMPTY				0x01
+#define CLASS_NON_EMPTY			0x02
+//#define CLASS_IN_VALID          0x03
+
+//Result for Possible values
+#define INF_RESULT_SUCCESS           0x01   // result
+#define INF_RESULT_FALIURE           0x02   // result
+
+typedef struct infOutcome
+{
+	uint8_t modelType;		//AI Model used for inference
+	uint8_t inferenceResult;// DG_SUCCESS or DG_FAIL
+	uint8_t infOutcome;		//Class detected
+
+}infOutcome_t;
 
 /*****************************Function Prototypes*******************************/
 

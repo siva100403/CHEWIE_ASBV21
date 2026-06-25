@@ -307,6 +307,9 @@ static void shredder_task(void *pvParameters)
 			case DG_LID_OPEN:
 				//Now lid is open. Wait for close to start shredder
 				shredderState = SHD_STATE_WAITFORCLOSE;
+				char response[64];
+				strcpy(response, "shredder.c:received DG_LID_OPEN in state IDLE\r\n");
+				sendCliResponse(response, strlen(response));
 				break;
 			case DG_LID_CLOSE:
 				//Ignore
@@ -314,6 +317,7 @@ static void shredder_task(void *pvParameters)
 			case DG_TIMER_EXPIRY:
 				//Ignored. Not expected in IDLE state
 				break;
+
 			case SHD_FLAP_SYNC:
 				//FLAP needs to be brought to CLOSE condition
 				//Check FLAP is in CLOSE condition
@@ -397,7 +401,19 @@ static void shredder_task(void *pvParameters)
 					flapMotorStop();
 
 				}
-				//printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				printf("shredder.c:shredderTask():SHD_STATE_WAITFORCLOSE: Flap close event received\r\n");
+				break;
+			case DG_LID_AIINFERENCECOMPLETE:
+				char response[64];
+				strcpy(response, "shredder.c:received AIINF in state WAITFORCLOSE\r\n");
+				sendCliResponse(response, strlen(response));
+				shredderState = SHD_STATE_IDLE;
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				//printf("shredder.c:DG_LID_AIINFERENCECOMPLETE():shedder in SHD_STATE_WAITFORCLOSE");
 				break;
 			default:
 				//Ignored. Unexpected event
@@ -427,7 +443,20 @@ static void shredder_task(void *pvParameters)
 					flapMotorStop();
 
 				}
-				//printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
+				printf("shredder.c:shredderTask():SHD_STATE_STARTDELAY: Flap close event received\r\n");
+				break;
+			case DG_LID_AIINFERENCECOMPLETE:
+				char response[64];
+				strcpy(response, "shredder.c:received AIINF in state STARTDELAY\r\n");
+				sendCliResponse(response, strlen(response));
+				shredderState = SHD_STATE_IDLE;
+				dgtimerStop(SHREDDER_MOD);
+				*rcvMsg.result = DG_SUCCESS;
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				//printf("shredder.c:Shredder in SHD_STATE_STARTDELAY state,cmd is DG_LID_AIINFERENCECOMPLETE ");
 				break;
 			default:
 				break;
@@ -437,6 +466,7 @@ static void shredder_task(void *pvParameters)
 			switch(rcvMsg.command)
 			{
 			case DG_LID_OPEN:
+			case DG_LID_INBETWEEN:
 				// Need to stop shredding operation
 				executeSHDSeqControl(SEQ_ENGINE_STOP);
 				shredderState = SHD_STATE_WAITFORCLOSE;

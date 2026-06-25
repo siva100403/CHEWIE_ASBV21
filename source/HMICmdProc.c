@@ -1,4 +1,4 @@
-/*
+ /*
  * HMICmdProc.c
  *
  *  Created on: 05-May-2025
@@ -422,6 +422,50 @@ int commandProcessor(uint8_t *packetBuffer, uint8_t packetSize, uint8_t *payload
 		printf("HMICmdProc.c:CmdProc():GET_ASB_DATETIME:hour=%d, min=%d", dateTime->hour, dateTime->minute);
 		return DG_SUCCESS;
 		break;
+	case GET_INT_REASON:
+		intReason_t *reasonPayload;
+		reasonPayload = (intReason_t*)payload;
+		*payloadSize = sizeof(intReason_t);
+		printf("HMICmdProc.c():GET_INT_REASON:CMD RECEIVED ");
+		if(getIntReason() == REASON_AI_INF)
+		{
+			reasonPayload->reasonCode = REASON_AI_INF;
+			reasonPayload->param = 0;
+		}
+		else
+		{
+			reasonPayload->reasonCode = REASON_ALARM_NOTIFICATION;
+			reasonPayload->param = 0;
+		}
+		return DG_SUCCESS;
+		break;
+	case EXTAI_INF_OUTCOME:
+	{
+	    infOutcome_t *infPayload;
+
+	    *payloadSize = 0;
+
+	    infPayload = (infOutcome_t *)&packetBuffer[PAYLOAD_START];
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:modelType: %d\r\n",
+	           infPayload->modelType);
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:inferenceResult: %d\r\n",
+	           infPayload->inferenceResult);
+
+	    printf("HMICmdProc.c:CmdProc():EXTAI_INF_OUTCOME:infOutcome: %d\r\n",
+	           infPayload->infOutcome);
+
+	    if ((infPayload->inferenceResult == INF_RESULT_SUCCESS) && (infPayload->infOutcome == CLASS_EMPTY))
+	    {
+	        if(event_lid_aiinferencecomplete(infPayload->infOutcome) != DG_SUCCESS)
+	        	return DG_FAIL;
+	    }
+
+	    return DG_SUCCESS;
+	}
+	break;
+	    break;
 	case GET_RTSS_DATA:
 		dgRtssPayload_t *rtssData;
 		uint8_t sensorStatus, sensorModulestatus;

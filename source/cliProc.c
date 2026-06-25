@@ -415,6 +415,7 @@ void cli_Task(void* arg)
 	char token[20];
 	int bufptr, cmdCode;
 	char version[12];
+	char target[16];
 
 
 	//Initialize CLI Buffer
@@ -435,6 +436,9 @@ void cli_Task(void* arg)
 	//Print version number and board details
 	getFwVersion(&version[0]);
 
+	//Target Chewie the FW meant for
+	getTargetChewie(target);
+
 	strcpy(response, "\r\n\r\n****************  ASB V2.2.1 CLI  ****************\r\n\r\n");
 	sendCliResponse(response, strlen(response));
 	vTaskDelay(100);
@@ -442,6 +446,12 @@ void cli_Task(void* arg)
 	strcat(response, version);
 	strcat(response, "     ************\r\n>");
 	sendCliResponse(response, strlen(response));
+	vTaskDelay(100);
+	strcpy(response, "************     Target Chewie:");
+	strcat(response, target);
+	strcat(response, "     ************\r\n>");
+	sendCliResponse(response, strlen(response));
+
 	vTaskDelay(100);
 
 	while (1)
@@ -610,8 +620,7 @@ void cli_Task(void* arg)
 					// Extract from command string
 					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract Heater number
 					{
-						strcpy(response, "CERROR:Less Parameters\r\n>");
-						sendCliResponse(response, strlen(response));
+
 						setRxStatus(RS232_RCV_IDLE);
 						break;
 					}

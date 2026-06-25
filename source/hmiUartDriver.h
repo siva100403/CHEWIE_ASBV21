@@ -29,6 +29,7 @@
 /****************Prototypes**************/
 
 int initHMIUart();
-void interruptHMI(void);
+void interruptHMI(uint8_t reason);
+uint8_t getIntReason(void);
 
 #endif /* HMIUARTDRIVER_H_ */

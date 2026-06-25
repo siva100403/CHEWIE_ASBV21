@@ -39,14 +39,19 @@
 char swVer[12] ;
 char productModel[32];
 char asbHwVersion[16];
+char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-
-	strcpy(swVer,"0.7.0" );
+	strcpy(swVer,"0.7.1" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
+}
+
+void getTargetChewie(char* target)
+{
+	strcpy(target, targetChewie);
 }
 
 void getFwVersion(char * version)
@@ -363,8 +368,25 @@ void getHwVersion(char * version)
  *
  *******************************************************************/
 
+/************************Ver 0.6.7 15-06-2026********************
+ * CSM V2
+ *  New Features
+ *  1. HMI Interrupt added for External AI Inference Request
+ *  2. HMICmdProc.c:Command handler for INT_REASON added
+ *
+ *******************************************************************/
+
 /************************Ver 0.7.0 25-06-2026********************
  * CSM V2
  *  Shredder.c:SEQ_ENGINE_STOP: MbsValveCS informed about Valve closing
+ *  Target Chewie:FE02
+ *
+ *******************************************************************/
+
+/************************Ver 0.7.1 25-06-2026********************
+ * CSM V2
+ *  Merge of Shdcs changes for flap on top of shredder and Ext AI inference
+ *  Target Chewie displayed in CLI startup message
+ *
  *
  *******************************************************************/

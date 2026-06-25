@@ -81,6 +81,7 @@
  * Variables
  ******************************************************************************/
 extern dgRs232TrBuf_t HMItrBuf;
+uint8_t intReason;
 
 
 /*******************************************************************************
@@ -128,6 +129,7 @@ void HMI_LPUART_IRQHandler(void)
 {
 	uint32_t RS232PortFlags;
     uint8_t data;
+    static bool escapeFlag=false;
 
 	GREEN_LED_ON();
     //RED_LED_ON();
@@ -144,10 +146,63 @@ void HMI_LPUART_IRQHandler(void)
     			{
     				//received STX
         			HMItrBuf.rxState = RS232_RECEIVING_CMD;
+        			HMItrBuf.rxCount = 0;
+        			escapeFlag = false;
     			}
     			break;
     		case RS232_RECEIVING_CMD:
-    			HMItrBuf.rxBufPtr[HMItrBuf.rxCount] = LPUART_ReadByte(HMI_LPUART);
+    			data = LPUART_ReadByte(HMI_LPUART);
+    			if((data == END_CHR)&&(escapeFlag==false))
+    			{
+    				//Reached end of packet
+    				if(HMItrBuf.rxCount< 5)
+    				{
+    					//Too small a packet. Ignore and start looking for STX again
+        				HMItrBuf.rxCount = 0;
+        				HMItrBuf.rxState = RS232_RCV_IDLE;
+        				break;
+    				}
+    				else
+    				{
+        				//Received the command in full. Send the command to HMI task
+        				sendRcvBuffer(HMItrBuf.rxBufPtr, HMItrBuf.rxCount);
+        				HMItrBuf.rxState = RS232_PROCESSING_CMD;
+        				//HMItrBuf.rxCount=0;
+        				break;
+    				}
+    			}
+    			else if((data == START_CHR)&&(escapeFlag==false))
+    			{
+    				//Started receiving new packet
+    				HMItrBuf.rxCount = 0;
+        			//escapeFlag = false;
+    			}
+    			else
+    			{
+    				//We received a valid byte
+    				//Check whether buffer has space to write
+        			if(HMItrBuf.rxCount > MAX_TX_BUFFER_SIZE)
+        			{
+        				//Packet cannot be this long. Something is wrong.
+        				//Discard the buffer and start again
+        				HMItrBuf.rxCount = 0;
+        				HMItrBuf.rxState = RS232_RCV_IDLE;
+        			}
+        			else
+        			{
+            			HMItrBuf.rxBufPtr[HMItrBuf.rxCount] = data;
+            			HMItrBuf.rxCount++;
+            			if(data == ESCAPE_CHR)
+            			{
+            				escapeFlag = (escapeFlag == true)? false:true;
+            			}
+            			else
+            			{
+            				escapeFlag = false;
+            			}
+        			}
+    			}
+/*    			HMItrBuf.rxBufPtr[HMItrBuf.rxCount] = LPUART_ReadByte(HMI_LPUART);
     			if(HMItrBuf.rxBufPtr[HMItrBuf.rxCount] != END_CHR )
     			{
         			HMItrBuf.rxCount++;
@@ -187,6 +242,7 @@ void HMI_LPUART_IRQHandler(void)
             			HMItrBuf.rxCount++;
     				}
     			}
+*/
     			break;
 
     		case RS232_PROCESSING_CMD:
@@ -203,7 +259,7 @@ void HMI_LPUART_IRQHandler(void)
     	}
     	else if((kLPUART_IdleLineFlag)& RS232PortFlags)
     	{
-    		//Receive is over, but CR-LF is not received.
+    		//END_CHAR is not received.
     		//It is an incomplete command. Discard and start all over again
     		HMItrBuf.rxCount = 0;
     		HMItrBuf.rxState = RS232_RCV_IDLE;
@@ -275,9 +331,10 @@ void HMI_LPUART_IRQHandler(void)
     SDK_ISR_EXIT_BARRIER;
 }
 
-void interruptHMI(void)
+void interruptHMI(uint8_t reason)
 {
 	//Assumed it is inactive
+	intReason = reason;
     HMI_INT_ACTIVE();
     //Delay of >100 nsec
     for(int i=0; i<10; i++)
@@ -285,6 +342,11 @@ void interruptHMI(void)
         HMI_INT_ACTIVE();
     }
     HMI_INT_INACTIVE();
+}
+
+uint8_t getIntReason(void)
+{
+	return intReason;
 }
 
 int initHMIUart()

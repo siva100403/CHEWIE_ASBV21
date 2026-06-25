@@ -14,8 +14,9 @@
 #define LIDOPENING_DURATION				10000		//in mSec
 #define LIDCLOSING_DURATION				10000		//in mSec
 #define LID_OPEN_DELAY					20			//in Ticks (100 mSec)
-#define LID_OPEN_WAIT					1000			//in mSec Time: To ensure motor goes to OFF before reversal
-#define LID_CLOSE_WAIT					1000			//in mSec: To ensure motor goes to OFF before reversal
+#define LID_OPEN_WAIT					1000		//in mSec Time: To ensure motor goes to OFF before reversal
+#define LID_CLOSE_WAIT					1000		//in mSec: To ensure motor goes to OFF before reversal
+#define AIINF_DURATION					2000		//in mSec
 
 
 //Lid Module states
@@ -29,6 +30,7 @@
 #define LIDMOD_STATE_OPEN_DELAY		7			//Lid closed just now. Hence delay is required to OPEN
 #define LIDMOD_STATE_READY			8			//After MODULE_START it goes to READY state
 #define LIDMOD_STATE_ERROR			9
+#define LIDMOD_STATE_AIINF			10
 
 
 /************************ Function Prototypes ********************/

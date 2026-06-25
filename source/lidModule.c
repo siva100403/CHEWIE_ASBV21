@@ -390,8 +390,8 @@ static void lidModule_task(void *pvParameters)
 			}
 			break;
 
-		case LIDMOD_STATE_OPEN:
-			printf("lidModule.c:lidModule_task():Rcvd Event:%d in state LIDMOD_STATE_OPEN)\r\n",rcvMsg.command);
+		case LIDMOD_STATE_AIINF:
+			printf("lidModule.c:lidModule_task():Rcvd Event:%d in state LIDMOD_STATE_AIINF)\r\n",rcvMsg.command);
 			switch(rcvMsg.command)
 			{
 			case DG_MODULE_START:
@@ -445,6 +445,71 @@ static void lidModule_task(void *pvParameters)
 				lidModuleState = LIDMOD_STATE_CLOSING;
 				updateLidStatus(CLOSING);
 				dgtimerStart(LID_MOD, LIDCLOSING_DURATION/portTICK_PERIOD_MS);
+				break;
+			default:
+				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_AIINF - Ignored)\r\n",rcvMsg.command);
+				break;
+			}
+			break;
+
+
+		case LIDMOD_STATE_OPEN:
+			printf("lidModule.c:lidModule_task():Rcvd Event:%d in state LIDMOD_STATE_OPEN)\r\n",rcvMsg.command);
+			switch(rcvMsg.command)
+			{
+			case DG_MODULE_START:
+				//Ignore. Already active
+				break;
+			case DG_MODULE_STOP:  /*TODO*/ // Lid has to be closed before going to IDLE
+				dgtimerStop(LID_MOD);
+				lidModuleState = LIDMOD_STATE_IDLE;
+				break;
+			case PROXIMITY_EVENT:
+				//Get the event details from received message
+				dgProximityEvents_t *proximityEvent;
+				uint8_t event;
+				proximityEvent = (dgProximityEvents_t*)rcvMsg.cmdParam;
+
+				//Currently we handle only Cap proximity sensor events
+				event = ((proximityEvent->proximity) & CAP_PROXIMITY_EVENT_MASK);
+				if(event == CAP_PROXIMITY_EVENT_DETECTED)
+				{
+					dgtimerStop(LID_MOD);
+					//Proximity event detected. Lid is already open. Extend the time
+					dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(PROXIMITY_LIDCLOSE_TIMEOUT));
+				}
+				else if (event == CAP_PROXIMITY_EVENT_REMOVED)
+				{
+					//Proximity event removed. After a timeout, we can close the lid.
+					dgtimerStop(LID_MOD);
+					dgtimerStart(LID_MOD, CONV_SEC_TO_TICKS(NONPROXIMITY_LIDCLOSE_TIMEOUT));
+					capProximityState = CAP_PROXIMITY_EVENT_REMOVED;
+				}
+				else
+				{
+					capProximityState = CAP_PROXIMITY_EVENT_DETECTED;
+					//No event reported. Ignore
+				}
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					*(rcvMsg.result) = DG_SUCCESS;
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
+				break;
+			case LIDSWITCH_EVENT:
+				//We don't expect any Limit switch event in LID OPEN state
+				printf("lidModule.c:lidModule_task():Rcvd LS Event 0x%X in LID OPEN state\r\n",rcvMsg.command);
+
+				break;
+			case DG_TIMER_EXPIRY:
+				//LID Open for longer than 15 sec. Close the Lid
+				//LID_MOTOR_DIR_CLOSE();
+				//LID_POWER_ON();
+				lidModuleState = LIDMOD_STATE_AIINF;
+				interruptHMI(REASON_AI_INF);
+				updateLidStatus(OPEN);
+				dgtimerStart(LID_MOD, AIINF_DURATION/portTICK_PERIOD_MS);
+				printf("Interrupt started for AI_INF");
 				break;
 			default:
 				printf("lidModule.c:lidModule_task():Invalid Event:%d in state LIDMOD_STATE_OPEN - Ignored)\r\n",rcvMsg.command);

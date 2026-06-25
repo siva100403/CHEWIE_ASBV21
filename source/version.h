@@ -13,5 +13,6 @@
 void initVersion(void);
 void getFwVersion(char * version);
 void getHwVersion(char * version);
+void getTargetChewie(char* target);
 
 #endif /* VERSION_H_ */
