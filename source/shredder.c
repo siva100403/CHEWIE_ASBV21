@@ -139,6 +139,9 @@ int executeSHDSeqControl(uint8_t seqEngineControl)
 		SHD_STOP();
 #ifdef INCLUDE_FLAP_CONTROL
 		//Close Flap
+		flapMotorStop();
+		mbsVClose();
+		vTaskDelay(1);   //Wait for mbsValveCS to receive close message
 		flapMotorCWR();
 		stopFlapFlag = true;
 		flapTimerStart(((shdTiming->flapCloseDur)*1000)/ portTICK_PERIOD_MS);

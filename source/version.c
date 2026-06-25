@@ -43,7 +43,7 @@ char asbHwVersion[16];
 void initVersion(void)
 {
 
-	strcpy(swVer,"0.6.6" );
+	strcpy(swVer,"0.7.0" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -360,5 +360,11 @@ void getHwVersion(char * version)
 /************************Ver Test 03-06-2026********************
  * CSM V2
  *  MBS Valve control has a separate task to control the flow
+ *
+ *******************************************************************/
+
+/************************Ver 0.7.0 25-06-2026********************
+ * CSM V2
+ *  Shredder.c:SEQ_ENGINE_STOP: MbsValveCS informed about Valve closing
  *
  *******************************************************************/
