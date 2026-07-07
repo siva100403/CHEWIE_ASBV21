@@ -81,6 +81,7 @@
 #include "measure.h"
 #include "alarmManager.h"
 #include "mbsValveCS.h"
+#include "dgCameraDriver.h"
 
 //Health register allocation
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
@@ -280,6 +281,10 @@ static void sysStart_task(void *pvParameters)
 			devHealthReg[CLI_UART_DEV].operationStatus = DEVICE_NOTWORKING;
 		}
 	}
+
+	initCamera();
+
+	vTaskDelay(1000);
 
 	//Initialize and make TC78H660 active
 	TC78H660_Active();

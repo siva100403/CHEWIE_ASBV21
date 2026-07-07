@@ -59,6 +59,7 @@
 
 //I2C slave devices connected to FC3
 #define SHT4X_SLAVE_ADDR		0x44
+#define OV7670_SLAVE_ADDR		0x21
 
 
 
@@ -92,4 +93,10 @@ int deinitCamera_I2C();
 int sht4x_reg_read(uint8_t reg_addr, uint8_t* reg_value);
 int sht4x_reg_write(uint8_t reg_addr, uint8_t reg_value);
 int sht4x_setAddress(uint8_t reg_addr);
+
+status_t BOARD_Camera_I2C_SendSCCB(uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, const uint8_t *txBuff, uint8_t txBuffSize);
+status_t BOARD_Camera_I2C_ReceiveSCCB(uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, uint8_t *rxBuff, uint8_t rxBuffSize);
+int ov7670_reg_write(uint8_t reg_addr, uint8_t reg_value);
+int ov7670_reg_read(uint8_t reg_addr, uint8_t* reg_value);
+
 #endif /* DGI2CDRIVER_H_ */

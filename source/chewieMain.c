@@ -84,6 +84,7 @@
 #include "csmModAPI.h"
 #include "measure.h"
 #include "fwUpgrade.h"
+#include "dgCameraDriver.h"
 
 
 
@@ -169,19 +170,19 @@ static void print_task(void *pvParameters)
     BLUE_LED_ON();*/
 
 
-    vTaskDelay( 1000 ); //For other tasks to get started
+    vTaskDelay( 2000 ); //For other tasks to get started
 
 
     //initLimitSwitchModule();
 	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
 
+    //initCamera();
+	//uint8_t lidStatusLocal;
+	//float temp, hum;
+	//uint8_t buffer[128], outbuffer[128];
+	//int i,countr=0, countw=0;
 
-	uint8_t lidStatusLocal;
-	float temp, hum;
-	uint8_t buffer[128], outbuffer[128];
-	int i,countr=0, countw=0;
-
-	printf("Chewiemain.c:size of shredder Control param=%d\r\n", sizeof(dgShdConfigParams_t));
+	//printf("Chewiemain.c:size of shredder Control param=%d\r\n", sizeof(dgShdConfigParams_t));
 
     while(1)
     {

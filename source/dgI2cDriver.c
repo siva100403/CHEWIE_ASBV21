@@ -578,3 +578,289 @@ int sht4x_reg_write(uint8_t reg_addr, uint8_t reg_value)
     return DG_FAIL;
 }
 
+
+/************************** OV7670 SCCB Register Access methods ******************/
+
+
+int ov7670_reg_write(uint8_t reg_addr, uint8_t reg_value)
+{
+	lpi2c_master_transfer_t cameraByteWriteXfer;
+	 status_t status;
+
+	//lock mutex
+
+    if (xSemaphoreTake(cameraI2cHandle.mutex, portMAX_DELAY) != pdTRUE)
+    {
+    	printf("dgI2CDriver.c:ov7670_reg_write():Bus busy\r\n");
+        return DG_BUSY;
+    }
+
+	//EEPROM Xfer buffer for byte write
+	cameraI2cTxBuff[0] = reg_value;
+	cameraByteWriteXfer.slaveAddress 	= OV7670_SLAVE_ADDR;
+	cameraByteWriteXfer.direction      	= kLPI2C_Write;
+	cameraByteWriteXfer.subaddress     	= (uint32_t)reg_addr;
+	cameraByteWriteXfer.subaddressSize 	= 1;
+	cameraByteWriteXfer.data           	= cameraI2cTxBuff;
+	cameraByteWriteXfer.dataSize       	= 1;
+	cameraByteWriteXfer.flags          	= kLPI2C_TransferDefaultFlag;
+
+    status = LPI2C_MasterTransferNonBlocking(CAMERA_I2C_MASTER, &cameraI2cHandle.g_m_handle, &cameraByteWriteXfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+    	printf("dgI2CDriver.c:ov7670_reg_write():Transact fail\r\n");
+        return DG_FAIL;
+    }
+
+    /* Wait for transfer to finish */
+    xSemaphoreTake(cameraI2cHandle.semaphore, portMAX_DELAY);
+    vTaskDelay(1); //Camera sensor requires this delay. Otherwise it does not work
+    /* Unlock resource mutex */
+    xSemaphoreGive(cameraI2cHandle.mutex);
+
+    /* Return status captured by callback function */
+    if(cameraI2cHandle.status ==kStatus_Success)
+    {
+    	uint8_t readbackValue;
+    	ov7670_reg_read(reg_addr, &readbackValue);
+    	printf("dgI2CDriver.c:ov7670_reg_write():writeValue=0x%x, readback=0x%x\r\n",reg_value, readbackValue);
+    	return DG_SUCCESS;
+    }
+	printf("dgI2CDriver.c:ov7670_reg_write():write fail\r\n");
+    return DG_FAIL;
+}
+
+//Register value should have a storage for 1 bytes
+int ov7670_reg_read(uint8_t reg_addr, uint8_t* reg_value)
+{
+
+	lpi2c_master_transfer_t cameraByteXfer, cameraByteWriteXfer;
+	status_t status;
+
+	//lock mutex
+
+    if (xSemaphoreTake(cameraI2cHandle.mutex, portMAX_DELAY) != pdTRUE)
+    {
+    	printf("dgI2CDriver.c:ov7670_reg_read():Bus Busy\r\n");
+        return DG_BUSY;
+    }
+
+    //Do a write cycle to set address
+	cameraI2cTxBuff[0] = reg_addr;
+	cameraByteWriteXfer.slaveAddress 	= OV7670_SLAVE_ADDR;
+	cameraByteWriteXfer.direction      	= kLPI2C_Write;
+	cameraByteWriteXfer.subaddress     	= 0;
+	cameraByteWriteXfer.subaddressSize 	= 0;
+	cameraByteWriteXfer.data           	= cameraI2cTxBuff;
+	cameraByteWriteXfer.dataSize       	= 1;
+	cameraByteWriteXfer.flags          	= kLPI2C_TransferDefaultFlag;
+
+    status = LPI2C_MasterTransferNonBlocking(CAMERA_I2C_MASTER, &cameraI2cHandle.g_m_handle, &cameraByteWriteXfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+    	printf("dgI2CDriver.c:ov7670_reg_read():Transact Error\r\n");
+        return DG_FAIL;
+    }
+
+    /* Wait for transfer to finish */
+    (void)xSemaphoreTake(cameraI2cHandle.semaphore, portMAX_DELAY);
+    vTaskDelay(1);    //Camera sensor requires this delay. Otherwise it does not work
+    //Check the result of address write operation
+    if(cameraI2cHandle.status !=kStatus_Success)
+    {
+    	printf("dgI2CDriver.c:ov7670_reg_read():Address set failed\r\n");
+        xSemaphoreGive(cameraI2cHandle.mutex);
+        return DG_FAIL;
+    }
+
+    //Now read the data from the register
+
+    cameraByteXfer.slaveAddress 	= OV7670_SLAVE_ADDR;
+    cameraByteXfer.direction      	= kLPI2C_Read;
+    cameraByteXfer.subaddress     	= 0;
+    cameraByteXfer.subaddressSize 	= 0;
+    cameraByteXfer.data           	= cameraI2cRxBuff;
+    cameraByteXfer.dataSize       	= 1;
+    cameraByteXfer.flags          	= kLPI2C_TransferDefaultFlag;
+
+    status = LPI2C_MasterTransferNonBlocking(CAMERA_I2C_MASTER, &cameraI2cHandle.g_m_handle, &cameraByteXfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+    	printf("dgI2CDriver.c:ov7670_reg_read():read failed\r\n");
+        return DG_FAIL;
+    }
+
+    /* Wait for transfer to finish */
+    (void)xSemaphoreTake(cameraI2cHandle.semaphore, portMAX_DELAY);
+    vTaskDelay(1); //Camera sensor requires this delay. Otherwise it does not work
+    /* Unlock resource mutex */
+    (void)xSemaphoreGive(cameraI2cHandle.mutex);
+
+    /* Return status captured by callback function */
+    if(cameraI2cHandle.status ==kStatus_Success)
+    {
+    	//Copy 1 byte
+    	*reg_value = cameraI2cRxBuff[0];
+
+    	return DG_SUCCESS;
+    }
+	printf("dgI2CDriver.c:ov7670_reg_read():read fail\r\n");
+    return DG_FAIL;
+
+}
+
+/******************* Camera I2C methods to work with NXP Camera driver *************/
+
+
+
+status_t BOARD_LPI2C_ReceiveSCCB(LPI2C_Type *base,
+                             uint8_t deviceAddress,
+                             uint32_t subAddress,
+                             uint8_t subAddressSize,
+                             uint8_t *rxBuff,
+                             uint8_t rxBuffSize)
+{
+    lpi2c_master_transfer_t xfer;
+	status_t status;
+
+    xSemaphoreTake(cameraI2cHandle.mutex, portMAX_DELAY);
+    vTaskDelay(1); //Camera sensor requires this delay. Otherwise it does not work
+    //printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Semaphore taken\r\n");
+
+    xfer.flags          = kLPI2C_TransferDefaultFlag;
+    xfer.slaveAddress   = deviceAddress;
+    xfer.direction      = kLPI2C_Write;
+    xfer.subaddress     = subAddress;
+    xfer.subaddressSize = subAddressSize;
+    xfer.data           = NULL;
+    xfer.dataSize       = 0;
+
+
+    status = LPI2C_MasterTransferNonBlocking(base, &cameraI2cHandle.g_m_handle, &xfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+        return status;
+    }
+    //printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Address transfer initiated\r\n");
+    /* Wait for transfer to finish */
+    xSemaphoreTake(cameraI2cHandle.semaphore, portMAX_DELAY);
+
+    //printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Address transfer completed\r\n");
+    vTaskDelay(1);    //Camera sensor requires this delay. Otherwise it does not work
+
+    if(cameraI2cHandle.status != kStatus_Success)
+    {
+        printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Address transfer error\r\n");
+    	return cameraI2cHandle.status;
+    }
+    xfer.flags          = kLPI2C_TransferDefaultFlag;
+    xfer.slaveAddress   = deviceAddress;
+    xfer.direction      = kLPI2C_Read;
+    xfer.subaddress     = subAddress;
+    xfer.subaddressSize = 0;
+    xfer.data           = rxBuff;
+    xfer.dataSize       = rxBuffSize;
+
+    status = LPI2C_MasterTransferNonBlocking(base, &cameraI2cHandle.g_m_handle, &xfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+        printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Transact error\r\n");
+        return status;
+    }
+    //printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Data read initiated\r\n");
+    vTaskDelay(1); //Camera sensor requires this delay. Otherwise it does not work
+    /* Unlock resource mutex */
+    xSemaphoreGive(cameraI2cHandle.mutex);
+
+    //printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Data received\r\n");
+    if(cameraI2cHandle.status != kStatus_Success)
+    {
+        printf("dgI2cDriver.c:BOARD_LPI2C_ReceiveSCCB():Transact error\r\n");
+    }
+    /* Return status captured by callback function */
+    return cameraI2cHandle.status;
+}
+
+/*status_t BOARD_Camera_I2C_Send(
+    uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, const uint8_t *txBuff, uint8_t txBuffSize)
+{
+    return BOARD_LPI2C_Send(CAMERA_I2C_MASTER, deviceAddress, subAddress, subAddressSize, (uint8_t *)txBuff,
+                            txBuffSize);
+}
+
+status_t BOARD_Camera_I2C_Receive(
+    uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, uint8_t *rxBuff, uint8_t rxBuffSize)
+{
+    return BOARD_LPI2C_Receive(CAMERA_I2C_MASTER, deviceAddress, subAddress, subAddressSize, rxBuff,
+                               rxBuffSize);
+}*/
+
+status_t BOARD_LPI2C_SendSCCB(LPI2C_Type *base,
+                          uint8_t deviceAddress,
+                          uint32_t subAddress,
+                          uint8_t subAddressSize,
+                          uint8_t *txBuff,
+                          uint8_t txBuffSize)
+{
+    lpi2c_master_transfer_t xfer;
+	status_t status;
+
+    xSemaphoreTake(cameraI2cHandle.mutex, portMAX_DELAY);
+
+
+    xfer.flags          = kLPI2C_TransferDefaultFlag;
+    xfer.slaveAddress   = deviceAddress;
+    xfer.direction      = kLPI2C_Write;
+    xfer.subaddress     = subAddress;
+    xfer.subaddressSize = subAddressSize;
+    xfer.data           = txBuff;
+    xfer.dataSize       = txBuffSize;
+
+    //status =  LPI2C_MasterTransferBlocking(CAMERA_I2C_MASTER, &xfer);
+
+    status = LPI2C_MasterTransferNonBlocking(base, &cameraI2cHandle.g_m_handle, &xfer);
+    if (status != kStatus_Success)
+    {
+        xSemaphoreGive(cameraI2cHandle.mutex);
+        return status;
+    }
+
+    /* Wait for transfer to finish */
+    xSemaphoreTake(cameraI2cHandle.semaphore, portMAX_DELAY);
+
+    /* Unlock resource mutex */
+    xSemaphoreGive(cameraI2cHandle.mutex);
+    if(cameraI2cHandle.status != kStatus_Success)
+    {
+        printf("dgI2cDriver.c:BOARD_LPI2C_SendSCCB():Transact error\r\n");
+    }
+    vTaskDelay(1);
+    uint8_t readbackValue;
+    BOARD_LPI2C_ReceiveSCCB(base,deviceAddress, subAddress,subAddressSize, &readbackValue, 1);
+    printf("dgI2cDriver.c:BOARD_LPI2C_SendSCCB():reg=0x%x,written=0x%x, readback=0x%x\r\n", subAddress, txBuff[0],readbackValue);
+    /* Return status captured by callback function */
+    return cameraI2cHandle.status;
+
+}
+
+status_t BOARD_Camera_I2C_SendSCCB(
+    uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, const uint8_t *txBuff, uint8_t txBuffSize)
+{
+    return BOARD_LPI2C_SendSCCB(CAMERA_I2C_MASTER, deviceAddress, subAddress, subAddressSize, (uint8_t *)txBuff,
+                                txBuffSize);
+}
+
+status_t BOARD_Camera_I2C_ReceiveSCCB(
+    uint8_t deviceAddress, uint32_t subAddress, uint8_t subAddressSize, uint8_t *rxBuff, uint8_t rxBuffSize)
+{
+    return BOARD_LPI2C_ReceiveSCCB(CAMERA_I2C_MASTER, deviceAddress, subAddress, subAddressSize, rxBuff,
+                                   rxBuffSize);
+}
+
+
+
