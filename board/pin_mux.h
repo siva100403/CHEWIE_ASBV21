@@ -473,6 +473,21 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_TC78H660_STBY_PIN_MASK (1U << 15U)      /*!<@brief PORT pin mask */
                                                                /* @} */
 
+/*! @name PORT4_16 (number 38), MOTOR1_ONOFF_CTRL
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO_PIN 16U              /*!<@brief GPIO pin number */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_GPIO_PIN_MASK (1U << 16U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN 16U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_MOTOR1_ONOFF_CTRL_PIN_MASK (1U << 16U)      /*!<@brief PORT pin mask */
+                                                                   /* @} */
+
 /*! @name PORT4_17 (number 39), MOTOR1_DIR_CTRL
   @{ */
 
@@ -695,24 +710,6 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_CAMERA_VSYNC_PORT PORT0               /*!<@brief PORT peripheral base pointer */
 #define BOARD_INITPINS_CAMERA_VSYNC_PIN 4U                   /*!<@brief PORT pin number */
 #define BOARD_INITPINS_CAMERA_VSYNC_PIN_MASK (1U << 4U)      /*!<@brief PORT pin mask */
-                                                             /* @} */
-
-/*! @name PORT0_5 (number 81), CAMERA_PCLK
-  @{ */
-
-/* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_CAMERA_PCLK_PORT PORT0               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_CAMERA_PCLK_PIN 5U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_CAMERA_PCLK_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
-                                                            /* @} */
-
-/*! @name PORT0_6 (number 82), CAMERA_HSYNC
-  @{ */
-
-/* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_CAMERA_HSYNC_PORT PORT0               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_CAMERA_HSYNC_PIN 6U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_CAMERA_HSYNC_PIN_MASK (1U << 6U)      /*!<@brief PORT pin mask */
                                                              /* @} */
 
 /*! @name PORT0_19 (number 87), TCA9803_EN

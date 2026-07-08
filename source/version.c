@@ -43,7 +43,7 @@ char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.8.0" );
+	strcpy(swVer,"0.8.1" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -395,5 +395,11 @@ void getHwVersion(char * version)
  * CSM V2
  *  Camera driver integrated and working - Pin config for PCLK and HSYNC to be interchanged in Tool
  *
+ *
+ *******************************************************************/
+
+/************************Ver 0.8.1 08-07-2026********************
+ * CSM V2
+ *  .MEX file modified to interchange Pin config for PCLK and HSYNC
  *
  *******************************************************************/

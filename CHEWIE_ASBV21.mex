@@ -163,11 +163,6 @@
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="Peripheral" resourceId="CTIMER3" description="Peripheral CTIMER3 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="cm33_core0">
                         <data>true</data>
@@ -324,6 +319,11 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="GPIO4" signal="GPIO, 16" pin_num="38" pin_signal="PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/PLU_OUT4/ADC0_A6">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
                   <pin peripheral="GPIO4" signal="GPIO, 17" pin_num="39" pin_signal="PIO4_17/TRIG_IN9/FC2_P3/USB1_OTG_OC/CT3_MAT1/FLEXIO0_D25/PLU_OUT5/ADC0_B6">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
@@ -389,12 +389,6 @@
                   <pin peripheral="FLEXSPI0" signal="FLEXSPI_A_SCLK" pin_num="71" pin_signal="PIO3_7/FC6_P6/FC7_P1/CT4_MAT3/PWM0_B1/FLEXIO0_D15/SMARTDMA_PIO7/FLEXSPI0_A_SCLK/SIM0_VCCEN/SAI0_MCLK"/>
                   <pin peripheral="FLEXSPI0" signal="FLEXSPI_A_SS0_B" pin_num="75" pin_signal="PIO3_0/WUU0_IN22/TRIG_IN0/FC7_P3/CT_INP16/PWM0_A0/FLEXIO0_D8/SMARTDMA_PIO0/FLEXSPI0_A_SS0_b"/>
                   <pin peripheral="SMARTDMA0" signal="TRIG, 0" pin_num="80" pin_signal="PIO0_4/WUU0_IN0/EWM0_IN/FC0_P0/FC1_P4/CT0_MAT2/UTICK_CAP2/HSCMP1_OUT/PDM0_CLK/TSI0_CH8"/>
-                  <pin peripheral="SMARTDMA0" signal="TRIG, 1" pin_num="81" pin_signal="PIO0_5/EWM0_OUT_b/FC0_P1/FC1_P5/CT0_MAT3/UTICK_CAP3/PDM0_DATA0/TSI0_CH9"/>
-                  <pin peripheral="SMARTDMA0" signal="TRIG, 2" pin_num="82" pin_signal="PIO0_6/ISPMODE_N/FC0_P2/FC1_P6/CT_INP2/PDM0_DATA1/TSI0_CH10">
-                     <pin_features>
-                        <pin_feature name="identifier" value="CAMERA_HSYNC"/>
-                     </pin_features>
-                  </pin>
                   <pin peripheral="GPIO0" signal="GPIO, 19" pin_num="87" pin_signal="PIO0_19/WUU0_IN3/EWM0_OUT_b/FC0_P3/CT0_MAT3/FLEXIO0_D3/HSCMP1_OUT/TSI0_CH14/ADC0_A11">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
@@ -423,7 +417,8 @@
                   <pin peripheral="SMARTDMA0" signal="SMARTDMA_PIO, 5" pin_num="2" pin_signal="PIO1_9/TRACE_DATA1/FC4_P1/FC5_P5/CT_INP9/SCT0_OUT3/FLEXIO0_D17/SMARTDMA_PIO5/PLU_OUT1/ENET0_TXD3/I3C1_SCL/TSI0_CH18/ADC1_A9"/>
                   <pin peripheral="SMARTDMA0" signal="SMARTDMA_PIO, 6" pin_num="3" pin_signal="PIO1_10/TRACE_DATA2/FC4_P2/FC5_P6/CT2_MAT0/SCT0_IN2/FLEXIO0_D18/SMARTDMA_PIO6/PLU_IN0/ENET0_TXER/CAN0_TXD/TSI0_CH19/ADC1_A10"/>
                   <pin peripheral="SMARTDMA0" signal="SMARTDMA_PIO, 7" pin_num="4" pin_signal="PIO1_11/WUU0_IN11/TRACE_DATA3/FC4_P3/CT2_MAT1/SCT0_IN3/FLEXIO0_D19/SMARTDMA_PIO7/PLU_IN1/ENET0_RX_CLK/I3C1_PUR/CAN0_RXD/TSI0_CH20/ADC1_A11"/>
-                  <pin peripheral="CTIMER3" signal="MATCH, 0" pin_num="38" pin_signal="PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/PLU_OUT4/ADC0_A6">
+                  <pin peripheral="SMARTDMA0" signal="TRIG, 1" pin_num="82" pin_signal="PIO0_6/ISPMODE_N/FC0_P2/FC1_P6/CT_INP2/PDM0_DATA1/TSI0_CH10"/>
+                  <pin peripheral="SMARTDMA0" signal="TRIG, 2" pin_num="81" pin_signal="PIO0_5/EWM0_OUT_b/FC0_P1/FC1_P5/CT0_MAT3/UTICK_CAP3/PDM0_DATA0/TSI0_CH9">
                      <pin_features>
                         <pin_feature name="identifier" value=""/>
                      </pin_features>
