@@ -482,9 +482,9 @@ void BOARD_InitPins(void)
     /* P0_4 is selected for SMARTDMA arch B 0 */
     INPUTMUX_AttachSignal(INPUTMUX0, 0U, kINPUTMUX_GpioPort0Pin4ToSmartDma);
     /* P0_5 is selected for SMARTDMA arch B 1 */
-    INPUTMUX_AttachSignal(INPUTMUX0, 1U, kINPUTMUX_GpioPort0Pin5ToSmartDma);
+    INPUTMUX_AttachSignal(INPUTMUX0, 1U, kINPUTMUX_GpioPort0Pin6ToSmartDma);
     /* P0_6 is selected for SMARTDMA arch B 2 */
-    INPUTMUX_AttachSignal(INPUTMUX0, 2U, kINPUTMUX_GpioPort0Pin6ToSmartDma);
+    INPUTMUX_AttachSignal(INPUTMUX0, 2U, kINPUTMUX_GpioPort0Pin5ToSmartDma);
 
     /* PORT0_16 (pin 84) is configured as FC0_P0 */
     PORT_SetPinMux(BOARD_INITPINS_UART_RXD_HMI_PORT, BOARD_INITPINS_UART_RXD_HMI_PIN, kPORT_MuxAlt2);

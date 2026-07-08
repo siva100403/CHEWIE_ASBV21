@@ -622,9 +622,9 @@ int ov7670_reg_write(uint8_t reg_addr, uint8_t reg_value)
     /* Return status captured by callback function */
     if(cameraI2cHandle.status ==kStatus_Success)
     {
-    	uint8_t readbackValue;
-    	ov7670_reg_read(reg_addr, &readbackValue);
-    	printf("dgI2CDriver.c:ov7670_reg_write():writeValue=0x%x, readback=0x%x\r\n",reg_value, readbackValue);
+    	//uint8_t readbackValue;
+    	//ov7670_reg_read(reg_addr, &readbackValue);
+    	//printf("dgI2CDriver.c:ov7670_reg_write():writeValue=0x%x, readback=0x%x\r\n",reg_value, readbackValue);
     	return DG_SUCCESS;
     }
 	printf("dgI2CDriver.c:ov7670_reg_write():write fail\r\n");
@@ -840,9 +840,9 @@ status_t BOARD_LPI2C_SendSCCB(LPI2C_Type *base,
         printf("dgI2cDriver.c:BOARD_LPI2C_SendSCCB():Transact error\r\n");
     }
     vTaskDelay(1);
-    uint8_t readbackValue;
-    BOARD_LPI2C_ReceiveSCCB(base,deviceAddress, subAddress,subAddressSize, &readbackValue, 1);
-    printf("dgI2cDriver.c:BOARD_LPI2C_SendSCCB():reg=0x%x,written=0x%x, readback=0x%x\r\n", subAddress, txBuff[0],readbackValue);
+    //uint8_t readbackValue;
+    //BOARD_LPI2C_ReceiveSCCB(base,deviceAddress, subAddress,subAddressSize, &readbackValue, 1);
+    //printf("dgI2cDriver.c:BOARD_LPI2C_SendSCCB():reg=0x%x,written=0x%x, readback=0x%x\r\n", subAddress, txBuff[0],readbackValue);
     /* Return status captured by callback function */
     return cameraI2cHandle.status;
 

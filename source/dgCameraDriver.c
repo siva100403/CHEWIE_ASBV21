@@ -246,11 +246,11 @@ int initCamera(void)
     printf("dgCameraDriver.c:initCamera():TSLB Value=0x%x\r\n",xsc);
     ov7670_reg_read(OV7670_COM13_REG, &xsc);
     printf("dgCameraDriver.c:initCamera():COM13 Value=0x%x\r\n",xsc);*/
-    for(int i=0; i< 0xCA; i++)
+/*    for(int i=0; i< 0xCA; i++)
     {
         ov7670_reg_read(i, &xsc);
         printf("dgCameraDriver.c:initCamera():RegAddr = 0x%x, Value =0x%x\r\n",i, xsc);
-    }
+    }*/
 
 
     DEMO_InitSmartDma();

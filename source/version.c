@@ -43,7 +43,7 @@ char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.7.1" );
+	strcpy(swVer,"0.8.0" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -387,6 +387,13 @@ void getHwVersion(char * version)
  * CSM V2
  *  Merge of Shdcs changes for flap on top of shredder and Ext AI inference
  *  Target Chewie displayed in CLI startup message
+ *
+ *
+ *******************************************************************/
+
+/************************Ver 0.8.0 08-07-2026********************
+ * CSM V2
+ *  Camera driver integrated and working - Pin config for PCLK and HSYNC to be interchanged in Tool
  *
  *
  *******************************************************************/
