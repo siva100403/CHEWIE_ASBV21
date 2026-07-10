@@ -293,22 +293,28 @@ int getImageData(char *buffer, int pixelOffset, uint8_t size)
 {
 	uint8_t count;
 	uint16_t pixel;
-	char tempbuff[10];
+	char *p;
+	//char tempbuff[10];
+
+
 	//Validate parameters
 	if((buffer == NULL)||(size>64)||((pixelOffset+size)>DEMO_BUFFER_WIDTH*DEMO_BUFFER_HEIGHT))
 	{
 		return DG_FAIL;
 	}
-	strcpy(buffer, "CC:");
+	p = buffer;
+	p += sprintf(p, "CC:");
+	//strcpy(buffer, "CC:");
 	for(count=0;count<size;count++)
 	{
 		pixel = g_camera_buffer[pixelOffset+count];
-		sprintf(tempbuff, "%04X ", pixel);
+		p += sprintf(p, "%04X ", pixel);
 		//itoa(pixel, tempbuff, 16);
-		strcat(buffer, tempbuff);
-		strcat(buffer, " ");
+		//strcat(buffer, tempbuff);
+		//strcat(buffer, " ");
 	}
-	strcat(buffer, "\r\n");
+	//strcat(buffer, "\r\n");
+	p += sprintf(p, "\r\n");
 	return DG_SUCCESS;
 }
 

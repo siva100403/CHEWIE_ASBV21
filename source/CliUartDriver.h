@@ -24,7 +24,7 @@
 #define CLI_LPUART_IRQHandler 	LP_FLEXCOMM1_IRQHandler
 
 
-#define CLI_UART_BAUDRATE	9600U
+#define CLI_UART_BAUDRATE	115200U
 /*! @brief Ring buffer size (Unit: Byte). */
 #define DEMO_RING_BUFFER_SIZE 16
 

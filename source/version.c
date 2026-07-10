@@ -413,5 +413,6 @@ void getHwVersion(char * version)
 /************************Ver 0.8.3 10-07-2026********************
  * CSM V2
  *  - Capture image from Chewie Configuration tool tested working
+ *  - Optimized Transfer speed - CLI port baud increased to 115200, Processing optimized
  *
  *******************************************************************/
