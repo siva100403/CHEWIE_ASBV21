@@ -403,3 +403,9 @@ void getHwVersion(char * version)
  *  .MEX file modified to interchange Pin config for PCLK and HSYNC
  *
  *******************************************************************/
+
+/************************Ver 0.8.2 10-07-2026********************
+ * CSM V2
+ *  - Cli commands added for CAP_IMAGE and GET_IMAGE for getting images on the laptop
+ *
+ *******************************************************************/
