@@ -97,6 +97,8 @@ struct cmd_buffer
 #define GETADCSCFG_C	51
 #define SETADCSCFG_C	52
 #define FWUPGRADE		53
+#define CAP_IMAGE		54
+#define GET_IMAGE		55
 
 
 

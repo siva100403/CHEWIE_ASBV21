@@ -74,6 +74,7 @@
 #include "measure.h"
 #include "hatcsMod.h"
 #include "fwUpgrade.h"
+#include "dgCameraDriver.h"
 
 
 /*******************************************************************************
@@ -153,6 +154,14 @@ int getCmdCode(char* token)
 	else if (strcmp(&token[0], "CSMSTOP\0")==0)
 	{
 		cmdCode = CSMSTOP;
+	}
+	else if (strcmp(&token[0], "CAP_IMAGE\0")==0)
+	{
+		cmdCode = CAP_IMAGE;
+	}
+	else if (strcmp(&token[0], "GET_IMAGE\0")==0)
+	{
+		cmdCode = GET_IMAGE;
 	}
 	else if (strcmp(&token[0], "GETCSMSTATUS_CHTL\0")==0)
 	{
@@ -402,6 +411,8 @@ void setRxStatus(uint8_t status)
 	NVIC_SetPriority(CLI_LPUART_IRQn, 4);
 	EnableIRQ(CLI_LPUART_IRQn);
 }
+
+
 
 void cli_Task(void* arg)
 {
@@ -1560,6 +1571,66 @@ void cli_Task(void* arg)
 				    setRxStatus(RS232_RCV_IDLE);
 				    break;
 				}
+
+				case CAP_IMAGE:
+			    	if(captureImage() == DG_SUCCESS)
+			    	{
+				        sprintf(response, "CC:\r\n");
+			    	}
+			    	else
+			    	{
+				        strcpy(response, "CE:\r\n");
+			    	}
+				    sendCliResponse(response, strlen(response));
+				    setRxStatus(RS232_RCV_IDLE);
+					break;
+				case GET_IMAGE:
+					//usage: GET_IMAGE offset size
+					int bufOffset;
+					uint8_t size;
+					// Extract buffer offset string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract offset
+					{
+						strcpy(response, "CE:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					bufOffset = atoi(&token[0]);
+					if(bufOffset>(480*320))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					// Extract size string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract size
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					size = atoi(&token[0]);
+					if((size == 0)||(size>32))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					response[0] == 0;
+					//Get the image data convert to string and fill "response"
+					if(getImageData(response, bufOffset, size) != DG_SUCCESS)
+					{
+						strcpy(response, "CE:\r\n>");
+					}
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
 
 				case SETAUGERCFG_C:
 				{

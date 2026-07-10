@@ -14,5 +14,7 @@
 int initCamera(void);
 int captureImage(void);
 int getImagePart(uint8_t *payload,uint16_t startByte,uint8_t size );
+void startSmartDma();
+int getImageData(char *buffer, int pixelOffset, uint8_t size);
 
 #endif /* DGCAMERADRIVER_H_ */

@@ -39,6 +39,7 @@
 #include "fsl_clock.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
+#include <cr_section_macros.h>
 //#include "fsl_camera_device.h"
 //#include "fsl_video_common.h"
 
@@ -95,26 +96,30 @@ camera_device_handle_t handle = {
 smartdma_camera_param_t smartdmaParam;
 static volatile bool g_camera_complete_flag = false;
 static uint16_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
-//static uint8_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
+//__BSS(RAM5) static uint16_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
 volatile uint8_t g_samrtdma_stack[64] = {0};
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
+
 static void SDMA_CompleteCallback(void *param)
 {
 	static uint8_t count=0;
-    g_camera_complete_flag = true;
-    //printf("C");
+
     count++;
 
     GREEN_LED_TOGGLE();
+
 /*    if((g_camera_buffer[0]!= 0)|| (g_camera_buffer[1]!= 0) || (g_camera_buffer[2]!= 0))
     {
     	RED_LED_TOGGLE();
     }*/
-    if(count> 20)
+    if(count> 2)
     {
-    	//SMARTDMA_Deinit();
+        g_camera_complete_flag = true;
+        SMARTDMA_Reset();
+        count =0;
     }
 
 }
@@ -169,11 +174,11 @@ static void DEMO_InitSmartDma(void)
     NVIC_SetPriority(SMARTDMA_IRQn, 3);
 
     /* Boot smartdma. */
-    smartdmaParam.smartdma_stack = (uint32_t *)g_samrtdma_stack;
-    smartdmaParam.p_buffer       = (uint32_t *)g_camera_buffer;
+    //smartdmaParam.smartdma_stack = (uint32_t *)g_samrtdma_stack;
+    //smartdmaParam.p_buffer       = (uint32_t *)g_camera_buffer;
     /* Make sure the frame size that the firmware fetches is smaller than or equal to the camera resolution.
        In this case it is half of the camera resolution. */
-    SMARTDMA_Boot(DEMO_SMARTDMA_API, &smartdmaParam, 0x2);
+    //SMARTDMA_Boot(DEMO_SMARTDMA_API, &smartdmaParam, 0x2);
 }
 
 /*!
@@ -210,15 +215,7 @@ int initCamera(void)
     CAMERA_RST_INACTIVE();
 
     vTaskDelay(200);
-/*    uint8_t reg_value;
-    while(1)
-    {
-		if(ov7670_reg_read(OV7670_PID_REG, &reg_value) == DG_SUCCESS)
-		{
-			printf("ChewieMain.c:print_task():OV7670 read reg value = %d\r\n", reg_value);
-		}
-		vTaskDelay(2);
-    }*/
+
 
     DEMO_InitCamera();
     uint8_t xsc, ysc;
@@ -253,7 +250,8 @@ int initCamera(void)
     }*/
 
 
-    DEMO_InitSmartDma();
+   DEMO_InitSmartDma();
+   //startSmartDma();
 
     return DG_SUCCESS;
 
@@ -268,15 +266,49 @@ int initCamera(void)
     }*/
 }
 
-/*
+void startSmartDma()
+{
+    /* Boot smartdma. */
+    smartdmaParam.smartdma_stack = (uint32_t *)g_samrtdma_stack;
+    smartdmaParam.p_buffer       = (uint32_t *)g_camera_buffer;
+    /* Make sure the frame size that the firmware fetches is smaller than or equal to the camera resolution.
+       In this case it is half of the camera resolution. */
+    SMARTDMA_Boot(DEMO_SMARTDMA_API, &smartdmaParam, 0x2);
+}
 int captureImage()
 {
+	g_camera_complete_flag = false;
+	startSmartDma();
+	while(g_camera_complete_flag == false)
+	{
+		vTaskDelay(1);
+	}
+	printf("camera capture completed\r\n");
+	g_camera_complete_flag = false;
 	return DG_SUCCESS;
 }
 
-int getImagePart(uint8_t *payload,uint16_t startByte,uint8_t size )
+
+int getImageData(char *buffer, int pixelOffset, uint8_t size)
 {
-	memcpy(payload, &g_camera_buffer[startByte],size);
+	uint8_t count;
+	uint16_t pixel;
+	char tempbuff[10];
+	//Validate parameters
+	if((buffer == NULL)||(size>64)||((pixelOffset+size)>DEMO_BUFFER_WIDTH*DEMO_BUFFER_HEIGHT))
+	{
+		return DG_FAIL;
+	}
+	strcpy(buffer, "CC:");
+	for(count=0;count<size;count++)
+	{
+		pixel = g_camera_buffer[pixelOffset+count];
+		sprintf(tempbuff, "%04X ", pixel);
+		//itoa(pixel, tempbuff, 16);
+		strcat(buffer, tempbuff);
+		strcat(buffer, " ");
+	}
+	strcat(buffer, "\r\n");
 	return DG_SUCCESS;
 }
-*/
+

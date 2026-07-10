@@ -112,11 +112,11 @@ int main(void) {
     initModuleStore();
     if(PSRAM_Init()==kStatus_Success)
     {
-    	printf("chewieMain.c:initSysStart(): PSRAM Init success\r\n");
+    	printf("chewieMain.c: PSRAM Init success\r\n");
     }
     else
     {
-    	printf("chewieMain.c:initSysStart(): PSRAM Init Fail\r\n");
+    	printf("chewieMain.c: PSRAM Init Fail\r\n");
     }
 
 
@@ -165,10 +165,6 @@ static void print_task(void *pvParameters)
 {
 
 
-/*    GREEN_LED_ON();
-    RED_LED_ON();
-    BLUE_LED_ON();*/
-
 
     vTaskDelay( 2000 ); //For other tasks to get started
 
@@ -177,38 +173,15 @@ static void print_task(void *pvParameters)
 	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
 
     //initCamera();
-	//uint8_t lidStatusLocal;
-	//float temp, hum;
-	//uint8_t buffer[128], outbuffer[128];
-	//int i,countr=0, countw=0;
+
 
 	//printf("Chewiemain.c:size of shredder Control param=%d\r\n", sizeof(dgShdConfigParams_t));
-
+	//uint8_t *psramArea;
+	//psramArea = (uint8_t*)PSRAM_START_ADDR;
     while(1)
     {
 /*
-    	for(i=0; i<128; i++)
-    	{
-    		buffer[i]=countw++;
-    	}
 
-    	if(eeprom_mem_write_within_page(0x1000, buffer, 10)==DG_SUCCESS)
-    	{
-    		printf("EEPROM write success\r\n");
-       	}
-    	else
-    	{
-    		printf("EEPROM write failed\r\n");
-    	}
-
-    	if(eeprom_mem_read_within_page(0x1000, outbuffer, 10) == DG_SUCCESS)
-    	{
-    		printf("EEPROM read success\r\n");
-    	}
-    	else
-    	{
-    		printf("EEPROM read failed\r\n");
-    	}
 
     	for(i=0;i<10; i++)
     	{
@@ -220,7 +193,12 @@ static void print_task(void *pvParameters)
 
     	//storeWorkingConfigEEPROM()
     	//getLidSwicthStatus();
-    	vTaskDelay(2000);
+    	//psramArea[i] = i;
+    	vTaskDelay(1000);
+    	//printf("PSRAM offset=%d, value=%d\r\n", i, psramArea[i] );
+    	//i++;
+    	//captureImage();
+    	//printf("ChewieMain.c:image captured!\r\n");
 
 		//safeStateForFwUpgrade();
 		//printf("cliProc.c:starting ISPMode");
@@ -228,7 +206,6 @@ static void print_task(void *pvParameters)
     	//getLidSwicthStatus();
 
     	//printf("ChewieMain.c:lidSwitchStatus=%d, LSCLOSE=%d, LSOPEN=%d\r\n",getLidSwicthStatus(), READ_LS_SENSE_LIDCLOSE(), READ_LS_SENSE_LIDOPEN());
-
 
     }
 
