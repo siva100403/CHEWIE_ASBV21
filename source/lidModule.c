@@ -4,8 +4,8 @@
  *  Created on: 15-May-2025
  *      Author: Jawahar Arumugam
  */
-/* FreeRTOS kernel includes. */
 
+/* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"

@@ -28,7 +28,8 @@
 #define ADCS_MOD		20
 #define ALARMMGR_MOD	21
 #define MBSV_MOD		22
-#define LAST_MODULE		23
+#define INF_MOD			23
+#define LAST_MODULE		24
 
 
 
@@ -124,6 +125,9 @@
 #define MBSV_CYCLE1					0x49
 #define MBSV_CYCLE2					0x4A
 #define MBSV_CLOSE					0x4B
+
+//Inference module commands
+#define INF_CMD_START				0x50
 
 /****************** Queue Message Definition ************************/
 

@@ -1628,6 +1628,7 @@ void cli_Task(void* arg)
 					{
 						strcpy(response, "CE:\r\n>");
 					}
+					printf("cliProc.c:GET_IMAGE:response=%s", response);
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
 					break;

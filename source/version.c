@@ -43,7 +43,7 @@ char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.8.1" );
+	strcpy(swVer,"0.8.3" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -407,5 +407,11 @@ void getHwVersion(char * version)
 /************************Ver 0.8.2 10-07-2026********************
  * CSM V2
  *  - Cli commands added for CAP_IMAGE and GET_IMAGE for getting images on the laptop
+ *
+ *******************************************************************/
+
+/************************Ver 0.8.3 10-07-2026********************
+ * CSM V2
+ *  - Capture image from Chewie Configuration tool tested working
  *
  *******************************************************************/
