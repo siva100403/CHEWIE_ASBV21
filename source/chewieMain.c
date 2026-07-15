@@ -219,10 +219,7 @@ static void print_task(void *pvParameters)
 
 
     //initCamera();
-    if (MODEL_Init() != kStatus_Success)
-    {
-        printf("Failed initializing model\r\n");
-    }
+
 
 
     while(1)

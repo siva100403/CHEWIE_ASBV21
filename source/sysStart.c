@@ -82,6 +82,7 @@
 #include "alarmManager.h"
 #include "mbsValveCS.h"
 #include "dgCameraDriver.h"
+#include "inference.h"
 
 //Health register allocation
 dgHealthStatus_t 	devHealthReg[LAST_DEVICE];
@@ -282,7 +283,7 @@ static void sysStart_task(void *pvParameters)
 		}
 	}
 
-	initCamera();
+	//initCamera();
 
 	vTaskDelay(1000);
 
@@ -510,6 +511,16 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[TCS_MOD].operationStatus = MODULE_NOTWORKING;
 	}
 
+	//Start Inference Module
+	if(initInferenceModule() == DG_SUCCESS)
+	{
+		printf("sysStart_task():Init Inference Module success\r\n");
+	}
+	else
+	{
+		printf("sysStart_task():Init Inference Module failed\r\n");
+	}
+
 	//Delay for limit switch module
 	vTaskDelay(8);   //40mSec delay
 	//Send Flapsync command to shredder module
@@ -553,9 +564,11 @@ static void sysStart_task(void *pvParameters)
 	{
 		printf("sysconfig version mismatch. CSM not started. Load default config\r\n");
 	}
-	//vTaskDelay(8);  //40 mSec delay for the Limit switch module to get the Lid status after de-bouncing
-	printf("sysStart_task():Before calling module start for LID\r\n");
 
+
+
+
+	//vTaskDelay(8);  //40 mSec delay for the Limit switch module to get the Lid status after de-bouncing
 	//Start Lid Module
 	if(moduleHealthReg[LID_MOD].operationStatus == MODULE_IDLE)
 	{
@@ -563,7 +576,15 @@ static void sysStart_task(void *pvParameters)
 		moduleHealthReg[LID_MOD].operationStatus = MODULE_WORKING;
 	}
 
-	printf("sysStart_task():Before calling module start for ALARM Manager\r\n");
+	//Starting Inference module
+	if(moduleStart(INF_MOD) != DG_SUCCESS)
+	{
+		printf("sysStart_task():Inference Module start command failed\r\n");
+	}
+	else
+	{
+		printf("sysStart_task():Inference Module  start command passed\r\n");
+	}
 
 	if(moduleStart(ALARMMGR_MOD) != DG_SUCCESS)
 	{

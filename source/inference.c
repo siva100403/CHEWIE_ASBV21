@@ -71,6 +71,7 @@
 #include "AlarmManagerAPI.h"
 #include "AlarmManager.h"
 #include "inference.h"
+#include "model.h"
 
 
 
@@ -121,7 +122,12 @@ static void inferenceModule_task(void *pvParameters)
 	QueueHandle_t inferenceModuleQHandle;
 	dgMsg_t rcvMsg;					//Holds the currently received message
 	static int infModuleState;		// This stores the state of Lid module
-
+    tensor_dims_t inputDims;
+    tensor_type_t inputType;
+    tensor_dims_t outputDims;
+    tensor_type_t outputType;
+    uint8_t* inputData;
+    uint8_t* outputData;
 
 	//Wait till module registration is complete
 	inferenceModuleQHandle = NULL;
@@ -153,10 +159,22 @@ static void inferenceModule_task(void *pvParameters)
 			{
 			case DG_MODULE_START:
 				//Create interpreter and load model.
-				  //Success go to ready state else error state
-					/*TODO*/
-				//Go to READY state and wait for commands
-				infModuleState = INFMOD_STATE_READY;
+			    if (MODEL_Init() != kStatus_Success)
+			    {
+			        printf("infModule.c:infModule_task():Model Init fail\r\n");
+					//Go to Error state
+					infModuleState = INFMOD_STATE_ERROR;
+			    }
+			    else
+			    {
+			        inputData = MODEL_GetInputTensorData(&inputDims, &inputType);
+			        outputData = MODEL_GetOutputTensorData(&outputDims, &outputType);
+
+			        printf("infModule.c:infModule_task():Model Init:Input addr=0x%x, output addr=0x%x\r\n",inputData, outputData);
+			        printf("infModule.c:infModule_task():Model Init:width=0x%x, height=0x%x, chls=0x%x\r\n",inputDims.data[2],inputDims.data[1],inputDims.data[3]);
+					//Go to READY state and wait for commands
+					infModuleState = INFMOD_STATE_READY;
+			    }
 				break;
 			case DG_MODULE_STOP:
 				//Ignore in IDLE state
