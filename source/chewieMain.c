@@ -85,6 +85,7 @@
 #include "measure.h"
 #include "fwUpgrade.h"
 #include "dgCameraDriver.h"
+#include "model.h"
 
 
 
@@ -169,15 +170,14 @@ static void print_task(void *pvParameters)
     vTaskDelay( 2000 ); //For other tasks to get started
 
 
-    //initLimitSwitchModule();
-	//printf("chewieMain.c:():print_task():Limit switch initialized\r\n");
 
     //initCamera();
+    if (MODEL_Init() != kStatus_Success)
+    {
+        printf("Failed initializing model\r\n");
+    }
 
 
-	//printf("Chewiemain.c:size of shredder Control param=%d\r\n", sizeof(dgShdConfigParams_t));
-	//uint8_t *psramArea;
-	//psramArea = (uint8_t*)PSRAM_START_ADDR;
     while(1)
     {
 /*
