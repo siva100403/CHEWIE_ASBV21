@@ -14,7 +14,7 @@
 
 /* Freescale includes. */
 #include "fsl_device_registers.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
@@ -608,21 +608,21 @@ int initLidModule(void)
 	result = xTaskCreate(lidModule_task, "lidModule_task", configMINIMAL_STACK_SIZE + 500, NULL, task_PRIORITY, &lidModuleTaskHandle);
     if ( result !=    pdPASS)
     {
-        PRINTF("lidModule_task creation failed!.\r\n");
+        printf("lidModule_task creation failed!.\r\n");
         return DG_FAIL;
     }
     //HMI CMD Proc requires single shot timer and hence create FreeRTOS SW timer
     lidModuleTimerHandle = xTimerCreate("lidModuleTimer",100, pdFALSE, (void*)LID_MOD, dgTimerCallback);
     if(lidModuleTimerHandle == NULL)
     {
-        PRINTF("Timer creation failed!.\r\n");
+        printf("Timer creation failed!.\r\n");
     	vTaskDelete(lidModuleTaskHandle);
         return DG_FAIL;
     }
     if(registerModule(LID_MOD, lidModuleTaskHandle, lidModuleTimerHandle)!= DG_SUCCESS)
     {
     	//Registering the module failed. Hence kill the task and return error
-        PRINTF("lidModule_task registration failed!.\r\n");
+        printf("lidModule_task registration failed!.\r\n");
         xTimerDelete(lidModuleTimerHandle,100 / portTICK_PERIOD_MS);
     	vTaskDelete(lidModuleTaskHandle);
 

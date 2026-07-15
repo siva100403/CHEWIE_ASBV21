@@ -14,7 +14,7 @@
 
 /* Freescale includes. */
 #include "fsl_device_registers.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
@@ -65,13 +65,13 @@ int transferStart(uint8_t srcModule, uint16_t trfrDuration)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("transferCSAPI.c:transferStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("transferCSAPI.c:transferStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("transferCSAPI.c:transferStart():Message send failed\r\n" );
+		printf("transferCSAPI.c:transferStart():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -118,13 +118,13 @@ int transferAbort(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("transferCSAPI.c:transferAbort():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("transferCSAPI.c:transferAbort():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("transferCSAPI.c:transferAbort():Message send failed\r\n" );
+		printf("transferCSAPI.c:transferAbort():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -160,13 +160,13 @@ int event_ls_stvalveClose(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("transferCSAPI.c:event_ls_stvalveClose():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("transferCSAPI.c:event_ls_stvalveClose():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("transferCSAPI.c:event_ls_stvalveClose():Message send failed\r\n" );
+		printf("transferCSAPI.c:event_ls_stvalveClose():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -195,13 +195,13 @@ int tcsSTValveSync(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("transferCSAPI.c:tcsSTValveSync():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("transferCSAPI.c:tcsSTValveSync():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("transferCSAPI.c:tcsSTValveSync():Message send failed\r\n" );
+		printf("transferCSAPI.c:tcsSTValveSync():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 

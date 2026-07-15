@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -97,12 +97,12 @@ int flapTimerStart(TickType_t timeoutValue)
 
 	if(xTimerChangePeriod(flapTimerHandle,timeoutValue, DGTIMER_BLOCKTIME )== pdFALSE)
 	{
-		PRINTF("shredder.c:flapTimerStart():Change period failed\r\n");
+		printf("shredder.c:flapTimerStart():Change period failed\r\n");
 		return DG_FAIL;
 	}
 	if(xTimerStart(flapTimerHandle,DGTIMER_BLOCKTIME) == pdFALSE)
 	{
-		PRINTF("shredder.c:flapTimerStart():Start failed\r\n");
+		printf("shredder.c:flapTimerStart():Start failed\r\n");
 		return DG_FAIL;
 	}
 	return DG_SUCCESS;

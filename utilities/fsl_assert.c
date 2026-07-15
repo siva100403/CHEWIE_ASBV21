@@ -5,10 +5,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-
+#include "stdio.h"
 #include "fsl_common.h"
 #include "fsl_assert.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 
 /* User can implement its own asser handler (dump logs, registers, etc) by reimplementing the function fsl_assert_hook() */
 __attribute__ ((weak)) int fsl_assert_hook(const char *failedExpr, const char *file, int line)
@@ -25,9 +25,9 @@ __attribute__ ((weak)) int fsl_assert_hook(const char *failedExpr, const char *f
 void __aeabi_assert(const char *failedExpr, const char *file, int line)
 {
 #if SDK_DEBUGCONSOLE == DEBUGCONSOLE_DISABLE
-    PRINTF("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" \n", failedExpr, file, line);
+    printf("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" \n", failedExpr, file, line);
 #else
-    (void)PRINTF("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" \n", failedExpr, file, line);
+    (void)printf("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" \n", failedExpr, file, line);
 #endif
 
     (void)fsl_assert_hook(failedExpr, file, line);
@@ -44,7 +44,7 @@ void __assertion_failed(char *failedExpr)
     const char *file = NULL;
     int line = -1;
 
-    (void)PRINTF("ASSERT ERROR \" %s \n", failedExpr);
+    (void)printf("ASSERT ERROR \" %s \n", failedExpr);
 
     (void)fsl_assert_hook(failedExpr, file, line);
 
@@ -56,7 +56,7 @@ void __assertion_failed(char *failedExpr)
 #else
 void __assert_func(const char *file, int line, const char *func, const char *failedExpr)
 {
-    (void)PRINTF("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" function name \"%s\" \n", failedExpr, file, line,
+    (void)printf("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" function name \"%s\" \n", failedExpr, file, line,
                  func);
 
     (void)fsl_assert_hook(failedExpr, file, line);
@@ -73,11 +73,11 @@ void __assert_func(const char *file, int line, const char *func, const char *fai
 
 void __msl_assertion_failed(char const *failedExpr, char const *file, char const *func, int line)
 {
-    PRINTF("\r\nASSERT ERROR\r\n");
-    PRINTF("  File      : %s\r\n", file);
-    PRINTF("  Function  : %s\r\n", func); /*compiler not support func name yet*/
-    PRINTF("  Line      : %u\r\n", (uint32_t)line);
-    PRINTF("  failedExpr: %s\r\n", failedExpr);
+    printf("\r\nASSERT ERROR\r\n");
+    printf("  File      : %s\r\n", file);
+    printf("  Function  : %s\r\n", func); /*compiler not support func name yet*/
+    printf("  Line      : %u\r\n", (uint32_t)line);
+    printf("  failedExpr: %s\r\n", failedExpr);
     asm(DEBUGHLT);
 }
 

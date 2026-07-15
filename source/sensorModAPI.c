@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -108,13 +108,13 @@ int sensorStart(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("sensorModAPI.c:sensorStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("sensorModAPI.c:sensorStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("sensorModAPI.c:sensorStart()::Message send failed \r\n" );
+		printf("sensorModAPI.c:sensorStart()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -152,13 +152,13 @@ int sensorStop(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("sensorModAPI.c:sensorStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("sensorModAPI.c:sensorStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("sensorModAPI.c:sensorStop():Message send failed \r\n" );
+		printf("sensorModAPI.c:sensorStop():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -212,18 +212,18 @@ int sensorSetParam(uint8_t srcModule, float setvalueTemp, float setvalueHumidity
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("sensorModAPI.c:sensorSetParam():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("sensorModAPI.c:sensorSetParam():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("sensorModAPI.c:sensorSetParam()::Message send failed for cmd CT_CONFIGURE \r\n" );
+		printf("sensorModAPI.c:sensorSetParam()::Message send failed for cmd CT_CONFIGURE \r\n" );
 		return DG_FAIL;
 	}
 
 	//Message send success. Now we will wait for response
-	PRINTF("CTAPI.c:ctConfigure():Message sent. Waiting for response\r\n" );
+	printf("CTAPI.c:ctConfigure():Message sent. Waiting for response\r\n" );
 	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
 
 	//Response received. Check the results
@@ -252,13 +252,13 @@ int getSensorStatus(uint8_t srcModule, float *curTemp, float *curHumidity, float
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("sensorModAPI.c:getSensorStatus():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("sensorModAPI.c:getSensorStatus():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("sensorModAPI.c:getSensorStatus()::Message send failed for cmd CT_CONFIGURE \r\n" );
+		printf("sensorModAPI.c:getSensorStatus()::Message send failed for cmd CT_CONFIGURE \r\n" );
 		return DG_FAIL;
 	}
 

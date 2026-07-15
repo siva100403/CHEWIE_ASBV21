@@ -21,13 +21,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 /* NXP includes */
 #include "board.h"
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -87,6 +88,52 @@
 #include "dgCameraDriver.h"
 #include "model.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*int DbgConsole_Printf(const char *fmt, ...) {
+    va_list args;
+    int result;
+
+    va_start(args, fmt);
+    // Route the log directly to standard printf (handled by semihosting)
+    result = vprintf(fmt, args);
+    va_end(args);
+
+    return result;
+}*/
+void DebugLog(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+}
+
+int DebugVsnprintf(char* buffer, size_t max_length, const char* format, va_list va) {
+    return vsnprintf(buffer, max_length, format, va);
+}
+
+int DbgConsole_Printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    const int result = vprintf(format, args);
+    va_end(args);
+
+    return result;
+}
+
+// Satisfies the Neutron Firmware library's logging engine
+int DbgConsole_Vprintf(const char *fmt, va_list args) {
+    // Directly routes the firmware's log package to the semihosting stream
+    return vprintf(fmt, args);
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 
 

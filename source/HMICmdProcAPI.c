@@ -23,7 +23,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -96,7 +96,7 @@ int sendRcvBuffer(uint8_t *rcvdBuffer, uint16_t rcvdBufferSize)
 
 	if(sendMsgFromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("HMICmdProcAPI.c:sendRcvBuffer()::Message send failed \r\n" );
+		printf("HMICmdProcAPI.c:sendRcvBuffer()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -126,7 +126,7 @@ int sendTxCompleteEvent()
 
 	if(sendMsgFromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("HMICmdProcAPI.c:sendTxCompleteEvent()::Message send failed \r\n" );
+		printf("HMICmdProcAPI.c:sendTxCompleteEvent()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 

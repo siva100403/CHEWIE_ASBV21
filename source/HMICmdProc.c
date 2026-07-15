@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -738,21 +738,21 @@ int initHMICmdProc(void)
 	result = xTaskCreate(hmiCmdProc_task, "hmiCmdProc_task", configMINIMAL_STACK_SIZE + 1200, NULL, task_PRIORITY, &hmiCmdProcTaskHandle);
     if ( result !=    pdPASS)
     {
-        PRINTF("hmiCmdProc_task creation failed!.\r\n");
+        printf("hmiCmdProc_task creation failed!.\r\n");
         return DG_FAIL;
     }
     //HMI CMD Proc requires single shot timer and hence create FreeRTOS SW timer
     hmiCmdProcTimerHandle = xTimerCreate("HMICmdProcTimer",100, pdFALSE, (void*)HMICMDPROC_MOD, dgTimerCallback);
     if(hmiCmdProcTimerHandle == NULL)
     {
-        PRINTF("Timer creation failed!.\r\n");
+        printf("Timer creation failed!.\r\n");
     	vTaskDelete(hmiCmdProcTaskHandle);
         return DG_FAIL;
     }
     if(registerModule(HMICMDPROC_MOD, hmiCmdProcTaskHandle, hmiCmdProcTimerHandle)!= DG_SUCCESS)
     {
     	//Registering the module failed. Hence kill the task and return error
-        PRINTF("hmiCmdProc_task registration failed!.\r\n");
+        printf("hmiCmdProc_task registration failed!.\r\n");
         xTimerDelete(hmiCmdProcTimerHandle,100 / portTICK_PERIOD_MS);
     	vTaskDelete(hmiCmdProcTaskHandle);
 

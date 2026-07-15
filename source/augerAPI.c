@@ -27,7 +27,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -89,13 +89,13 @@ int ctStart(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("augerAPI.c:ctStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("augerAPI.c:ctStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("augerAPI.c:ctStart()::Message send failed \r\n" );
+		printf("augerAPI.c:ctStart()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -133,13 +133,13 @@ int ctStop(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("augerAPI.c:ctStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("augerAPI.c:ctStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("augerAPI.c:ctStop():Message send failed \r\n" );
+		printf("augerAPI.c:ctStop():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 

@@ -21,7 +21,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -73,13 +73,13 @@ int event_lid_inbetween(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("ShredderAPI.c:event_lid_inbetween():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("ShredderAPI.c:event_lid_inbetween():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ShredderAPI.c:event_lid_inbetween()::Message send failed \r\n" );
+		printf("ShredderAPI.c:event_lid_inbetween()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -103,13 +103,13 @@ int event_lid_open(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("ShredderAPI.c:shdStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("ShredderAPI.c:shdStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ShredderAPI.c:shdStart()::Message send failed \r\n" );
+		printf("ShredderAPI.c:shdStart()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -141,13 +141,13 @@ int event_lid_close(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ShredderAPI.c:shdStop():Message send failed \r\n" );
+		printf("ShredderAPI.c:shdStop():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -173,12 +173,12 @@ int event_lid_aiinferencecomplete(uint8_t infresult)
     sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
     if(sendMsgBuf.taskHandleSM == NULL)
     {
-        PRINTF("ShredderAPI.c:event_lid_aiinferencecomplete(): Task handle is NULL\r\n");
+        printf("ShredderAPI.c:event_lid_aiinferencecomplete(): Task handle is NULL\r\n");
         return DG_FAIL;
     }
     if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
     {
-        PRINTF("ShredderAPI.c:event_lid_aiinferencecomplete(): Message send failed\r\n");
+        printf("ShredderAPI.c:event_lid_aiinferencecomplete(): Message send failed\r\n");
         return DG_FAIL;
     }
     xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
@@ -204,13 +204,13 @@ int event_ls_flapclose(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ShredderAPI.c:shdStop():Message send failed \r\n" );
+		printf("ShredderAPI.c:shdStop():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -241,13 +241,13 @@ int shdFlapSync(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("ShredderAPI.c:shdStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ShredderAPI.c:shdFlapSync():Message send failed \r\n" );
+		printf("ShredderAPI.c:shdFlapSync():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 

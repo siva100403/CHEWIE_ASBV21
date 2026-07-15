@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -108,12 +108,12 @@ int sprayerTimerStart(TickType_t timeoutValue)
 
 	if(xTimerChangePeriod(sprayerTimerHandle,timeoutValue, DGTIMER_BLOCKTIME )== pdFALSE)
 	{
-		PRINTF("hatcsMod.c:sprayerTimerStart():Change period failed\r\n");
+		printf("hatcsMod.c:sprayerTimerStart():Change period failed\r\n");
 		return DG_FAIL;
 	}
 	if(xTimerStart(sprayerTimerHandle,DGTIMER_BLOCKTIME) == pdFALSE)
 	{
-		PRINTF("hacsMod.c:sprayerTimerStart():Start failed\r\n");
+		printf("hacsMod.c:sprayerTimerStart():Start failed\r\n");
 		return DG_FAIL;
 	}
 	return DG_SUCCESS;

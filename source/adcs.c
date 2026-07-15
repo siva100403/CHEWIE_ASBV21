@@ -35,7 +35,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -269,7 +269,7 @@ int adcsStart(uint8_t srcModule)
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ADCS.c:adcsSendWasteAddEvent():Message send failed \r\n" );
+		printf("ADCS.c:adcsSendWasteAddEvent():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -295,7 +295,7 @@ int adcsAbort(uint8_t srcModule)
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("ADCS.c:adcsAbort():Message send failed \r\n" );
+		printf("ADCS.c:adcsAbort():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 

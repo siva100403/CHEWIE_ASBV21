@@ -24,7 +24,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -123,13 +123,13 @@ int csmStart(uint8_t srcModule, uint8_t state, uint8_t phase, uint16_t remaining
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmStart():Message send failed\r\n" );
+		printf("csmAPI.c:csmStart():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -177,13 +177,13 @@ int csmStop(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmStop():Message send failed\r\n" );
+		printf("csmAPI.c:csmStop():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -289,13 +289,13 @@ int csmGetState(uint8_t srcModule, dgCsmParam_t *state)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmGetState():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmGetState():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmGetState():Message send failed\r\n" );
+		printf("csmAPI.c:csmGetState():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -326,13 +326,13 @@ int csmNotifyWasteAddStart(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmNotifyWasteAddStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmNotifyWasteAddStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmNotifyWasteAddStart():Message send failed\r\n" );
+		printf("csmAPI.c:csmNotifyWasteAddStart():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -368,13 +368,13 @@ int csmNotifyWasteAdded(uint8_t srcModule, uint8_t wasteCat)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmNotifyWasteAddEnd():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmNotifyWasteAddEnd():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmNotifyWasteAddEnd():Message send failed\r\n" );
+		printf("csmAPI.c:csmNotifyWasteAddEnd():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -406,13 +406,13 @@ int csmNotifyTransferComplete(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmNotifyTransferComplete():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("csmAPI.c:csmNotifyTransferComplete():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmNotifyTransferComplete():Message send failed\r\n" );
+		printf("csmAPI.c:csmNotifyTransferComplete():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -444,13 +444,13 @@ int csmPause(void)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmPause():Task handle is null\r\n");
+		printf("csmAPI.c:csmPause():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmPause():Message send failed\r\n" );
+		printf("csmAPI.c:csmPause():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 
@@ -482,13 +482,13 @@ int csmResume(void)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("csmAPI.c:csmResume():Task handle is null\r\n");
+		printf("csmAPI.c:csmResume():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("csmAPI.c:csmResume():Message send failed\r\n" );
+		printf("csmAPI.c:csmResume():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 

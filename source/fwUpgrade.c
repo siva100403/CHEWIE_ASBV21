@@ -6,11 +6,16 @@
  */
 
 
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_common.h"
 #include "pin_mux.h"
 #include "board.h"
 #include "fsl_runbootloader.h"
+
+/* Standard C includes */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -90,27 +95,27 @@ void startIspMode(void)
  /*
     if (arg.option.B.tag != BOOT_ARG_TAG)
     {
-        PRINTF("The runBootloader API arg is Invalid...\n");
+        printf("The runBootloader API arg is Invalid...\n");
         error_trap();
     }
     if (arg.option.B.mode == kUserAppBootMode_IspBoot)
     {
-        PRINTF("Calling the runBootloader API to force into the ISP mode: %x...\n", arg.option.B.boot_interface);
-        PRINTF("The runBootloader ISP interface is choosen from the following one:\n");
-        PRINTF("kIspPeripheral_Auto :     0\n");
-        PRINTF("kIspPeripheral_UsbHid :   1\n");
-        PRINTF("kIspPeripheral_Uart :     2\n");
-        PRINTF("kIspPeripheral_SpiSlave : 3\n");
-        PRINTF("kIspPeripheral_I2cSlave : 4\n");
-        PRINTF("kIspPeripheral_Can :      5\n");
+        printf("Calling the runBootloader API to force into the ISP mode: %x...\n", arg.option.B.boot_interface);
+        printf("The runBootloader ISP interface is choosen from the following one:\n");
+        printf("kIspPeripheral_Auto :     0\n");
+        printf("kIspPeripheral_UsbHid :   1\n");
+        printf("kIspPeripheral_Uart :     2\n");
+        printf("kIspPeripheral_SpiSlave : 3\n");
+        printf("kIspPeripheral_I2cSlave : 4\n");
+        printf("kIspPeripheral_Can :      5\n");
     }
     else
     {
-        PRINTF("Not Calling the runBootloader API to force into the ISP mode\n");
+        printf("Not Calling the runBootloader API to force into the ISP mode\n");
     }
 */
 
-    PRINTF("Call the runBootloader API based on the arg : %x...\n", arg);
+    printf("Call the runBootloader API based on the arg : %x...\n", arg);
     bootloader_user_entry(&arg);
 
     while (1)

@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -96,13 +96,13 @@ int hatcsStart(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModAPI.c:hatcsStart():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("hatcsModAPI.c:hatcsStart():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModAPI.c:hatcsStart()::Message send failed \r\n" );
+		printf("hatcsModAPI.c:hatcsStart()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -140,13 +140,13 @@ int hatcsStop(uint8_t srcModule)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModAPI.c:hatcsStop():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("hatcsModAPI.c:hatcsStop():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModAPI.c:hatcsStop():Message send failed \r\n" );
+		printf("hatcsModAPI.c:hatcsStop():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -229,13 +229,13 @@ int hatcsNotifySensorState(uint8_t srcModule, uint8_t sensorState)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModAPI.c:hatcsNotifySensorState():Task handle is null for module with id: %d \r\n", srcModule);
+		printf("hatcsModAPI.c:hatcsNotifySensorState():Task handle is null for module with id: %d \r\n", srcModule);
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModAPI.c:hatcsNotifySensorState():Message send failed \r\n" );
+		printf("hatcsModAPI.c:hatcsNotifySensorState():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -268,13 +268,13 @@ int hatcsInstructAirInlet()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModAPI.c:hatcsInstructAirInlet():Task handle is null for module \r\n");
+		printf("hatcsModAPI.c:hatcsInstructAirInlet():Task handle is null for module \r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModAPI.c:hatcsInstructAirInlet():Message send failed \r\n" );
+		printf("hatcsModAPI.c:hatcsInstructAirInlet():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -308,13 +308,13 @@ int event_ls_mkvalveRecirc()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Task handle is null\r\n");
+		printf("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Message send failed\r\n" );
+		printf("hatcsModCSAPI.c:event_ls_mkvalveRecirc():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 	return DG_SUCCESS;
@@ -336,13 +336,13 @@ int hatcsMkValveSync()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("hatcsModAPI.c:hatcsMkValveSync():Task handle is null \r\n");
+		printf("hatcsModAPI.c:hatcsMkValveSync():Task handle is null \r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("hatcsModAPI.c:hatcsMkValveSync():Message send failed\r\n" );
+		printf("hatcsModAPI.c:hatcsMkValveSync():Message send failed\r\n" );
 		return DG_FAIL;
 	}
 

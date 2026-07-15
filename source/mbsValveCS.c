@@ -37,7 +37,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -295,13 +295,13 @@ int mbsVCycle1()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("mbsValveCS.c:mbsVCycle1():Task handle is null\r\n");
+		printf("mbsValveCS.c:mbsVCycle1():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("mbsValveCS.c:mbsVCycle1():Message send failed \r\n" );
+		printf("mbsValveCS.c:mbsVCycle1():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -326,13 +326,13 @@ int mbsVCycle2()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("mbsValveCS.c:mbsVCycle2():Task handle is null \r\n");
+		printf("mbsValveCS.c:mbsVCycle2():Task handle is null \r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("mbsValveCS.c:mbsVCycle2():Message send failed \r\n" );
+		printf("mbsValveCS.c:mbsVCycle2():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 
@@ -356,13 +356,13 @@ int mbsVClose()
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("mbsValveCS.c:mbsvClose():Task handle is null\r\n");
+		printf("mbsValveCS.c:mbsvClose():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("mbsValveCS.c:mbsVClose():Message send failed \r\n" );
+		printf("mbsValveCS.c:mbsVClose():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 

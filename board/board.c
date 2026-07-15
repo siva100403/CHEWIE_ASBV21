@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include "fsl_common.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "board.h"
 #if defined(SDK_I2C_BASED_COMPONENT_USED) && SDK_I2C_BASED_COMPONENT_USED
 #include "fsl_lpi2c.h"
@@ -20,9 +20,9 @@
  * Code
  ******************************************************************************/
 /* Initialize debug console. */
-void BOARD_InitDebugConsole(void)
+/*void BOARD_InitDebugConsole(void)
 {
-    /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
+     attach 12 MHz clock to FLEXCOMM0 (debug console)
     CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
 
     RESET_ClearPeripheralReset(BOARD_DEBUG_UART_RST);
@@ -34,7 +34,7 @@ void BOARD_InitDebugConsole(void)
 
 void BOARD_InitDebugConsole_Core1(void)
 {
-    /* attach 12 MHz clock to FLEXCOMM1 (debug console) */
+     attach 12 MHz clock to FLEXCOMM1 (debug console)
     //    CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH_CORE1);
 
     RESET_ClearPeripheralReset(BOARD_DEBUG_UART_RST_CORE1);
@@ -43,7 +43,7 @@ void BOARD_InitDebugConsole_Core1(void)
 
     DbgConsole_Init(BOARD_DEBUG_UART_INSTANCE_CORE1, BOARD_DEBUG_UART_BAUDRATE_CORE1, BOARD_DEBUG_UART_TYPE_CORE1,
                     uartClkSrcFreq);
-}
+}*/
 
 #if defined(SDK_I2C_BASED_COMPONENT_USED) && SDK_I2C_BASED_COMPONENT_USED
 void BOARD_LPI2C_Init(LPI2C_Type *base, uint32_t clkSrc_Hz)

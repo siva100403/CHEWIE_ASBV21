@@ -22,7 +22,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -2592,21 +2592,21 @@ int initCli(void)
     if (xTaskCreate(cli_Task, "cli_Task", configMINIMAL_STACK_SIZE + 1000, NULL, task_PRIORITY, &cliTaskHandle) !=
         pdPASS)
     {
-        PRINTF("CLI Task creation failed!.\r\n");
+        printf("CLI Task creation failed!.\r\n");
         return DG_FAIL;
     }
     //CLI requires timer and hence create FreeRTOS SW timer
 /*    cliTimerHandle = xTimerCreate("cliTimer",CLI_TIMER_DEFAULT, pdFALSE, (void*)CLI_MOD, dgTimerCallback);
     if(cliTimerHandle == NULL)
     {
-        PRINTF("Timer creation failed!.\r\n");
+        printf("Timer creation failed!.\r\n");
     	vTaskDelete(cliTaskHandle);
         return DG_FAIL;
     }*/
     if(registerModule(CLI_MOD, cliTaskHandle, cliTimerHandle)!= DG_SUCCESS)
     {
     	//Registering the module failed. Hence kill the task and return error
-        PRINTF("CLI Task registration failed!.\r\n");
+        printf("CLI Task registration failed!.\r\n");
 //        xTimerDelete(cliTimerHandle,100 / portTICK_PERIOD_MS);
     	vTaskDelete(cliTaskHandle);
 
@@ -2637,7 +2637,7 @@ int sendCliCmd(uint8_t srcModule, char* cmdstring)
 
 	if(sendMsgFromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("rs232CliDriver.c:sendCliCmd()::Message send failed \r\n" );
+		printf("rs232CliDriver.c:sendCliCmd()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 	return DG_SUCCESS;
@@ -2666,7 +2666,7 @@ int sendRespCompleteEvent(uint8_t srcModule)
 
 	if(sendMsgfromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
-//		PRINTF("heaterAPI.c:heaterStop()::Message send failed \r\n" );
+//		printf("heaterAPI.c:heaterStop()::Message send failed \r\n" );
 		return DG_FAIL;
 	}
 	return DG_SUCCESS;

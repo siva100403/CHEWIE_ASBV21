@@ -14,7 +14,7 @@
 
 /* Freescale includes. */
 #include "fsl_device_registers.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
@@ -245,21 +245,21 @@ int initInferenceModule(void)
 	result = xTaskCreate(inferenceModule_task, "inferenceModule_task", configMINIMAL_STACK_SIZE + 500, NULL, task_PRIORITY, &inferenceModuleTaskHandle);
     if ( result !=    pdPASS)
     {
-        PRINTF("inferenceModule_task creation failed!.\r\n");
+        printf("inferenceModule_task creation failed!.\r\n");
         return DG_FAIL;
     }
     //inferenceModule_task requires single shot timer and hence create FreeRTOS SW timer
     inferenceModuleTimerHandle = xTimerCreate("inferenceModuleTimer",100, pdFALSE, (void*)LID_MOD, dgTimerCallback);
     if(inferenceModuleTimerHandle == NULL)
     {
-        PRINTF("Timer creation failed!.\r\n");
+        printf("Timer creation failed!.\r\n");
     	vTaskDelete(inferenceModuleTaskHandle);
         return DG_FAIL;
     }
     if(registerModule(INF_MOD, inferenceModuleTaskHandle, inferenceModuleTimerHandle)!= DG_SUCCESS)
     {
     	//Registering the module failed. Hence kill the task and return error
-        PRINTF("inferenceModule_task registration failed!.\r\n");
+        printf("inferenceModule_task registration failed!.\r\n");
         xTimerDelete(inferenceModuleTimerHandle,100 / portTICK_PERIOD_MS);
     	vTaskDelete(inferenceModuleTaskHandle);
 

@@ -24,7 +24,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "fsl_debug_console.h"
+//#include "fsl_debug_console.h"
 #include "fsl_spc.h"
 #include "fsl_lpi2c.h"
 #include "fsl_lpuart.h"
@@ -130,19 +130,19 @@ int sendLidSwitchEvent(uint8_t switchEvent)
 	sendMsgBuf.taskHandleSM = xTaskGetCurrentTaskHandle();
 	if(sendMsgBuf.taskHandleSM == NULL)
 	{
-		PRINTF("lidModuleAPI.c:sendLidSwitchEvnt():Task handle is null\r\n");
+		printf("lidModuleAPI.c:sendLidSwitchEvnt():Task handle is null\r\n");
 		return DG_FAIL;
 	}
 
 
 	if(sendMsgFromISR(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
+		printf("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
 		return DG_FAIL;
 	}
 /*	if(sendMsg(&sendMsgBuf) != DG_SUCCESS)
 	{
-		PRINTF("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
+		printf("lidModuleAPI.c:sendLidSwitchEvnt():Message send failed \r\n" );
 		return DG_FAIL;
 	}*/
 	//No need to wait for response and hence return
