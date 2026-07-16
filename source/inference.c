@@ -72,6 +72,9 @@
 #include "AlarmManager.h"
 #include "inference.h"
 #include "model.h"
+#include "output_postproc.h"
+#include "image_decode_raw.h"
+#include "image_data.h"
 
 
 
@@ -214,7 +217,22 @@ static void inferenceModule_task(void *pvParameters)
 				infModuleState = INFMOD_STATE_IDLE;
 				break;
 			case INF_CMD_START:
+				//send ack for the command
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					*(rcvMsg.result) = DG_SUCCESS;
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
 
+				//copy image data to the input buffer
+			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+			    //Convert input data to Tensor
+			    MODEL_ConvertInput(inputData, &inputDims, inputType);
+			    //Run model inference
+		        MODEL_RunInference();
+
+		        //Post processing the output
+		        MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
 				//Image pre-processing
 				/*TODO*/
 					//Crop 320X480 to 288X288 -consider the center

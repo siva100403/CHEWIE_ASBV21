@@ -43,7 +43,7 @@ char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.8.3" );
+	strcpy(swVer,"0.9.0" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -414,5 +414,11 @@ void getHwVersion(char * version)
  * CSM V2
  *  - Capture image from Chewie Configuration tool tested working
  *  - Optimized Transfer speed - CLI port baud increased to 115200, Processing optimized
+ *
+ *******************************************************************/
+
+/************************Ver 0.9.0 16-07-2026********************
+ * CSM V2 + AI Engine
+ *  - AI inference engine integrated to inference stored image
  *
  *******************************************************************/

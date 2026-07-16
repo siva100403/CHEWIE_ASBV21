@@ -87,6 +87,7 @@
 #include "fwUpgrade.h"
 #include "dgCameraDriver.h"
 #include "model.h"
+#include "inference.h"
 
 
 #ifdef __cplusplus
@@ -238,11 +239,13 @@ static void print_task(void *pvParameters)
     	//storeWorkingConfigEEPROM()
     	//getLidSwicthStatus();
     	//psramArea[i] = i;
-    	vTaskDelay(1000);
+    	vTaskDelay(1500);
     	//printf("PSRAM offset=%d, value=%d\r\n", i, psramArea[i] );
     	//i++;
     	//captureImage();
     	//printf("ChewieMain.c:image captured!\r\n");
+
+    	doInference();
 
 		//safeStateForFwUpgrade();
 		//printf("cliProc.c:starting ISPMode");
