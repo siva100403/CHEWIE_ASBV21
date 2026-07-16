@@ -75,6 +75,7 @@
 #include "output_postproc.h"
 #include "image_decode_raw.h"
 #include "image_data.h"
+#include "dgCameraDriver.h"
 
 
 
@@ -178,6 +179,8 @@ static void inferenceModule_task(void *pvParameters)
 					//Go to READY state and wait for commands
 					infModuleState = INFMOD_STATE_READY;
 			    }
+			    //Initialize Camera
+			    initCamera();
 				break;
 			case DG_MODULE_STOP:
 				//Ignore in IDLE state

@@ -25,6 +25,7 @@ limitations under the License.
 //#include "fsl_debug_console.h"
 #include "model.h"
 #include "model_data.h"
+#include <cr_section_macros.h>
 
 static const tflite::Model* s_model = nullptr;
 static tflite::MicroInterpreter* s_interpreter = nullptr;
@@ -36,7 +37,7 @@ extern tflite::MicroOpResolver &MODEL_GetOpsResolver();
 #ifdef TENSORARENA_NONCACHE
 static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16) __attribute__((section("NonCacheable")));
 #else
-static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16);
+__BSS(RAM5) static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16);
 #endif
 
 static uint32_t s_tensorArenaSizeUsed = 0;
