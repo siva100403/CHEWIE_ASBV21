@@ -75,6 +75,7 @@
 #include "hatcsMod.h"
 #include "fwUpgrade.h"
 #include "dgCameraDriver.h"
+#include "inference.h"
 
 
 /*******************************************************************************
@@ -1573,7 +1574,7 @@ void cli_Task(void* arg)
 				}
 
 				case CAP_IMAGE:
-			    	if(captureImage() == DG_SUCCESS)
+			    	if(doInference() == DG_SUCCESS)
 			    	{
 				        sprintf(response, "CC:\r\n");
 			    	}

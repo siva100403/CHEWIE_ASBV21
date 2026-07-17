@@ -95,7 +95,7 @@ camera_device_handle_t handle = {
 
 smartdma_camera_param_t smartdmaParam;
 static volatile bool g_camera_complete_flag = false;
-static uint16_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
+uint16_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
 //uint16_t *g_camera_buffer;
 //__BSS(RAM5) static uint16_t g_camera_buffer[DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT];
 volatile uint8_t g_samrtdma_stack[64] = {0};

@@ -76,9 +76,10 @@
 #include "image_decode_raw.h"
 #include "image_data.h"
 #include "dgCameraDriver.h"
+#include "imagePreprocess.h"
 
 
-
+extern uint16_t g_camera_buffer[];
 
 int doInference()
 {
@@ -220,6 +221,9 @@ static void inferenceModule_task(void *pvParameters)
 				infModuleState = INFMOD_STATE_IDLE;
 				break;
 			case INF_CMD_START:
+				//Capture a frame from camera
+				captureImage();
+
 				//send ack for the command
 				if(rcvMsg.taskHandleSM != NULL)
 				{
@@ -228,7 +232,10 @@ static void inferenceModule_task(void *pvParameters)
 				}
 
 				//copy image data to the input buffer
-			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+			    //memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+
+				//Crop-resize-RGB888 conversion of input
+				Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 			    //Convert input data to Tensor
 			    MODEL_ConvertInput(inputData, &inputDims, inputType);
 			    //Run model inference

@@ -245,7 +245,7 @@ static void print_task(void *pvParameters)
     	//captureImage();
     	//printf("ChewieMain.c:image captured!\r\n");
 
-    	doInference();
+    	//doInference();
 
 		//safeStateForFwUpgrade();
 		//printf("cliProc.c:starting ISPMode");

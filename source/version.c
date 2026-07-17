@@ -43,7 +43,7 @@ char targetChewie[16] = "FE02";
 
 void initVersion(void)
 {
-	strcpy(swVer,"0.9.0" );
+	strcpy(swVer,"0.9.1" );
 
 	strcpy(productModel,"CHEWIE");
 	strcpy(asbHwVersion, "V 2.2");  //TODO: Read from EEPROM
@@ -420,5 +420,11 @@ void getHwVersion(char * version)
 /************************Ver 0.9.0 16-07-2026********************
  * CSM V2 + AI Engine
  *  - AI inference engine integrated to inference stored image
+ *
+ *******************************************************************/
+
+/************************Ver 0.9.1 17-07-2026********************
+ * CSM V2 + AI Engine
+ *  - AI inference engine integrated to inference camera image 128 X 128
  *
  *******************************************************************/
