@@ -164,6 +164,11 @@ int getCmdCode(char* token)
 	{
 		cmdCode = GET_IMAGE;
 	}
+
+	else if (strcmp(&token[0], "GET_IMAGE128\0")==0)
+	{
+		cmdCode = GET_IMAGE128;
+	}
 	else if (strcmp(&token[0], "GETCSMSTATUS_CHTL\0")==0)
 	{
 		cmdCode = GETCSMSTATUS_CHTL;
@@ -1626,6 +1631,55 @@ void cli_Task(void* arg)
 					response[0] == 0;
 					//Get the image data convert to string and fill "response"
 					if(getImageData(response, bufOffset, size) != DG_SUCCESS)
+					{
+						strcpy(response, "CE:\r\n>");
+					}
+					//printf("cliProc.c:GET_IMAGE:response=%s", response);
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+
+				case GET_IMAGE128:
+					//usage: GET_IMAGE offset size
+					int bufOffset128;
+					uint8_t size128;
+					// Extract buffer offset string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract offset
+					{
+						strcpy(response, "CE:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					bufOffset128 = atoi(&token[0]);
+					if(bufOffset128>=(128*128*3))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					// Extract size string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract size
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					size128 = atoi(&token[0]);
+					if((size128 == 0)||(size128>32))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					response[0] = 0;
+					//Get the image data convert to string and fill "response"
+					if(getImageData128X128(response, bufOffset128, size128) != DG_SUCCESS)
 					{
 						strcpy(response, "CE:\r\n>");
 					}

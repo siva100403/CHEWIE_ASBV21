@@ -99,6 +99,7 @@ struct cmd_buffer
 #define FWUPGRADE		53
 #define CAP_IMAGE		54
 #define GET_IMAGE		55
+#define GET_IMAGE128	56
 
 
 

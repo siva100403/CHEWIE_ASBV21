@@ -80,6 +80,8 @@
 
 
 extern uint16_t g_camera_buffer[];
+uint8_t* inputData;
+uint8_t* outputData;
 
 int doInference()
 {
@@ -121,6 +123,29 @@ int doInference()
 
 }
 
+int getImageData128X128(char *buffer, int pixelOffset, uint8_t size)
+{
+	uint8_t count;
+	uint8_t pixel;
+	char *p;
+
+	//Validate parameters
+	if((buffer == NULL)||(size>32)||((pixelOffset+size)>128*128*3))
+	{
+		return DG_FAIL;
+	}
+	p = buffer;
+	p += sprintf(p, "CC:");
+	//strcpy(buffer, "CC:");
+	for(count=0;count<size;count++)
+	{
+		pixel = inputData[pixelOffset+count];
+		p += sprintf(p, "%02X ", pixel);
+	}
+	p += sprintf(p, "\r\n");
+	return DG_SUCCESS;
+}
+
 
 static void inferenceModule_task(void *pvParameters)
 {
@@ -131,8 +156,8 @@ static void inferenceModule_task(void *pvParameters)
     tensor_type_t inputType;
     tensor_dims_t outputDims;
     tensor_type_t outputType;
-    uint8_t* inputData;
-    uint8_t* outputData;
+    //uint8_t* inputData;
+    //uint8_t* outputData;
 
 	//Wait till module registration is complete
 	inferenceModuleQHandle = NULL;

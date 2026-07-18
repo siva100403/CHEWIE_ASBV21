@@ -18,5 +18,6 @@
 
 int initInferenceModule(void);
 int doInference();
+int getImageData128X128(char *buffer, int pixelOffset, uint8_t size);
 
 #endif /* INFERENCE_H_ */
