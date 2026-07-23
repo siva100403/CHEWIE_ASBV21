@@ -512,4 +512,126 @@ int PSRAM_Write(uint32_t addr, const void *src, size_t len)
 }
 
 
+int PSRAM_TestByteOrder(volatile uint8_t *psram)
+{
+    for (uint32_t i = 0; i < 16U; i++)
+    {
+        psram[i] = (uint8_t)i;
+    }
 
+    for (uint32_t i = 0; i < 16U; i++)
+    {
+        if (psram[i] != (uint8_t)i)
+        {
+            printf("Byte order test failed @ 0x%08X: "
+                   "expected %02X, got %02X\r\n",
+                   i, (unsigned)i, psram[i]);
+            return DG_FAIL;
+        }
+    }
+    printf("psramDriver.c:PSRAM_TestByteOrder() Test passed\r\n");
+    return DG_SUCCESS;
+}
+
+int PSRAM_TestAccessWidth(uint32_t psramBase)
+{
+    volatile uint8_t  *p8;
+    volatile uint16_t *p16;
+    volatile uint32_t *p32;
+    uint32_t i;
+
+    p8  = (volatile uint8_t *)psramBase;
+    p16 = (volatile uint16_t *)psramBase;
+    p32 = (volatile uint32_t *)psramBase;
+
+    /* ---------------------------------
+     * Write 16 bytes using 8-bit writes
+     * --------------------------------- */
+    for (i = 0U; i < 16U; i++)
+    {
+        p8[i] = (uint8_t)i;
+    }
+
+    __DSB();
+    __ISB();
+
+    /* ---------------------------------
+     * Verify using 8-bit reads
+     * --------------------------------- */
+    printf("8-bit reads:\r\n");
+
+    for (i = 0U; i < 16U; i++)
+    {
+        printf("%02X ", (unsigned int)p8[i]);
+        if((p8[i]) != i)
+        {
+        	return DG_FAIL;
+        }
+    }
+
+    printf("\r\n");
+
+    /* ---------------------------------
+     * Verify using 16-bit reads
+     * --------------------------------- */
+    printf("16-bit reads:\r\n");
+
+    for (i = 0U; i < 8U; i++)
+    {
+        uint16_t expected;
+        uint16_t actual;
+
+        expected = (uint16_t)((2U * i) |
+                            ((2U * i + 1U) << 8U));
+
+        actual = p16[i];
+
+        printf("[%lu] Expected=0x%04X Actual=0x%04X\r\n",
+               (unsigned long)i,
+               (unsigned int)expected,
+               (unsigned int)actual);
+
+        if (actual != expected)
+        {
+            printf("16-bit access test FAILED\r\n");
+            return DG_FAIL;
+        }
+    }
+
+    /* ---------------------------------
+     * Verify using 32-bit reads
+     * --------------------------------- */
+    printf("32-bit reads:\r\n");
+
+    for (i = 0U; i < 4U; i++)
+    {
+        uint32_t base;
+        uint32_t expected;
+        uint32_t actual;
+
+        base = 4U * i;
+
+        expected =
+              (base + 0U)
+            | ((base + 1U) << 8U)
+            | ((base + 2U) << 16U)
+            | ((base + 3U) << 24U);
+
+        actual = p32[i];
+
+        printf("[%lu] Expected=0x%08lX Actual=0x%08lX\r\n",
+               (unsigned long)i,
+               (unsigned long)expected,
+               (unsigned long)actual);
+
+        if (actual != expected)
+        {
+            printf("32-bit access test FAILED\r\n");
+            return DG_FAIL;
+        }
+    }
+
+    printf("PSRAM access-width test PASSED\r\n");
+
+    return DG_SUCCESS;
+}

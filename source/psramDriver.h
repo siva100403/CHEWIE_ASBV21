@@ -20,4 +20,9 @@ int PSRAM_ExitQPI(void);
 int PSRAM_Write_QPI(uint32_t addr, const void *src, size_t len);
 int PSRAM_Read_QPI(uint32_t addr, void *dst, size_t len);
 
+int PSRAM_TestByteOrder(volatile uint8_t *psram);
+int PSRAM_TestAccessWidth(uint32_t psramBase);
+
+
+
 #endif /* PSRAMDRIVER_H_ */

@@ -248,7 +248,22 @@ static void inferenceModule_task(void *pvParameters)
 			case INF_CMD_START:
 				//Capture a frame from camera
 				captureImage();
+/*				for(int count=0;count<320*480;count++)
+				{
+					g_camera_buffer[count]=0xFFFF;
+				}*/
+				Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 
+				for(int count=0;count<8;count++)
+				{
+					printf("RGB888:0x%x 0x%x 0x%x\r\n", inputData[count*3],inputData[count*3+1],inputData[count*3+2]);
+				}
+/*				for(int count=0; count < 128*128; count++)
+				{
+					inputData[count*3] = 0xFF;
+					inputData[count*3+1] = 0x00;
+					inputData[count*3+2] = 0x00;
+				}*/
 				//send ack for the command
 				if(rcvMsg.taskHandleSM != NULL)
 				{
@@ -260,14 +275,14 @@ static void inferenceModule_task(void *pvParameters)
 			    //memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
 
 				//Crop-resize-RGB888 conversion of input
-				Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
+				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 			    //Convert input data to Tensor
-			    MODEL_ConvertInput(inputData, &inputDims, inputType);
+			    //MODEL_ConvertInput(inputData, &inputDims, inputType);
 			    //Run model inference
-		        MODEL_RunInference();
+		        //MODEL_RunInference();
 
 		        //Post processing the output
-		        MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
+		        //MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
 				//Image pre-processing
 				/*TODO*/
 					//Crop 320X480 to 288X288 -consider the center

@@ -168,6 +168,8 @@ int main(void) {
     	printf("chewieMain.c: PSRAM Init Fail\r\n");
     }
 
+    //PSRAM_TestByteOrder((uint8_t*) PSRAM_START_ADDR);
+    PSRAM_TestAccessWidth(PSRAM_START_ADDR);
 
     if(initSysStart()==DG_SUCCESS)
     {
