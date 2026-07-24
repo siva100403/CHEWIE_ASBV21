@@ -254,10 +254,10 @@ static void inferenceModule_task(void *pvParameters)
 				}*/
 				Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 
-				for(int count=0;count<8;count++)
+/*				for(int count=0;count<8;count++)
 				{
 					printf("RGB888:0x%x 0x%x 0x%x\r\n", inputData[count*3],inputData[count*3+1],inputData[count*3+2]);
-				}
+				}*/
 /*				for(int count=0; count < 128*128; count++)
 				{
 					inputData[count*3] = 0xFF;
@@ -277,12 +277,12 @@ static void inferenceModule_task(void *pvParameters)
 				//Crop-resize-RGB888 conversion of input
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 			    //Convert input data to Tensor
-			    //MODEL_ConvertInput(inputData, &inputDims, inputType);
+			    MODEL_ConvertInput(inputData, &inputDims, inputType);
 			    //Run model inference
-		        //MODEL_RunInference();
+		        MODEL_RunInference();
 
 		        //Post processing the output
-		        //MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
+		        MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
 				//Image pre-processing
 				/*TODO*/
 					//Crop 320X480 to 288X288 -consider the center

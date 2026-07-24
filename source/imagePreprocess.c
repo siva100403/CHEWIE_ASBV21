@@ -28,9 +28,9 @@ static inline void AccumulateRgb565(
      */
 
 	//swap bytes
-/*	uint16_t temp = (pixel<<8)&0xFF00;
+	uint16_t temp = (pixel<<8)&0xFF00;
 	uint16_t temp1 = (pixel>>8)&0x00FF;
-	pixel = temp + temp1;*/
+	pixel = temp | temp1;
     const uint32_t red5 = ((uint32_t)pixel >> 11U) & 0x1FU;
     const uint32_t green6 = ((uint32_t)pixel >> 5U) & 0x3FU;
     const uint32_t blue5 = (uint32_t)pixel & 0x1FU;
