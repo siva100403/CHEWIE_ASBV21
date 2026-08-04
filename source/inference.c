@@ -146,6 +146,28 @@ int getImageData128X128(char *buffer, int pixelOffset, uint8_t size)
 	return DG_SUCCESS;
 }
 
+int getImageData96X96(char *buffer, int pixelOffset, uint8_t size)
+{
+	uint8_t count;
+	uint8_t pixel;
+	char *p;
+
+	//Validate parameters
+	if((buffer == NULL)||(size>32)||((pixelOffset+size)>96*96*3))
+	{
+		return DG_FAIL;
+	}
+	p = buffer;
+	p += sprintf(p, "CC:");
+	//strcpy(buffer, "CC:");
+	for(count=0;count<size;count++)
+	{
+		pixel = inputData[pixelOffset+count];
+		p += sprintf(p, "%02X ", pixel);
+	}
+	p += sprintf(p, "\r\n");
+	return DG_SUCCESS;
+}
 
 static void inferenceModule_task(void *pvParameters)
 {
@@ -248,11 +270,9 @@ static void inferenceModule_task(void *pvParameters)
 			case INF_CMD_START:
 				//Capture a frame from camera
 				captureImage();
-/*				for(int count=0;count<320*480;count++)
-				{
-					g_camera_buffer[count]=0xFFFF;
-				}*/
-				Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
+
+				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
+				Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
 
 /*				for(int count=0;count<8;count++)
 				{

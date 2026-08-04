@@ -100,6 +100,7 @@ struct cmd_buffer
 #define CAP_IMAGE		54
 #define GET_IMAGE		55
 #define GET_IMAGE128	56
+#define GET_IMAGE96		57
 
 
 

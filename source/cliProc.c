@@ -169,6 +169,10 @@ int getCmdCode(char* token)
 	{
 		cmdCode = GET_IMAGE128;
 	}
+	else if (strcmp(&token[0], "GET_IMAGE96\0")==0)
+	{
+		cmdCode = GET_IMAGE96;
+	}
 	else if (strcmp(&token[0], "GETCSMSTATUS_CHTL\0")==0)
 	{
 		cmdCode = GETCSMSTATUS_CHTL;
@@ -1687,6 +1691,56 @@ void cli_Task(void* arg)
 					sendCliResponse(response, strlen(response));
 					setRxStatus(RS232_RCV_IDLE);
 					break;
+
+				case GET_IMAGE96:
+					//usage: GET_IMAGE offset size
+					int bufOffset96;
+					uint8_t size96;
+					// Extract buffer offset string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract offset
+					{
+						strcpy(response, "CE:Less Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					bufOffset96 = atoi(&token[0]);
+					if(bufOffset96>=(96*96*3))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					// Extract size string
+					if (getNextToken(cmdString,&token[0], &bufptr)==-1)  //Extract size
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+					size96 = atoi(&token[0]);
+					if((size96 == 0)||(size96>32))
+					{
+						strcpy(response, "CE:Invalid Parameters\r\n>");
+						sendCliResponse(response, strlen(response));
+						setRxStatus(RS232_RCV_IDLE);
+						break;
+					}
+
+					response[0] = 0;
+					//Get the image data convert to string and fill "response"
+					if(getImageData96X96(response, bufOffset96, size96) != DG_SUCCESS)
+					{
+						strcpy(response, "CE:\r\n>");
+					}
+					//printf("cliProc.c:GET_IMAGE:response=%s", response);
+					sendCliResponse(response, strlen(response));
+					setRxStatus(RS232_RCV_IDLE);
+					break;
+
 
 				case SETAUGERCFG_C:
 				{
