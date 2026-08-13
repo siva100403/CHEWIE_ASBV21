@@ -269,10 +269,10 @@ static void inferenceModule_task(void *pvParameters)
 				break;
 			case INF_CMD_START:
 				//Capture a frame from camera
-				captureImage();
+				//captureImage();
 
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
-				Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
+				//Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
 
 /*				for(int count=0;count<8;count++)
 				{
@@ -292,14 +292,14 @@ static void inferenceModule_task(void *pvParameters)
 				}
 
 				//copy image data to the input buffer
-			    //memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
 
 				//Crop-resize-RGB888 conversion of input
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 			    //Convert input data to Tensor
 			    MODEL_ConvertInput(inputData, &inputDims, inputType);
 			    //Run model inference
-		        MODEL_RunInference();
+		       MODEL_RunInference();
 
 		        //Post processing the output
 		        MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);

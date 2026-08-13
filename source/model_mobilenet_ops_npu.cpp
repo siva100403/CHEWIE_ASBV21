@@ -11,14 +11,17 @@
 
 tflite::MicroOpResolver &MODEL_GetOpsResolver()
 {
-    static tflite::MicroMutableOpResolver<5> s_microOpResolver;
+    static tflite::MicroMutableOpResolver<9> s_microOpResolver;
 
+    s_microOpResolver.AddConv2D();
+    s_microOpResolver.AddDepthwiseConv2D();
+    s_microOpResolver.AddAdd();
+    s_microOpResolver.AddPad();
+    s_microOpResolver.AddMean();
+    s_microOpResolver.AddFullyConnected();
+    s_microOpResolver.AddSoftmax();
     s_microOpResolver.AddDequantize();
     s_microOpResolver.AddReshape();
-    s_microOpResolver.AddSlice();
-    s_microOpResolver.AddSoftmax();
-    s_microOpResolver.AddCustom(tflite::GetString_NEUTRON_GRAPH(),
-        tflite::Register_NEUTRON_GRAPH());
 
     return s_microOpResolver;
 }

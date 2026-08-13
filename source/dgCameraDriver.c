@@ -191,6 +191,7 @@ int initCamera(void)
     /* Enable clock for PCLK. */
     CLOCK_AttachClk(kMAIN_CLK_to_CLKOUT);
     CLOCK_SetClkDiv(kCLOCK_DivClkOut, 25U);   //25U changed to 6 for 25 MHz --> 150 MHz/6
+    //CLOCK_SetClkDiv(kCLOCK_DivClkOut, 6U);   //25U changed to 6 for 25 MHz --> 150 MHz/6
 
 
     /* Init camera I2C clock. */
@@ -286,6 +287,8 @@ int captureImage()
 	}
 	printf("camera capture completed\r\n");
 	g_camera_complete_flag = false;
+	SMARTDMA_Deinit();
+	SMARTDMA_Reset();
 	return DG_SUCCESS;
 }
 
