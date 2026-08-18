@@ -30,8 +30,8 @@ s_microOpResolver.AddCustom(tflite::GetString_NEUTRON_GRAPH(), tflite::Register_
 #define MODEL_INPUT_MEAN 127.5f
 #define MODEL_INPUT_STD 127.5f
 
-//constexpr int kTensorArenaSize = 256 * 1024;
-constexpr int kTensorArenaSize = 604 * 1024;
+constexpr int kTensorArenaSize = 300 * 1024;
+//constexpr int kTensorArenaSize = 604 * 1024;
 
 static const uint8_t model_data[] __ALIGNED(16) __PLACEMENT = {
   0x20, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x33, 0x00, 0x00, 0x00, 0x00,

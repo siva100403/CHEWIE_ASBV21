@@ -37,8 +37,8 @@ static uint8_t s_tensorArena[kTensorArenaSize]
 
 #else
 
-__BSS(RAM5)
-static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16);
+__BSS(RAM5)static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16);
+//static uint8_t s_tensorArena[kTensorArenaSize] __ALIGNED(16);
 
 #endif
 
@@ -204,7 +204,7 @@ status_t MODEL_RunInference(void)
     /*
      * Read DWT cycle counter before inference.
      */
-    start = DWT->CYCCNT;
+    //start = DWT->CYCCNT;
 
 
     /*
@@ -216,7 +216,7 @@ status_t MODEL_RunInference(void)
     /*
      * Read DWT cycle counter after inference.
      */
-    end = DWT->CYCCNT;
+   // end = DWT->CYCCNT;
 
 
     /*
@@ -225,17 +225,17 @@ status_t MODEL_RunInference(void)
      * uint32_t is used because DWT->CYCCNT
      * is a 32-bit cycle counter.
      */
-    uint32_t cycles = end - start;
+    //uint32_t cycles = end - start;
 
 
-    printf("Invoke cycles = %lu\r\n",
+   /* printf("Invoke cycles = %lu\r\n",
            (unsigned long)cycles);
 
-
+*/
     /*
      * Calculate approximate inference time in milliseconds.
      */
-    uint32_t frequency =
+  /*  uint32_t frequency =
         CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
     if (frequency != 0)
@@ -247,7 +247,7 @@ status_t MODEL_RunInference(void)
         printf("Invoke time = %lu ms\r\n",
                (unsigned long)time_ms);
     }
-
+*/
 
     if (status != kTfLiteOk)
     {

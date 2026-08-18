@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#define STATIC_IMAGE_NAME "Non-Empty"
+#define STATIC_IMAGE_NAME "Empty"
 
 static const uint8_t image_data[] = {
     0x7D, 0x7B, 0x80, 0x6F, 0x6D, 0x72, 0x7B, 0x79, 0x7E, 0x83, 0x81, 0x86,
