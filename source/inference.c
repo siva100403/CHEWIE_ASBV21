@@ -78,6 +78,10 @@
 #include "dgCameraDriver.h"
 #include "imagePreprocess.h"
 
+/* Timing / DWT cycle counter includes */
+#include "fsl_common.h"
+#include "core_cm33.h"   /* swap for core_cm4.h / core_cm7.h if your target is not cm33 */
+
 
 extern uint16_t g_camera_buffer[];
 uint8_t* inputData;
@@ -88,7 +92,16 @@ int doInference()
 	dgMsg_t sendMsgBuf;
 	uint8_t result;
 
+	/* Timing variables for profiling doInference() round-trip */
+	/*uint32_t start;
+	uint32_t end;
+	uint32_t cycles;
+	uint32_t frequency;
+
 	result = DG_FAIL;
+
+	frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+	start = DWT->CYCCNT;*/
 
 	//Populate the message to send to the modbus task
 	sendMsgBuf.src_module = UNKNOWN;
@@ -113,6 +126,15 @@ int doInference()
 	//Message send success. Now we will wait for response
 
 	xTaskNotifyWait(0,0,NULL, portMAX_DELAY);
+
+	/*end = DWT->CYCCNT;
+	cycles = end - start;
+	printf("doInference cycles = %lu\r\n", (unsigned long)cycles);
+	if (frequency != 0)
+	{
+		uint32_t time_ms = (uint32_t)(((uint64_t)cycles * 1000ULL) / frequency);
+		printf("doInference time = %lu ms\r\n", (unsigned long)time_ms);
+	}*/
 
 	//Response received. Check the results
 	if(result == DG_SUCCESS)
@@ -180,6 +202,12 @@ static void inferenceModule_task(void *pvParameters)
     tensor_type_t outputType;
     //uint8_t* inputData;
     //uint8_t* outputData;
+
+    /* Timing variables for profiling memcpy / MODEL_ConvertInput / MODEL_ProcessOutput */
+    uint32_t start;
+    uint32_t end;
+    uint32_t cycles;
+    uint32_t frequency;
 
 	//Wait till module registration is complete
 	inferenceModuleQHandle = NULL;
@@ -269,6 +297,8 @@ static void inferenceModule_task(void *pvParameters)
 				break;
 			case INF_CMD_START:
 				//Capture a frame from camera
+				//frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+				//start = DWT->CYCCNT;
 				//captureImage();
 
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
@@ -291,18 +321,59 @@ static void inferenceModule_task(void *pvParameters)
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
 				}
 
-				//copy image data to the input buffer
-			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+				//frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
+				//copy image data to the input buffer
+				//start = DWT->CYCCNT;
+			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+			    //end = DWT->CYCCNT;
+			   // cycles = end - start;
+			    //printf("memcpy cycles = %lu\r\n", (unsigned long)cycles);
+			   /* if (frequency != 0)
+			    {
+			        uint32_t time_ms = (uint32_t)(((uint64_t)cycles * 1000ULL) / frequency);
+			        printf("memcpy time = %lu ms\r\n", (unsigned long)time_ms);
+			    }
+*/
 				//Crop-resize-RGB888 conversion of input
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 			    //Convert input data to Tensor
+			    //start = DWT->CYCCNT;
 			    MODEL_ConvertInput(inputData, &inputDims, inputType);
-			    //Run model inference
-		       MODEL_RunInference();
+			    //end = DWT->CYCCNT;
+			    //cycles = end - start;
+			   //printf("MODEL_ConvertInput cycles = %lu\r\n", (unsigned long)cycles);
+			   /* if (frequency != 0)
+			    {
+			        uint32_t time_ms = (uint32_t)(((uint64_t)cycles * 1000ULL) / frequency);
+			        printf("MODEL_ConvertInput time = %lu ms\r\n", (unsigned long)time_ms);
+			    }
+*/
+			    //Run model inference (MODEL_RunInference already prints its own cycles/ms internally)
+			    frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+			    start = DWT->CYCCNT;
+			    MODEL_RunInference();
+			    end = DWT->CYCCNT;
+			    cycles = end - start;
+			    printf("MODEL_RunInference = %lu\r\n", (unsigned long)cycles);
+			    			    if (frequency != 0)
+			    			    {
+			    			        uint32_t time_ms = (uint32_t)(((uint64_t)cycles * 1000ULL) / frequency);
+			    			        printf("MODEL_RunInference time = %lu ms\r\n", (unsigned long)time_ms);
+			    			    }
 
 		        //Post processing the output
+		        //start = DWT->CYCCNT;
 		        MODEL_ProcessOutput(outputData, &outputDims, outputType, 10);
+		        //end = DWT->CYCCNT;
+		        //cycles = end - start;
+		        //printf("Model_ProcessOutput cycles = %lu\r\n", (unsigned long)cycles);
+		        /*if (frequency != 0)
+		        {
+		            uint32_t time_ms = (uint32_t)(((uint64_t)cycles * 1000ULL) / frequency);
+		            printf("Model_ProcessOutput time = %lu ms\r\n", (unsigned long)time_ms);
+		        }
+*/
 				//Image pre-processing
 				/*TODO*/
 					//Crop 320X480 to 288X288 -consider the center

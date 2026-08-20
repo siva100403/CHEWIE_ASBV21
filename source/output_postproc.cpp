@@ -47,7 +47,7 @@ status_t MODEL_ProcessOutput(
 
     printf("----------------------------------------\r\n");
     printf("     Detected: %s (%d%%)\r\n",label,score);
-    printf("     Inference time: %d ms\r\n",inferenceTime);
+    //printf("     Inference time: %d ms\r\n",inferenceTime);
     printf("----------------------------------------\r\n");
 
     return kStatus_Success;
