@@ -13,9 +13,8 @@
 
 #include "model.h"
 #include "model_data.h"
-
+//#include "EmptyvsNonEmpty-npu.h"
 #include <cr_section_macros.h>
-
 #include "fsl_common.h"
 #include "core_cm33.h"
 
