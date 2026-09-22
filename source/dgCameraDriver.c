@@ -287,8 +287,8 @@ int captureImage()
 	}
 	printf("camera capture completed\r\n");
 	g_camera_complete_flag = false;
-	SMARTDMA_Deinit();
-	SMARTDMA_Reset();
+	//SMARTDMA_Deinit();
+	//SMARTDMA_Reset();
 	return DG_SUCCESS;
 }
 

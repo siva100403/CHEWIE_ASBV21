@@ -299,10 +299,10 @@ static void inferenceModule_task(void *pvParameters)
 				//Capture a frame from camera
 				//frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 				//start = DWT->CYCCNT;
-				//captureImage();
+				captureImage();
 
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
-				//Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
+				Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
 
 /*				for(int count=0;count<8;count++)
 				{
@@ -325,7 +325,7 @@ static void inferenceModule_task(void *pvParameters)
 
 				//copy image data to the input buffer
 				//start = DWT->CYCCNT;
-			    memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
+			    //memcpy(inputData, image_data, inputDims.data[2] * inputDims.data[1] * inputDims.data[3]);
 			    //end = DWT->CYCCNT;
 			   // cycles = end - start;
 			    //printf("memcpy cycles = %lu\r\n", (unsigned long)cycles);

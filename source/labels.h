@@ -11,7 +11,7 @@
 static const char* const labels[] = {
     "Empty",
 	"Non-Empty",
-	"No-Detection"
+	"No Detection"
 };
 
 #endif // _LABELS_H_

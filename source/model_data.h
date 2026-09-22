@@ -13,11 +13,6 @@ static tflite::MicroMutableOpResolver<2> s_microOpResolver;
 s_microOpResolver.AddSoftmax();
 s_microOpResolver.AddCustom(tflite::GetString_NEUTRON_GRAPH(), tflite::Register_NEUTRON_GRAPH());
 */
-
-/*#define MODEL_NAME "EmptyvsNonEmpty-npu.tflite"
-#define MODEL_SIZE 433216
-static const unsigned char model_data[] __attribute__((aligned(16))) = {*/
-
 #ifdef __arm__
 #include <cmsis_compiler.h>
 #else
@@ -29,7 +24,8 @@ static const unsigned char model_data[] __attribute__((aligned(16))) = {*/
 #else
 #define __PLACEMENT
 #endif
-#define MODEL_NAME "EmptyvsNonEmpty-npu"
+#define MODEL_NAME "EmptyvsNonEmpty-npu.tflite"
+#define MODEL_SIZE 433216
 #define MODEL_INPUT_MEAN 127.5f
 #define MODEL_INPUT_STD 127.5f
 
