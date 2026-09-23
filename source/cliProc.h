@@ -101,6 +101,7 @@ struct cmd_buffer
 #define GET_IMAGE		55
 #define GET_IMAGE128	56
 #define GET_IMAGE96		57
+#define DO_INFERENCE	58
 
 
 

@@ -80,12 +80,14 @@
 
 /* Timing / DWT cycle counter includes */
 #include "fsl_common.h"
+#include <cr_section_macros.h>
 #include "core_cm33.h"   /* swap for core_cm4.h / core_cm7.h if your target is not cm33 */
 
 
 extern uint16_t g_camera_buffer[];
 uint8_t* inputData;
 uint8_t* outputData;
+__BSS(RAM5)static uint8_t imageCopy[96*96*3] __ALIGNED(16);
 
 int doInference()
 {
@@ -184,7 +186,7 @@ int getImageData96X96(char *buffer, int pixelOffset, uint8_t size)
 	//strcpy(buffer, "CC:");
 	for(count=0;count<size;count++)
 	{
-		pixel = inputData[pixelOffset+count];
+		pixel = imageCopy[pixelOffset+count];
 		p += sprintf(p, "%02X ", pixel);
 	}
 	p += sprintf(p, "\r\n");
@@ -303,6 +305,7 @@ static void inferenceModule_task(void *pvParameters)
 
 				//Image_CropResizeRgb565ToRgb888_128X128(g_camera_buffer, inputData);
 				Image_CropResizeRgb565ToRgb888_96X96(g_camera_buffer, inputData);
+				memcpy(imageCopy, inputData, 96*96*3);
 
 /*				for(int count=0;count<8;count++)
 				{
@@ -314,12 +317,12 @@ static void inferenceModule_task(void *pvParameters)
 					inputData[count*3+1] = 0x00;
 					inputData[count*3+2] = 0x00;
 				}*/
-				//send ack for the command
+/*				//send ack for the command
 				if(rcvMsg.taskHandleSM != NULL)
 				{
 					*(rcvMsg.result) = DG_SUCCESS;
 					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
-				}
+				}*/
 
 				//frequency = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
@@ -374,6 +377,12 @@ static void inferenceModule_task(void *pvParameters)
 		            printf("Model_ProcessOutput time = %lu ms\r\n", (unsigned long)time_ms);
 		        }
 */
+				//send ack for the command
+				if(rcvMsg.taskHandleSM != NULL)
+				{
+					*(rcvMsg.result) = DG_SUCCESS;
+					xTaskNotify(rcvMsg.taskHandleSM, 0, eNoAction);
+				}
 				//Image pre-processing
 				/*TODO*/
 					//Crop 320X480 to 288X288 -consider the center

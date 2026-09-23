@@ -285,6 +285,10 @@ int getCmdCode(char* token)
 	{
 		cmdCode = AIR_VALVE1;
 	}
+	else if (strcmp(&token[0], "DO_INFERENCE\0")==0)
+	{
+		cmdCode = DO_INFERENCE;
+	}
 	else if (strcmp(&token[0], "AIRVALVE2\0")==0)
 	{
 		cmdCode = AIR_VALVE2;
@@ -1583,6 +1587,7 @@ void cli_Task(void* arg)
 				}
 
 				case CAP_IMAGE:
+				case DO_INFERENCE:
 			    	if(doInference() == DG_SUCCESS)
 			    	{
 				        sprintf(response, "CC:\r\n");
